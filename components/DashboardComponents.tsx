@@ -1,11 +1,21 @@
+
 import React, { useState } from 'react';
 import { User, Achievement } from '../types';
 import { Trophy, Flame, Star, Zap, MessageSquare, Send } from 'lucide-react';
 import { chatWithGemini } from '../services/geminiService';
 
 export const XPBar: React.FC<{ user: User }> = ({ user }) => {
-  const nextLevelXp = user.level * 1000;
-  const progress = (user.xp / nextLevelXp) * 100;
+  // Quadratic Formula: XP = 500 * (Level - 1)^2
+  // XP needed for current level start
+  const currentLevelBaseXP = 500 * Math.pow(user.level - 1, 2);
+  // XP needed for next level start
+  const nextLevelBaseXP = 500 * Math.pow(user.level, 2);
+  
+  const xpNeededForLevel = nextLevelBaseXP - currentLevelBaseXP;
+  const xpProgressInLevel = user.xp - currentLevelBaseXP;
+  
+  // Guard against divide by zero or negative
+  const percentage = Math.min(100, Math.max(0, (xpProgressInLevel / xpNeededForLevel) * 100));
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -15,13 +25,13 @@ export const XPBar: React.FC<{ user: User }> = ({ user }) => {
           <div className="text-3xl font-bold text-indigo-600">Lvl {user.level}</div>
         </div>
         <div className="text-right">
-          <span className="text-sm font-medium text-gray-600">{user.xp} / {nextLevelXp} XP</span>
+          <span className="text-sm font-medium text-gray-600">{user.xp} / {nextLevelBaseXP} XP</span>
         </div>
       </div>
       <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-        <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000" style={{ width: `${progress}%` }}></div>
+        <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000" style={{ width: `${percentage}%` }}></div>
       </div>
-      <p className="mt-3 text-xs text-gray-400">Earn {nextLevelXp - user.xp} more XP to reach Level {user.level + 1}</p>
+      <p className="mt-3 text-xs text-gray-400">Earn {nextLevelBaseXP - user.xp} more XP to reach Level {user.level + 1}</p>
     </div>
   );
 };

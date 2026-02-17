@@ -35,6 +35,7 @@ export const COURSES: Course[] = [
     description: 'Master C++ and Algorithms. Ideal for FINKI and Computer Science students wanting to ace their midterms.',
     professorId: 'p1',
     image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    university: 'FINKI',
     priceFull: 6000,
     priceSingle: 750,
     lectures: Array.from({ length: 10 }).map((_, i) => ({
@@ -51,6 +52,7 @@ export const COURSES: Course[] = [
     description: 'Practical marketing strategies, SEO, and Social Media management. Suitable for Economics and Business students.',
     professorId: 'p2',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    university: 'UKIM',
     priceFull: 6000,
     priceSingle: 750,
     lectures: Array.from({ length: 10 }).map((_, i) => ({
@@ -67,6 +69,7 @@ export const COURSES: Course[] = [
     description: 'Comprehensive review of skeletal and muscular systems. Essential for Medical Faculty students.',
     professorId: 'p3',
     image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    university: 'Medical Faculty',
     priceFull: 6000,
     priceSingle: 750,
     lectures: Array.from({ length: 10 }).map((_, i) => ({

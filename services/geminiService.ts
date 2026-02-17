@@ -1,14 +1,9 @@
-
 import { GoogleGenAI } from "@google/genai";
 
-// Initialize the client.
-// Note: In a real environment, ensure process.env.API_KEY is set.
-// For this demo, we will handle missing keys gracefully in the UI.
-const apiKey = process.env.API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const chatWithGemini = async (message: string, history: string[] = []) => {
-  if (!apiKey) {
+  if (!process.env.API_KEY) {
     // Fallback for demo purposes if no API key is present
     return new Promise<string>((resolve) => {
       setTimeout(() => {
@@ -18,7 +13,7 @@ export const chatWithGemini = async (message: string, history: string[] = []) =>
   }
 
   try {
-    const model = 'gemini-2.5-flash-latest'; // Using Flash for speed/efficiency in a chat context
+    const model = 'gemini-3-flash-preview';
     const response = await ai.models.generateContent({
       model: model,
       contents: message,

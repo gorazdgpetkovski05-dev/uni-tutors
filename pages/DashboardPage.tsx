@@ -200,7 +200,7 @@ const BookingActionButtons: React.FC<{ bookingId: string, updateStatus: (id: str
 // --- Admin Course Manager ---
 
 const AdminCourseManager: React.FC = () => {
-    const { addCourse } = useData();
+    const { addCourse, uploadCourseImage } = useData();
     const { notify } = useNotification();
     const { t } = useLanguage();
     
@@ -209,6 +209,7 @@ const AdminCourseManager: React.FC = () => {
     const [code, setCode] = useState('');
     const [description, setDescription] = useState('Online and group study available.');
     const [selectedProf, setSelectedProf] = useState(PROFESSORS[0].id);
+    const [university, setUniversity] = useState('FINKI'); 
     const [price, setPrice] = useState(6000);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>('');
@@ -267,16 +268,26 @@ const AdminCourseManager: React.FC = () => {
         }));
 
         try {
+            // 1. Handle Image Upload
+            let finalImageUrl = imagePreview;
+            if (imageFile) {
+                finalImageUrl = await uploadCourseImage(imageFile);
+            } else if (!imagePreview) {
+                finalImageUrl = "https://picsum.photos/800/400?random=" + Math.random();
+            }
+
+            // 2. Add Course
             await addCourse({
                 id: `c-${Date.now()}`,
                 title, code, description, professorId: selectedProf,
-                image: imagePreview || "https://picsum.photos/800/400?random=" + Math.random(),
+                university: university,
+                image: finalImageUrl,
                 priceFull: Number(price), priceSingle: 750, lectures: finalLectures
             });
             notify('Course Added', `${title} is live!`, 'success');
-            setTitle(''); setCode(''); setLectures([]); setImagePreview('');
-        } catch (e) {
-            notify('Error', 'Failed to add course.', 'info');
+            setTitle(''); setCode(''); setLectures([]); setImagePreview(''); setImageFile(null);
+        } catch (e: any) {
+            notify('Error', e.message || 'Failed to add course.', 'info');
         } finally {
             setIsSubmitting(false);
         }
@@ -303,6 +314,24 @@ const AdminCourseManager: React.FC = () => {
                              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('priceMkd')}</label>
                              <input type="number" className="w-full p-2 border rounded-lg" value={price} onChange={e => setPrice(Number(e.target.value))} />
                         </div>
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">University</label>
+                        <input 
+                            list="uni-list"
+                            className="w-full p-2 border rounded-lg bg-white" 
+                            value={university} 
+                            onChange={e => setUniversity(e.target.value)}
+                            placeholder="Select or type university..."
+                        />
+                        <datalist id="uni-list">
+                            <option value="FINKI" />
+                            <option value="UKIM" />
+                            <option value="FON" />
+                            <option value="American College" />
+                            <option value="Medical Faculty" />
+                        </datalist>
+                        <p className="text-[10px] text-gray-400 mt-1">Type a new name to create a new university category.</p>
                     </div>
                     <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('assignProf')}</label>

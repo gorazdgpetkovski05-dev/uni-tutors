@@ -167,8 +167,10 @@ export const translations = {
     // Courses Page
     availableCourses: "Available Subjects",
     selectSubject: "Select a subject to view details and experts.",
-    searchPlaceholder: "Search subjects (e.g., Math, Law)...",
-    noCoursesFound: "No subjects found matching your search.",
+    searchPlaceholder: "Search subjects...",
+    filterUniversity: "Filter by University",
+    allUniversities: "All Universities",
+    noCoursesFound: "No subjects found matching your criteria.",
     viewDetails: "View Details",
   },
   mk: {
@@ -337,6 +339,8 @@ export const translations = {
     availableCourses: "Достапни Предмети",
     selectSubject: "Избери предмет за детали и експерти.",
     searchPlaceholder: "Пребарај предмети...",
+    filterUniversity: "Филтер по Универзитет",
+    allUniversities: "Сите Универзитети",
     noCoursesFound: "Не се пронајдени предмети.",
     viewDetails: "Детали",
   }

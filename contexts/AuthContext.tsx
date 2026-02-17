@@ -10,6 +10,7 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
   loading: boolean;
 }
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   resetPassword: async () => {},
   updatePassword: async () => {},
   logout: async () => {},
+  refreshUser: async () => {},
   isAuthenticated: false,
   loading: false,
 });
@@ -96,14 +98,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
   };
 
+  const refreshUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+          const u = await getUserProfile(session.user.id, session.user.email, session.user.user_metadata);
+          if (u) setUser(u);
+      }
+  };
+
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          const u = await getUserProfile(session.user.id, session.user.email, session.user.user_metadata);
-          if (u) setUser(u);
-        }
+        await refreshUser();
         
         supabase.auth.onAuthStateChange(async (event, session) => {
           if (event === 'SIGNED_IN' && session?.user) {
@@ -225,7 +231,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, resetPassword, updatePassword, logout, isAuthenticated: !!user, loading }}>
+    <AuthContext.Provider value={{ user, login, signup, resetPassword, updatePassword, logout, refreshUser, isAuthenticated: !!user, loading }}>
       {children}
     </AuthContext.Provider>
   );

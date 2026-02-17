@@ -24,6 +24,7 @@ export interface Course {
   description: string;
   professorId: string;
   image: string;
+  university?: string;
   lectures: Lecture[];
   priceFull: number; // 6000
   priceSingle: number; // 750

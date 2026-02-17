@@ -1,5 +1,5 @@
 
--- FINKI Tutors - Final Admin & Booking Fixes
+-- FINKI Tutors - Schema Update & Fixes
 -- ⚠️ WARNING: THIS WILL DROP EXISTING TABLES TO ENSURE EVERYTHING WORKS ⚠️
 
 -- 1. CLEANUP
@@ -48,6 +48,7 @@ create table public.courses (
   professor_id text, -- TEXT to support 'p1' etc
   professor_name text,
   image text,
+  university text default 'FINKI',
   price_full integer not null default 6000,
   price_single integer not null default 750,
   created_at timestamp with time zone default timezone('utc'::text, now())
@@ -58,7 +59,8 @@ create table public.lectures (
   id uuid default uuid_generate_v4() primary key,
   course_id uuid references public.courses(id) on delete cascade,
   title text not null,
-  date timestamp with time zone not null,
+  -- FIX: Added DEFAULT NOW() to prevent 'null value' errors if date is missing
+  date timestamp with time zone default now() not null, 
   duration integer default 90,
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
@@ -104,14 +106,20 @@ create table public.achievements (
   xp_reward integer default 100
 );
 
--- 10. SECURITY (Row Level Security)
+-- 10. STORAGE FOR IMAGES (Requires Supabase Storage Extension enabled)
+-- This creates the bucket 'course-images' and makes it public so you can upload files.
+insert into storage.buckets (id, name, public) 
+values ('course-images', 'course-images', true)
+on conflict (id) do nothing;
+
+-- 11. SECURITY (Row Level Security)
 alter table public.profiles enable row level security;
 alter table public.courses enable row level security;
 alter table public.lectures enable row level security;
 alter table public.bookings enable row level security;
 alter table public.site_config enable row level security;
 
--- HELPER FUNCTION: is_admin() - ROBUST VERSION
+-- HELPER FUNCTION: is_admin()
 create or replace function public.is_admin()
 returns boolean as $$
 begin
@@ -145,17 +153,12 @@ create policy "Admins/Teachers manage lectures" on public.lectures for all using
   public.is_admin() or exists (select 1 from public.profiles where id = auth.uid() and role = 'teacher'::public.user_role)
 );
 
--- Bookings Policies
--- 1. View: Users see own, Admins/Teachers see all
+-- Bookings
 create policy "Users view own bookings" on public.bookings for select using (auth.uid() = user_id);
 create policy "Teachers/Admins view all bookings" on public.bookings for select using (
   public.is_admin() or exists (select 1 from public.profiles where id = auth.uid() and role = 'teacher'::public.user_role)
 );
-
--- 2. Insert: Authenticated users can insert
 create policy "Authenticated users insert bookings" on public.bookings for insert with check (auth.uid() = user_id);
-
--- 3. Update: Admins/Teachers can update status
 create policy "Admins/Teachers update bookings" on public.bookings for update using (
   public.is_admin() or exists (select 1 from public.profiles where id = auth.uid() and role = 'teacher'::public.user_role)
 );
@@ -164,7 +167,15 @@ create policy "Admins/Teachers update bookings" on public.bookings for update us
 create policy "Config viewable by everyone" on public.site_config for select using (true);
 create policy "Admins update config" on public.site_config for update using (public.is_admin());
 
--- 11. AUTOMATIC PROFILE CREATION TRIGGER
+-- Storage Policies (Allows everyone to read images, authenticated users to upload)
+-- FIX: Drop existing policies first to prevent 'policy already exists' errors
+drop policy if exists "Public Access to Course Images" on storage.objects;
+drop policy if exists "Auth Users Upload Images" on storage.objects;
+
+create policy "Public Access to Course Images" on storage.objects for select using ( bucket_id = 'course-images' );
+create policy "Auth Users Upload Images" on storage.objects for insert with check ( bucket_id = 'course-images' and auth.role() = 'authenticated' );
+
+-- 12. AUTOMATIC PROFILE CREATION TRIGGER
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
@@ -183,15 +194,15 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
--- 12. DATA RECOVERY & SEEDING
+-- 13. DATA RECOVERY & SEEDING
 
--- Restore Profiles
+-- Restore Profiles (in case tables were dropped but users exist in Auth)
 insert into public.profiles (id, email, full_name, role)
 select id, email, raw_user_meta_data->>'full_name', 'student'::public.user_role
 from auth.users
 where id not in (select id from public.profiles);
 
--- FIX: Ensure Admin exists and has role
+-- Ensure Admin exists
 DO $$
 DECLARE
   admin_uid uuid;
@@ -199,10 +210,7 @@ BEGIN
   SELECT id INTO admin_uid FROM auth.users WHERE email = 'gorazd.g.petkovski05@gmail.com';
   
   IF admin_uid IS NOT NULL THEN
-    -- Update existing profile if exists
     UPDATE public.profiles SET role = 'admin' WHERE id = admin_uid;
-    
-    -- Insert if missing (edge case)
     IF NOT FOUND THEN
        INSERT INTO public.profiles (id, email, full_name, role) 
        VALUES (admin_uid, 'gorazd.g.petkovski05@gmail.com', 'Gorazd Admin', 'admin')
@@ -211,12 +219,11 @@ BEGIN
   END IF;
 END $$;
 
-
 -- Seed Courses
-INSERT INTO public.courses (title, code, description, professor_name, professor_id, image, price_full, price_single) VALUES 
-('Advanced Programming', 'CS-202', 'Master C++ and Algorithms. Ideal for FINKI and Computer Science students wanting to ace their midterms.', 'Nikola Jankoski', 'p1', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', 6000, 750),
-('Digital Marketing 101', 'MKT-101', 'Practical marketing strategies, SEO, and Social Media management. Suitable for Economics and Business students.', 'Dragan', 'p2', 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', 6000, 750),
-('Human Anatomy Basics', 'MED-105', 'Comprehensive review of skeletal and muscular systems. Essential for Medical Faculty students.', 'Dr. Sarah Trajkov', 'p3', 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', 6000, 750);
+INSERT INTO public.courses (title, code, description, professor_name, professor_id, image, university, price_full, price_single) VALUES 
+('Advanced Programming', 'CS-202', 'Master C++ and Algorithms. Ideal for FINKI and Computer Science students wanting to ace their midterms.', 'Nikola Jankoski', 'p1', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', 'FINKI', 6000, 750),
+('Digital Marketing 101', 'MKT-101', 'Practical marketing strategies, SEO, and Social Media management. Suitable for Economics and Business students.', 'Dragan', 'p2', 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', 'UKIM', 6000, 750),
+('Human Anatomy Basics', 'MED-105', 'Comprehensive review of skeletal and muscular systems. Essential for Medical Faculty students.', 'Dr. Sarah Trajkov', 'p3', 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', 'Medical Faculty', 6000, 750);
 
 -- Seed Lectures
 DO $$
