@@ -1,9 +1,31 @@
+
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Helper to safely access environment variables without crashing in browser environments
+const getApiKey = () => {
+  try {
+    // Check if process is defined (Node.js or polyfilled)
+    if (typeof process !== 'undefined' && process.env) {
+      return process.env.API_KEY;
+    }
+    // Check for Vite's import.meta.env
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      // @ts-ignore
+      return import.meta.env.VITE_API_KEY || import.meta.env.API_KEY;
+    }
+  } catch (e) {
+    // Ignore errors
+  }
+  return undefined;
+};
+
+const apiKey = getApiKey();
+const ai = new GoogleGenAI({ apiKey: apiKey || '123' }); // Pass dummy key if missing to prevent init crash
 
 export const chatWithGemini = async (message: string, history: string[] = []) => {
-  if (!process.env.API_KEY) {
+  // Check if we have a valid key before calling API
+  if (!apiKey || apiKey === '123') {
     // Fallback for demo purposes if no API key is present
     return new Promise<string>((resolve) => {
       setTimeout(() => {
