@@ -1,23 +1,20 @@
 
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { PROFESSORS } from '../constants';
 import { BookingModal } from '../components/BookingModal';
-import { ArrowLeft, Calendar, Clock, MapPin, CheckCircle2, User as UserIcon, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, CheckCircle2, AlertCircle } from 'lucide-react';
 import { BookingType } from '../types';
-import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export const CourseDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth();
-  const { courses } = useData();
+  const { courses, professors } = useData();
   const { t } = useLanguage();
   
   const course = courses.find(c => c.id === id);
-  const professor = course ? PROFESSORS.find(p => p.id === course.professorId) : null;
+  const professor = course ? professors.find(p => p.id === course.professorId) : null;
 
   const [bookingType, setBookingType] = useState<BookingType>('full');
   const [selectedLectureId, setSelectedLectureId] = useState<string>('');
@@ -195,19 +192,13 @@ export const CourseDetailsPage: React.FC = () => {
                   <span className="text-3xl font-bold text-gray-900">{totalPrice} <span className="text-base font-normal text-gray-500">MKD</span></span>
                 </div>
 
-                {user?.role === 'teacher' ? (
-                    <div className="bg-yellow-50 text-yellow-800 p-4 rounded-xl text-sm border border-yellow-200 text-center font-medium">
-                        {t('teacherCannotBook')}
-                    </div>
-                ) : (
-                    <button 
-                    disabled={bookingType === 'single' && !selectedLectureId}
-                    onClick={handleBookClick}
-                    className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
-                    >
-                    {t('bookAppt')}
-                    </button>
-                )}
+                <button 
+                disabled={bookingType === 'single' && !selectedLectureId}
+                onClick={handleBookClick}
+                className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
+                >
+                {t('bookAppt')}
+                </button>
                 
                 <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
                   <AlertCircle className="h-3 w-3" />

@@ -1,66 +1,11 @@
 
 import React, { useState } from 'react';
-import { User, Achievement } from '../types';
-import { Trophy, Flame, Star, Zap, MessageSquare, Send } from 'lucide-react';
+import { MessageSquare, Send } from 'lucide-react';
 import { chatWithGemini } from '../services/geminiService';
-
-export const XPBar: React.FC<{ user: User }> = ({ user }) => {
-  // Quadratic Formula: XP = 500 * (Level - 1)^2
-  // XP needed for current level start
-  const currentLevelBaseXP = 500 * Math.pow(user.level - 1, 2);
-  // XP needed for next level start
-  const nextLevelBaseXP = 500 * Math.pow(user.level, 2);
-  
-  const xpNeededForLevel = nextLevelBaseXP - currentLevelBaseXP;
-  const xpProgressInLevel = user.xp - currentLevelBaseXP;
-  
-  // Guard against divide by zero or negative
-  const percentage = Math.min(100, Math.max(0, (xpProgressInLevel / xpNeededForLevel) * 100));
-
-  return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-      <div className="flex justify-between items-end mb-2">
-        <div>
-          <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Current Level</span>
-          <div className="text-3xl font-bold text-indigo-600">Lvl {user.level}</div>
-        </div>
-        <div className="text-right">
-          <span className="text-sm font-medium text-gray-600">{user.xp} / {nextLevelBaseXP} XP</span>
-        </div>
-      </div>
-      <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-        <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000" style={{ width: `${percentage}%` }}></div>
-      </div>
-      <p className="mt-3 text-xs text-gray-400">Earn {nextLevelBaseXP - user.xp} more XP to reach Level {user.level + 1}</p>
-    </div>
-  );
-};
-
-export const AchievementBadge: React.FC<{ achievement: Achievement }> = ({ achievement }) => {
-  const IconMap: any = {
-    'graduation-cap': Star,
-    'code': Zap,
-    'calculator': Trophy,
-    'flame': Flame
-  };
-  const Icon = IconMap[achievement.icon] || Star;
-
-  return (
-    <div className={`p-4 rounded-xl border flex items-center gap-4 ${achievement.unlocked ? 'bg-white border-gray-100 shadow-sm' : 'bg-gray-50 border-dashed border-gray-200 opacity-60'}`}>
-      <div className={`p-3 rounded-full ${achievement.unlocked ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-200 text-gray-400'}`}>
-        <Icon className="h-6 w-6" />
-      </div>
-      <div>
-        <h4 className={`font-bold ${achievement.unlocked ? 'text-gray-900' : 'text-gray-500'}`}>{achievement.title}</h4>
-        <p className="text-xs text-gray-500">{achievement.description}</p>
-      </div>
-    </div>
-  );
-};
 
 export const AiTutor: React.FC = () => {
   const [messages, setMessages] = useState<{role: 'user'|'ai', text: string}[]>([
-    {role: 'ai', text: 'Hi! I am your FINKI AI Tutor. Ask me anything about your subjects!'}
+    {role: 'ai', text: 'Hi! I am your FINKI AI Tutor. Ask me anything about your courses!'}
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);

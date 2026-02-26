@@ -4,6 +4,7 @@ import { CourseCard } from '../components/CourseCard';
 import { Search, Filter } from 'lucide-react';
 import { useData } from '../contexts/DataContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { motion, AnimatePresence } from 'motion/react';
 
 export const CoursesPage: React.FC = () => {
   const { courses } = useData();
@@ -24,7 +25,11 @@ export const CoursesPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4"
+        >
           <div>
             <h1 className="text-3xl font-bold text-gray-900">{t('availableCourses')}</h1>
             <p className="mt-2 text-gray-600">{t('selectSubject')}</p>
@@ -58,19 +63,34 @@ export const CoursesPage: React.FC = () => {
                 />
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredCourses.map(course => (
-            <CourseCard 
-              key={course.id} 
-              course={course} 
-            />
-          ))}
-        </div>
+        <motion.div 
+          layout
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
+          <AnimatePresence mode="popLayout">
+            {filteredCourses.map(course => (
+              <motion.div
+                layout
+                key={course.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.3 }}
+              >
+                <CourseCard course={course} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
 
         {filteredCourses.length === 0 && (
-          <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100 mt-4">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100 mt-4"
+          >
             <div className="text-gray-400 mb-2">
                 <Search className="h-10 w-10 mx-auto opacity-50" />
             </div>
@@ -81,7 +101,7 @@ export const CoursesPage: React.FC = () => {
             >
                 Clear Filters
             </button>
-          </div>
+          </motion.div>
         )}
       </div>
     </div>

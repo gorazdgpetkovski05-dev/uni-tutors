@@ -1,34 +1,55 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Hero } from '../components/Hero';
 import { ArrowRight, Clock, Check, Trophy, Users, BookOpen, Calendar, ShieldCheck, GraduationCap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { motion, useInView, useSpring, useTransform } from 'motion/react';
 
-const FadeInSection: React.FC<{ children: React.ReactNode, className?: string, delay?: string }> = ({ children, className = "", delay = "" }) => {
-  const domRef = useRef<HTMLDivElement>(null);
+const Counter: React.FC<{ value: string, suffix?: string }> = ({ value, suffix = "" }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const numericValue = parseInt(value.replace(/[^0-9]/g, '')) || 0;
+  
+  const spring = useSpring(0, {
+    mass: 1,
+    stiffness: 100,
+    damping: 30,
+  });
+
+  const display = useTransform(spring, (current) => 
+    Math.round(current).toLocaleString() + suffix
+  );
 
   useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-        }
-      });
-    });
-
-    if (domRef.current) {
-      observer.observe(domRef.current);
+    if (isInView) {
+      spring.set(numericValue);
     }
+  }, [isInView, spring, numericValue]);
 
-    return () => observer.disconnect();
-  }, []);
+  return <motion.span ref={ref}>{display}</motion.span>;
+};
+
+const FadeInSection: React.FC<{ children: React.ReactNode, className?: string, delay?: number, direction?: 'up' | 'down' | 'left' | 'right' | 'none' }> = ({ children, className = "", delay = 0, direction = 'up' }) => {
+  const directions = {
+    up: { y: 40 },
+    down: { y: -40 },
+    left: { x: 40 },
+    right: { x: -40 },
+    none: {}
+  };
 
   return (
-    <div className={`fade-in-section ${delay} ${className}`} ref={domRef}>
+    <motion.div
+      initial={{ opacity: 0, ...directions[direction] }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={className}
+    >
       {children}
-    </div>
+    </motion.div>
   );
 };
 
@@ -43,31 +64,48 @@ export const Home: React.FC = () => {
       {/* STATS SECTION */}
       <section className="bg-slate-900 text-white py-12 border-b border-indigo-500/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeInSection>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              <div className="space-y-2">
-                <div className="text-4xl font-bold text-indigo-400">{landingPageData.statsStudents}</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <FadeInSection delay={0.1} direction="none">
+              <div className="space-y-2 group">
+                <div className="text-4xl font-bold text-indigo-400 group-hover:scale-110 transition-transform duration-300 inline-block">
+                  <Counter value={landingPageData.statsStudents} suffix="+" />
+                </div>
                 <div className="text-sm text-slate-400 uppercase tracking-wider font-medium">{t('statStudents')}</div>
               </div>
-              <div className="space-y-2">
-                <div className="text-4xl font-bold text-indigo-400">{landingPageData.statsProfessors}</div>
-                <div className="text-sm text-slate-400 uppercase tracking-wider font-medium">{t('statProfs')}</div>
+            </FadeInSection>
+            
+            <FadeInSection delay={0.2} direction="none">
+              <div className="space-y-2 group">
+                <div className="text-4xl font-bold text-indigo-400 group-hover:scale-110 transition-transform duration-300 inline-block">
+                  <Counter value={landingPageData.statsSuccessStories} suffix="+" />
+                </div>
+                <div className="text-sm text-slate-400 uppercase tracking-wider font-medium">{t('statSuccessStories')}</div>
               </div>
-              <div className="space-y-2">
-                <div className="text-4xl font-bold text-indigo-400">{landingPageData.statsLectures}</div>
+            </FadeInSection>
+            
+            <FadeInSection delay={0.3} direction="none">
+              <div className="space-y-2 group">
+                <div className="text-4xl font-bold text-indigo-400 group-hover:scale-110 transition-transform duration-300 inline-block">
+                  <Counter value={landingPageData.statsLectures} suffix="+" />
+                </div>
                 <div className="text-sm text-slate-400 uppercase tracking-wider font-medium">{t('statLectures')}</div>
               </div>
-              <div className="space-y-2">
-                <div className="text-4xl font-bold text-indigo-400">{landingPageData.statsPassRate}</div>
+            </FadeInSection>
+            
+            <FadeInSection delay={0.4} direction="none">
+              <div className="space-y-2 group">
+                <div className="text-4xl font-bold text-indigo-400 group-hover:scale-110 transition-transform duration-300 inline-block">
+                  <Counter value={landingPageData.statsPassRate} suffix="%" />
+                </div>
                 <div className="text-sm text-slate-400 uppercase tracking-wider font-medium">{t('statPassRate')}</div>
               </div>
-            </div>
-          </FadeInSection>
+            </FadeInSection>
+          </div>
         </div>
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInSection className="text-center mb-16">
             <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
@@ -80,19 +118,28 @@ export const Home: React.FC = () => {
 
           <div className="grid md:grid-cols-4 gap-8 relative">
             {/* Connecting Line (Desktop) */}
-            <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-indigo-200 via-indigo-400 to-indigo-200 -z-10"></div>
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
+              className="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-indigo-200 via-indigo-400 to-indigo-200 -z-10 origin-left"
+            ></motion.div>
 
             {[
-              { icon: Users, title: t('step1Title'), desc: t('step1Desc') },
-              { icon: BookOpen, title: t('step2Title'), desc: t('step2Desc') },
+              { icon: BookOpen, title: t('step1Title'), desc: t('step1Desc') },
+              { icon: Users, title: t('step2Title'), desc: t('step2Desc') },
               { icon: Calendar, title: t('step3Title'), desc: t('step3Desc') },
               { icon: ShieldCheck, title: t('step4Title'), desc: t('step4Desc') }
             ].map((step, idx) => (
-              <FadeInSection key={idx} delay={`stagger-${idx + 1}`} className="text-center bg-white p-4">
-                <div className="w-24 h-24 mx-auto bg-white rounded-full border-4 border-indigo-50 flex items-center justify-center mb-6 relative z-10 shadow-sm">
-                  <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg">
+              <FadeInSection key={idx} delay={idx * 0.15} className="text-center bg-white p-4 group">
+                <div className="w-24 h-24 mx-auto bg-white rounded-full border-4 border-indigo-50 flex items-center justify-center mb-6 relative z-10 shadow-sm group-hover:border-indigo-200 transition-colors">
+                  <motion.div 
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg"
+                  >
                     <step.icon className="h-8 w-8" />
-                  </div>
+                  </motion.div>
                   <div className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 border-white">
                     {idx + 1}
                   </div>
@@ -106,10 +153,10 @@ export const Home: React.FC = () => {
       </section>
 
       {/* BENEFITS GRID */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-gray-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <FadeInSection>
+            <FadeInSection direction="right">
               <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-6">
                 {t('whyChoose')} <span className="text-indigo-600">FINKI Tutors</span>?
               </h2>
@@ -124,29 +171,44 @@ export const Home: React.FC = () => {
                   { title: t('benefit3Title'), desc: t('benefit3Desc') },
                   { title: t('benefit4Title'), desc: t('benefit4Desc') }
                 ].map((item, idx) => (
-                  <div key={idx} className="flex gap-4">
+                  <motion.div 
+                    key={idx} 
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + (idx * 0.1) }}
+                    className="flex gap-4 group"
+                  >
                     <div className="flex-shrink-0 mt-1">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <Check className="h-5 w-5 text-green-600" />
+                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-600 group-hover:text-white transition-colors">
+                        <Check className="h-5 w-5 text-green-600 group-hover:text-white" />
                       </div>
                     </div>
                     <div>
                       <h4 className="text-lg font-bold text-gray-900">{item.title}</h4>
                       <p className="text-gray-500">{item.desc}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </FadeInSection>
             
-            <FadeInSection className="relative h-full min-h-[400px]" delay="stagger-2">
+            <FadeInSection className="relative h-full min-h-[400px]" delay={0.2} direction="left">
               <div className="absolute inset-0 bg-indigo-600 rounded-3xl transform rotate-3 opacity-10"></div>
-              <img 
+              <motion.img 
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.5 }}
                 src="https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
                 alt="Students collaborating" 
-                className="relative rounded-3xl shadow-2xl object-cover h-full w-full"
+                className="relative rounded-3xl shadow-2xl object-cover h-full w-full cursor-pointer"
               />
-              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-xl border border-gray-100 max-w-xs">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8, x: -20 }}
+                whileInView={{ opacity: 1, scale: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6 }}
+                className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-xl border border-gray-100 max-w-xs"
+              >
                 <div className="flex items-center gap-3 mb-2">
                    <Trophy className="h-8 w-8 text-yellow-500" />
                    <div>
@@ -154,7 +216,7 @@ export const Home: React.FC = () => {
                       <p className="text-xs text-gray-500">Voted by Student Parliament</p>
                    </div>
                 </div>
-              </div>
+              </motion.div>
             </FadeInSection>
           </div>
         </div>
@@ -174,7 +236,7 @@ export const Home: React.FC = () => {
           </FadeInSection>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <FadeInSection className="h-full" delay="stagger-1">
+            <FadeInSection className="h-full" delay={0.1}>
               <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 hover:border-indigo-100 transition-all hover:shadow-xl h-full flex flex-col group">
                 <div className="h-14 w-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <Clock className="h-7 w-7 text-indigo-600" />
@@ -193,8 +255,8 @@ export const Home: React.FC = () => {
               </div>
             </FadeInSection>
 
-            <FadeInSection className="h-full" delay="stagger-2">
-              <div className="bg-slate-900 p-8 rounded-3xl shadow-2xl text-white relative overflow-hidden h-full flex flex-col transform hover:-translate-y-2 transition-transform duration-300">
+            <FadeInSection className="h-full" delay={0.2}>
+              <div className="bg-slate-900 p-8 rounded-3xl shadow-2xl text-white relative overflow-hidden h-full flex flex-col transform hover:-translate-y-2 transition-all duration-300 hover:shadow-indigo-500/20">
                  <div className="absolute top-0 right-0 bg-gradient-to-l from-yellow-400 to-yellow-500 text-slate-900 text-xs font-bold px-4 py-2 rounded-bl-2xl uppercase tracking-wider shadow-md">
                     {t('mostPopular')}
                  </div>
@@ -220,21 +282,31 @@ export const Home: React.FC = () => {
       </section>
 
        {/* FINAL CTA */}
-       <section className="py-24 bg-gradient-to-br from-indigo-900 to-slate-900 text-white relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
-              <div className="absolute -top-24 -left-24 w-96 h-96 bg-indigo-500 rounded-full blur-3xl"></div>
-              <div className="absolute top-1/2 right-0 w-64 h-64 bg-purple-500 rounded-full blur-3xl"></div>
-          </div>
-          <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
+       <section className="py-24 bg-indigo-600 relative overflow-hidden">
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.2, 1],
+              rotate: [0, 90, 0]
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500 rounded-full opacity-50 blur-3xl"
+          ></motion.div>
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.3, 1],
+              rotate: [0, -90, 0]
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-700 rounded-full opacity-50 blur-3xl"
+          ></motion.div>
+
+          <div className="max-w-7xl mx-auto px-4 text-center relative z-10 text-white">
              <FadeInSection>
                <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">{t('readyToBoost')}</h2>
-               <p className="text-xl text-indigo-200 mb-10 max-w-2xl mx-auto">{t('joinThousands')}</p>
+               <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">{t('joinThousands')}</p>
                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                 <Link to="/signup" className="inline-flex items-center justify-center gap-3 text-indigo-900 bg-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1">
-                    {t('createFreeAccount')} <ArrowRight className="h-5 w-5" />
-                 </Link>
-                 <Link to="/courses" className="inline-flex items-center justify-center gap-3 text-white border-2 border-indigo-400 bg-transparent px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition-all">
-                    {t('browseCourses')}
+                 <Link to="/courses" className="inline-flex items-center justify-center gap-3 text-indigo-900 bg-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1">
+                    {t('browseCourses')} <ArrowRight className="h-5 w-5" />
                  </Link>
                </div>
              </FadeInSection>

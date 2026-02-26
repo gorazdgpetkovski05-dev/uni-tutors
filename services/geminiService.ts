@@ -29,7 +29,7 @@ export const chatWithGemini = async (message: string, history: string[] = []) =>
     // Fallback for demo purposes if no API key is present
     return new Promise<string>((resolve) => {
       setTimeout(() => {
-        resolve("I'm the UniTutors AI! It seems my API key is missing, but I'm here to help you study subjects from Economics to Computer Science once fully configured.");
+        resolve("I'm the UniTutors AI! It seems my API key is missing, but I'm here to help you study courses from Economics to Computer Science once fully configured.");
       }, 1000);
     });
   }

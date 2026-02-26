@@ -5,7 +5,7 @@ export const translations = {
   en: {
     // Navbar
     home: "Home",
-    courses: "Subjects",
+    courses: "Courses",
     pricing: "Pricing",
     dashboard: "Dashboard",
     login: "Login",
@@ -13,9 +13,9 @@ export const translations = {
     logout: "Logout",
     
     // Hero
-    heroTitle: "Master your university subjects at",
+    heroTitle: "Master your university courses at",
     heroSubtitle: "Book certified professionals for specific lectures or full courses. Tailored for students from UKIM, American College, FON, and more.",
-    browseCourses: "Browse Subjects",
+    browseCourses: "Browse Courses",
     joinNow: "Join Now",
     goToDashboard: "Go to Dashboard",
     verifiedProfs: "Certified Experts",
@@ -24,21 +24,21 @@ export const translations = {
     
     // Stats
     statStudents: "Students Tutored",
-    statProfs: "Certified Tutors",
+    statSuccessStories: "Success Stories",
     statLectures: "Sessions Delivered",
     statPassRate: "Success Rate",
 
     // How It Works
     howItWorks: "How it Works",
     howItWorksSub: "Getting the extra help you need is simple. Follow these steps to secure your spot.",
-    step1Title: "Create Account",
-    step1Desc: "Sign up to track your progress, save courses, and unlock achievements.",
-    step2Title: "Find Your Subject",
-    step2Desc: "Search for the specific university subject you need help with.",
-    step3Title: "Book Professional",
-    step3Desc: "Choose a single specialized session or a full semester bundle.",
-    step4Title: "Confirm & Learn",
-    step4Desc: "Pay securely, attend the session in our study hubs or online, and pass your exams.",
+    step1Title: "Find Your Course",
+    step1Desc: "Search for the specific university course you need help with.",
+    step2Title: "Choose Your Expert",
+    step2Desc: "Pick a certified professional that fits your schedule and needs.",
+    step3Title: "Confirm & Learn",
+    step3Desc: "Pay securely, attend the session in our study hubs or online, and pass your exams.",
+    step4Title: "Success",
+    step4Desc: "Master the material and get the grades you deserve.",
 
     // Benefits
     whyChoose: "Why students choose",
@@ -54,14 +54,14 @@ export const translations = {
 
     // Pricing
     pricingTitle: "Student-Friendly Pricing",
-    pricingSub: "Transparent costs. Pay per session or subscribe for the full subject.",
+    pricingSub: "Transparent costs. Pay per session or subscribe for the full course.",
     singleLecture: "Single Session",
     singleLectureDesc: "Perfect for clarifying specific topics or preparing for a specific midterm exam.",
     perLecture: "MKD / session",
     bookLecture: "Book Session",
-    fullCourseBundle: "Full Subject Bundle",
+    fullCourseBundle: "Full Course Bundle",
     fullCourseDesc: "Complete mastery. Includes all scheduled lectures/workshops at a discounted rate.",
-    perCourse: "MKD / subject",
+    perCourse: "MKD / course",
     getFullCourse: "Get Full Bundle",
     mostPopular: "Best Value",
     featureLive: "1.5 - 2 hours live session",
@@ -74,66 +74,8 @@ export const translations = {
 
     // CTA
     readyToBoost: "Ready to ace your exams?",
-    joinThousands: "Join thousands of students across Macedonia who are mastering their subjects with UniTutors.",
-    createFreeAccount: "Create Free Account",
+    joinThousands: "Join thousands of students across Macedonia who are mastering their courses with UniTutors.",
 
-    // Auth
-    signInTitle: "Sign in to your account",
-    createAccount: "Create your account",
-    emailLabel: "Email address",
-    passwordLabel: "Password",
-    fullNameLabel: "Full Name",
-    rememberMe: "Remember me",
-    forgotPass: "Forgot your password?",
-    noAccount: "Or create a new student account",
-    haveAccount: "Already have an account?",
-    termsAgree: "By clicking 'Create Account', you agree to our Terms of Service.",
-    authFailed: "Authentication Failed",
-    welcomeBack: "Welcome Back",
-    resetPassword: "Reset Password",
-    resetPasswordSub: "Enter your email and we'll send you instructions to reset your password.",
-    sendResetLink: "Send Reset Link",
-    backToLogin: "Back to Login",
-    linkSent: "Link Sent!",
-    checkEmail: "Check your email for the reset link.",
-    
-    // Dashboard
-    welcome: "Welcome",
-    overview: "Overview",
-    calendar: "Calendar",
-    adminTools: "Admin Tools",
-    settings: "Settings",
-    recentActivity: "Recent Activity",
-    achievements: "Achievements",
-    totalBookings: "Total Bookings",
-    activeCourses: "Active Subjects",
-    pendingActions: "Pending Actions",
-    
-    // Settings
-    changePassword: "Change Password",
-    newPassword: "New Password",
-    confirmNewPassword: "Confirm New Password",
-    updatePassword: "Update Password",
-    passwordsDoNotMatch: "Passwords do not match",
-    passwordTooShort: "Password must be at least 6 characters",
-    passwordUpdated: "Password updated successfully",
-    processing: "Processing...",
-    
-    // Admin Course & Users
-    createCourse: "Create New Subject",
-    courseTitle: "Subject Title",
-    courseCode: "Code (e.g., CS-101)",
-    priceMkd: "Price (MKD)",
-    assignProf: "Assign Professional",
-    desc: "Description",
-    coverImg: "Cover Image",
-    uploadText: "Click to upload or drag and drop",
-    modules: "Modules / Sessions",
-    moduleTitle: "Session Title",
-    addModule: "Add",
-    publishCourse: "Publish Subject",
-    userManagement: "User Management",
-    
     // Booking
     bookAppt: "Book Appointment",
     fullCourse: "Full Course",
@@ -152,9 +94,9 @@ export const translations = {
     copied: "Copied!",
     
     // Course Details
-    backToCourses: "Back to Subjects",
+    backToCourses: "Back to Courses",
     lectures: "Sessions",
-    courseSchedule: "Subject Schedule",
+    courseSchedule: "Course Schedule",
     courseScheduleFull: "Full program runs from",
     courseScheduleSingle: "Select a specific date to attend.",
     noLectures: "No sessions scheduled yet.",
@@ -165,18 +107,18 @@ export const translations = {
     approvalRequired: "Booking requires Admin/Tutor approval.",
 
     // Courses Page
-    availableCourses: "Available Subjects",
-    selectSubject: "Select a subject to view details and experts.",
-    searchPlaceholder: "Search subjects...",
+    availableCourses: "Available Courses",
+    selectSubject: "Select a course to view details and experts.",
+    searchPlaceholder: "Search courses...",
     filterUniversity: "Filter by University",
     allUniversities: "All Universities",
-    noCoursesFound: "No subjects found matching your criteria.",
+    noCoursesFound: "No courses found matching your criteria.",
     viewDetails: "View Details",
   },
   mk: {
     // Navbar
     home: "Дома",
-    courses: "Предмети",
+    courses: "Курсеви",
     pricing: "Ценовник",
     dashboard: "Табла",
     login: "Најави се",
@@ -184,9 +126,9 @@ export const translations = {
     logout: "Одјави се",
     
     // Hero
-    heroTitle: "Совладај ги предметите на",
+    heroTitle: "Совладај ги курсевите на",
     heroSubtitle: "Закажи часови кај сертифицирани експерти. Флексибилни цени за студенти од УКИМ, Американ, ФОН и други.",
-    browseCourses: "Разгледај Предмети",
+    browseCourses: "Разгледај Курсеви",
     joinNow: "Зачлени се",
     goToDashboard: "Оди до Табла",
     verifiedProfs: "Сертифицирани Експерти",
@@ -195,21 +137,21 @@ export const translations = {
     
     // Stats
     statStudents: "Студенти",
-    statProfs: "Експерти",
+    statSuccessStories: "Успешни Приказни",
     statLectures: "Предавања",
     statPassRate: "Успешност",
 
     // How It Works
     howItWorks: "Како Функционира",
     howItWorksSub: "Едноставно е да добиеш помош за факултет.",
-    step1Title: "Креирај Профил",
-    step1Desc: "Зачлени се за да го следиш напредокот и да отклучуваш достигнувања.",
-    step2Title: "Најди Предмет",
-    step2Desc: "Пребарај ги предметите што ти требаат (Право, Економија, ИТ).",
-    step3Title: "Закажи Експерт",
-    step3Desc: "Избери еден специфичен час или цел пакет.",
-    step4Title: "Потврди и Учи",
-    step4Desc: "Плати сигурно, присуствувај во нашите училници или онлајн.",
+    step1Title: "Најди Курс",
+    step1Desc: "Пребарај ги курсевите што ти требаат (Право, Економија, ИТ).",
+    step2Title: "Избери Експерт",
+    step2Desc: "Избери докажан професионалец кој одговара на твоите потреби.",
+    step3Title: "Потврди и Учи",
+    step3Desc: "Плати сигурно, присуствувај во нашите училници или онлајн.",
+    step4Title: "Успех",
+    step4Desc: "Совладај го материјалот и добиј ги оценките што ги заслужуваш.",
 
     // Benefits
     whyChoose: "Зошто студентите избираат",
@@ -225,14 +167,14 @@ export const translations = {
 
     // Pricing
     pricingTitle: "Студентски Цени",
-    pricingSub: "Транспарентно. Плаќање по сесија или месечна претплата за предмет.",
+    pricingSub: "Транспарентно. Плаќање по сесија или месечна претплата за курс.",
     singleLecture: "Една Сесија",
     singleLectureDesc: "Совршено за разјаснување на специфични теми или подготовка за колоквиум.",
     perLecture: "МКД / сесија",
     bookLecture: "Закажи Час",
-    fullCourseBundle: "Цел Предмет Пакет",
+    fullCourseBundle: "Цел Курс Пакет",
     fullCourseDesc: "Целосно совладување на материјалот. Вклучува 10+ сесии по промотивна цена.",
-    perCourse: "МКД / предмет",
+    perCourse: "МКД / курс",
     getFullCourse: "Земи Цел Пакет",
     mostPopular: "Најпопуларно",
     featureLive: "1.5 - 2 часа сесија во живо",
@@ -246,68 +188,10 @@ export const translations = {
     // CTA
     readyToBoost: "Спремни за десетки?",
     joinThousands: "Придружи се на илјадници студенти кои ги полагаат испитите со UniTutors.",
-    createFreeAccount: "Креирај Бесплатен Профил",
-    
-    // Auth
-    signInTitle: "Најавете се на вашиот профил",
-    createAccount: "Креирај профил",
-    emailLabel: "Емаил адреса",
-    passwordLabel: "Лозинка",
-    fullNameLabel: "Цело Име",
-    rememberMe: "Запомни ме",
-    forgotPass: "Заборавена лозинка?",
-    noAccount: "Или креирај нов профил",
-    haveAccount: "Веќе имаш профил?",
-    termsAgree: "Со кликање на 'Креирај профил', се согласувате со нашите Услови.",
-    authFailed: "Неуспешна најава",
-    welcomeBack: "Добредојдовте назад",
-    resetPassword: "Ресетирај Лозинка",
-    resetPasswordSub: "Внесете ја вашата емаил адреса за инструкции.",
-    sendResetLink: "Испрати Линк",
-    backToLogin: "Назад кон Најава",
-    linkSent: "Линкот е испратен!",
-    checkEmail: "Проверете го вашиот емаил.",
-    
-    // Dashboard
-    welcome: "Добредојдовте",
-    overview: "Преглед",
-    calendar: "Календар",
-    adminTools: "Админ Алатки",
-    settings: "Подесувања",
-    recentActivity: "Неодамнешна Активност",
-    achievements: "Достигнувања",
-    totalBookings: "Вкупно Резервации",
-    activeCourses: "Активни Предмети",
-    pendingActions: "Чекаат Акција",
-    
-    // Settings
-    changePassword: "Промени Лозинка",
-    newPassword: "Нова Лозинка",
-    confirmNewPassword: "Потврди Лозинка",
-    updatePassword: "Ажурирај Лозинка",
-    passwordsDoNotMatch: "Лозинките не се совпаѓаат",
-    passwordTooShort: "Лозинката мора да има најмалку 6 карактери",
-    passwordUpdated: "Лозинката е успешно ажурирана",
-    processing: "Се процесира...",
-    
-    // Admin Course & Users
-    createCourse: "Креирај Нов Предмет",
-    courseTitle: "Наслов на Предмет",
-    courseCode: "Код",
-    priceMkd: "Цена (МКД)",
-    assignProf: "Додели Експерт",
-    desc: "Опис",
-    coverImg: "Слика за Предмет",
-    uploadText: "Кликни за прикачување или повлечи слика",
-    modules: "Модули / Сесии",
-    moduleTitle: "Наслов на Сесија",
-    addModule: "Додај",
-    publishCourse: "Објави Предмет",
-    userManagement: "Менаџмент на Корисници",
     
     // Booking
     bookAppt: "Закажи Термин",
-    fullCourse: "Цел Предмет",
+    fullCourse: "Цел Курс",
     confirmBooking: "Потврди и Чекај Одобрување",
     cashOnly: "Начин на плаќање: Кеш / Картичка",
     paymentInfo: "Јавете се на бројот подолу за закажување. Откако ќе се јавите, потврдете подолу.",
@@ -323,7 +207,7 @@ export const translations = {
     copied: "Копирано!",
 
     // Course Details
-    backToCourses: "Назад кон Предмети",
+    backToCourses: "Назад кон Курсеви",
     lectures: "Сесии",
     courseSchedule: "Распоред",
     courseScheduleFull: "Целиот програм трае од",
@@ -336,12 +220,12 @@ export const translations = {
     approvalRequired: "Резервацијата бара одобрување.",
 
     // Courses Page
-    availableCourses: "Достапни Предмети",
-    selectSubject: "Избери предмет за детали и експерти.",
-    searchPlaceholder: "Пребарај предмети...",
+    availableCourses: "Достапни Курсеви",
+    selectSubject: "Избери курс за детали и експерти.",
+    searchPlaceholder: "Пребарај курсеви...",
     filterUniversity: "Филтер по Универзитет",
     allUniversities: "Сите Универзитети",
-    noCoursesFound: "Не се пронајдени предмети.",
+    noCoursesFound: "Не се пронајдени курсеви.",
     viewDetails: "Детали",
   }
 };

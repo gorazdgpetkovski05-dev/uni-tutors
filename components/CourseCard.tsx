@@ -2,7 +2,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Course } from '../types';
-import { PROFESSORS } from '../constants';
+import { useData } from '../contexts/DataContext';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -11,7 +11,8 @@ interface CourseCardProps {
 }
 
 export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
-  const professor = PROFESSORS.find(p => p.id === course.professorId);
+  const { professors } = useData();
+  const professor = professors.find(p => p.id === course.professorId);
   const { t } = useLanguage();
 
   return (
@@ -28,9 +29,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         <p className="text-gray-500 text-sm mb-4 line-clamp-2">{course.description}</p>
         
         <div className="flex items-center gap-3 mb-6">
-          <img src={professor?.avatar} alt={professor?.name} className="h-8 w-8 rounded-full border border-gray-200" />
+          <img src={professor?.avatar || 'https://ui-avatars.com/api/?name=Prof'} alt={professor?.name} className="h-8 w-8 rounded-full border border-gray-200" />
           <div className="text-sm">
-            <p className="font-medium text-gray-900">{professor?.name}</p>
+            <p className="font-medium text-gray-900">{professor?.name || 'Unknown Professor'}</p>
             <p className="text-xs text-gray-500">{professor?.specialty}</p>
           </div>
         </div>
