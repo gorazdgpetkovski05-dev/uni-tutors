@@ -52,23 +52,23 @@ export const CourseDetailsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header Image */}
-      <div className="h-64 md:h-80 w-full relative overflow-hidden group">
-        <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]"></div>
-        <div className="absolute inset-0 flex flex-col justify-end max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+      <div className="min-h-[320px] md:h-80 w-full relative overflow-hidden group">
+        <img src={course.image} alt={course.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+        <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-[1px] md:backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 flex flex-col justify-end max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 pb-10 pt-24">
           <Link to="/courses" className="text-white/80 hover:text-white flex items-center gap-2 mb-6 w-fit transition-colors">
             <ArrowLeft className="h-5 w-5" /> {t('backToCourses')}
           </Link>
           <div className="flex flex-wrap items-center gap-4 mb-2 animate-fade-in-up">
             <span className="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold">{course.code}</span>
-            <span className="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-medium backdrop-blur-md">{course.lectures.length} {t('lectures')}</span>
+            <span className="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm md:backdrop-blur-md">{course.lectures.length} {t('lectures')}</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-2">{course.title}</h1>
-          <p className="text-lg text-white/90 max-w-2xl">{course.description}</p>
+          <h1 className="text-2xl md:text-5xl font-bold text-white mb-2">{course.title}</h1>
+          <p className="text-base md:text-lg text-white/90 max-w-2xl">{course.description}</p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Main Content */}
@@ -200,9 +200,9 @@ export const CourseDetailsPage: React.FC = () => {
                 {t('bookAppt')}
                 </button>
                 
-                <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
-                  <AlertCircle className="h-3 w-3" />
-                  {t('approvalRequired')}
+                <p className="text-center text-xs text-gray-400 mt-4 flex flex-col items-center justify-center gap-2">
+                  <span className="flex items-center gap-1"><AlertCircle className="h-3 w-3" /> {t('approvalRequired')}</span>
+                  <span className="font-medium text-gray-500">Контакт: +389 70 356 541</span>
                 </p>
               </div>
             </div>

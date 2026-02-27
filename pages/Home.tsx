@@ -32,11 +32,13 @@ const Counter: React.FC<{ value: string, suffix?: string }> = ({ value, suffix =
 };
 
 const FadeInSection: React.FC<{ children: React.ReactNode, className?: string, delay?: number, direction?: 'up' | 'down' | 'left' | 'right' | 'none' }> = ({ children, className = "", delay = 0, direction = 'up' }) => {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  
   const directions = {
-    up: { y: 40 },
-    down: { y: -40 },
-    left: { x: 40 },
-    right: { x: -40 },
+    up: { y: isMobile ? 20 : 40 },
+    down: { y: isMobile ? -20 : -40 },
+    left: { x: isMobile ? 20 : 40 },
+    right: { x: isMobile ? -20 : -40 },
     none: {}
   };
 
@@ -44,8 +46,8 @@ const FadeInSection: React.FC<{ children: React.ReactNode, className?: string, d
     <motion.div
       initial={{ opacity: 0, ...directions[direction] }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: true, margin: isMobile ? "-50px" : "-100px" }}
+      transition={{ duration: isMobile ? 0.5 : 0.8, delay: isMobile ? delay * 0.5 : delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
       {children}
@@ -63,7 +65,7 @@ export const Home: React.FC = () => {
       
       {/* STATS SECTION */}
       <section className="bg-slate-900 text-white py-12 border-b border-indigo-500/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <FadeInSection delay={0.1} direction="none">
               <div className="space-y-2 group">
@@ -106,7 +108,7 @@ export const Home: React.FC = () => {
 
       {/* HOW IT WORKS */}
       <section className="py-24 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
           <FadeInSection className="text-center mb-16">
             <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
               {t('howItWorks')}
@@ -154,7 +156,7 @@ export const Home: React.FC = () => {
 
       {/* BENEFITS GRID */}
       <section className="py-24 bg-gray-50 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeInSection direction="right">
               <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-6">
@@ -225,7 +227,7 @@ export const Home: React.FC = () => {
       {/* PRICING SECTION */}
       <section id="pricing" className="py-24 bg-white relative overflow-hidden">
         <div className="absolute top-0 inset-x-0 h-64 bg-slate-900/5 -z-10 skew-y-3 transform origin-top-left"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
           <FadeInSection className="text-center mb-16">
             <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
               {t('pricingTitle')}
@@ -300,7 +302,7 @@ export const Home: React.FC = () => {
             className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-700 rounded-full opacity-50 blur-3xl"
           ></motion.div>
 
-          <div className="max-w-7xl mx-auto px-4 text-center relative z-10 text-white">
+          <div className="max-w-[1600px] mx-auto px-4 text-center relative z-10 text-white">
              <FadeInSection>
                <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">{t('readyToBoost')}</h2>
                <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">{t('joinThousands')}</p>

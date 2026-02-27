@@ -26,7 +26,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   
   if (!isOpen || !course) return null;
 
-  const phoneNumber = "+389 71 555 999";
+  const phoneNumber = "+389 70 356 541";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(phoneNumber);

@@ -22,9 +22,11 @@ export const CoursesPage: React.FC = () => {
     return matchesSearch && matchesUni;
   });
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -66,13 +68,13 @@ export const CoursesPage: React.FC = () => {
         </motion.div>
 
         <motion.div 
-          layout
+          layout={!isMobile}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           <AnimatePresence mode="popLayout">
             {filteredCourses.map(course => (
               <motion.div
-                layout
+                layout={!isMobile}
                 key={course.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}

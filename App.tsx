@@ -12,6 +12,7 @@ const Footer: React.FC = () => {
     return (
         <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
             <div className="max-w-7xl mx-auto px-4 text-center">
+            <p className="mb-2 font-medium text-slate-300">Контакт: +389 70 356 541</p>
             <p>&copy; {new Date().getFullYear()} FINKI Tutors. All rights reserved.</p>
             <div className="mt-4 flex justify-center space-x-6 text-sm">
                 <a href="#" className="hover:text-white">Privacy</a>

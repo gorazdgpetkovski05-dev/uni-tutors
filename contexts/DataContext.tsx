@@ -42,11 +42,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
         {
             id: '2',
-            name: 'Prof. Jovan Petrov',
-            email: 'jovan@example.com',
+            name: 'Nikola Jankoski',
+            email: 'nikola@example.com',
             specialty: 'Mathematics',
             rating: 4.7,
-            avatar: 'https://picsum.photos/seed/jovan/200/200',
+            avatar: 'https://picsum.photos/seed/nikola/200/200',
             customTag: 'Expert'
         }
     ];
