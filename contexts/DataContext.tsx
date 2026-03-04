@@ -33,11 +33,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const mockProfessors: Professor[] = [
         {
             id: '1',
-            name: 'Dr. Elena Markovska',
-            email: 'elena@example.com',
+            name: 'Dragan Jakimovski',
+            email: 'dragan@example.com',
             specialty: 'Computer Science',
             rating: 4.9,
-            avatar: 'https://picsum.photos/seed/elena/200/200',
+            avatar: 'https://picsum.photos/seed/dragan/200/200',
             customTag: 'Top Rated'
         },
         {
@@ -80,7 +80,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       },
       {
         id: 'aps',
-        title: 'Алгоритми и структури на податоци',
+        title: 'Алгоритми и податочни структури',
         code: 'АПС',
         description: 'Совладајте ги основните и напредните структури на податоци и алгоритми. Научете како да пишувате ефикасен код и да решавате комплексни проблеми.',
         image: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1350&q=80', // Coding/Algorithm theme
