@@ -43,9 +43,17 @@ export const Navbar: React.FC = () => {
             <Link to="/" className="flex items-center gap-2 group">
               <motion.div 
                 whileHover={{ scale: 1.1, rotate: 5 }}
-                className="bg-indigo-600 p-2 rounded-lg group-hover:bg-indigo-700 transition-colors"
+                className="relative"
               >
-                <GraduationCap className="h-6 w-6 text-white" />
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-600">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+                <div className="absolute -bottom-1 -right-1 bg-yellow-400 rounded-full p-[2px] border-2 border-white">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-900">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                  </svg>
+                </div>
               </motion.div>
               <span className="font-bold text-xl text-gray-900 tracking-tight">UNI<span className="text-indigo-600">Tutors</span></span>
             </Link>

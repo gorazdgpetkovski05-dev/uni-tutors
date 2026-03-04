@@ -245,7 +245,7 @@ export const Home: React.FC = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('singleLecture')}</h3>
                 <p className="text-gray-500 mb-6">{t('singleLectureDesc')}</p>
-                <div className="text-4xl font-bold text-gray-900 mb-6">750 <span className="text-base font-medium text-gray-400">{t('perLecture')}</span></div>
+                <div className="text-4xl font-bold text-gray-900 mb-6">800 <span className="text-base font-medium text-gray-400">{t('perLecture')}</span></div>
                 <ul className="space-y-4 mb-8 flex-1">
                   <li className="flex items-center text-gray-600"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureLive')}</li>
                   <li className="flex items-center text-gray-600"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureQA')}</li>
@@ -267,7 +267,7 @@ export const Home: React.FC = () => {
                 </div>
                 <h3 className="text-2xl font-bold mb-2">{t('fullCourseBundle')}</h3>
                 <p className="text-indigo-200 mb-6">{t('fullCourseDesc')}</p>
-                <div className="text-4xl font-bold mb-6">6000 <span className="text-base font-medium text-indigo-300">{t('perCourse')}</span></div>
+                <div className="text-4xl font-bold mb-6">6500 <span className="text-base font-medium text-indigo-300">{t('perCourse')}</span></div>
                 <ul className="space-y-4 mb-8 flex-1">
                   <li className="flex items-center text-indigo-100"><span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>{t('featureAllLectures')}</li>
                   <li className="flex items-center text-indigo-100"><span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>{t('featureSave')}</li>
