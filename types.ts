@@ -16,6 +16,13 @@ export interface Lecture {
   duration: number; // minutes
 }
 
+export interface Midterm {
+  id: string;
+  title: string;
+  sessions: number;
+  price: number;
+}
+
 export interface Course {
   id: string;
   title: string;
@@ -28,9 +35,12 @@ export interface Course {
   lectures: Lecture[];
   priceFull: number; // 6000
   priceSingle: number; // 750
+  midterms?: Midterm[];
+  customPriceDisplay?: string;
+  hidden?: boolean;
 }
 
-export type BookingType = 'single' | 'full';
+export type BookingType = 'single' | 'full' | 'midterm';
 
 // New Types for Dynamic Content
 export interface LandingPageData {

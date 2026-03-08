@@ -13,9 +13,10 @@ export const CoursesPage: React.FC = () => {
   const { t } = useLanguage();
 
   // Extract unique universities from available courses
-  const universities = ['All', ...new Set(courses.map(c => c.university || 'FINKI'))];
+  const universities = ['All', ...new Set(courses.map(c => c.university || 'UniTutors'))];
 
   const filteredCourses = courses.filter(c => {
+    if (c.hidden) return false;
     const matchesSearch = c.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           c.code.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesUni = selectedUniversity === 'All' || c.university === selectedUniversity;

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { BookingModal } from '../components/BookingModal';
 import { ArrowLeft, Calendar, Clock, MapPin, CheckCircle2, AlertCircle } from 'lucide-react';
-import { BookingType } from '../types';
+import { BookingType, Midterm } from '../types';
 import { useData } from '../contexts/DataContext';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -18,6 +18,7 @@ export const CourseDetailsPage: React.FC = () => {
 
   const [bookingType, setBookingType] = useState<BookingType>('full');
   const [selectedLectureId, setSelectedLectureId] = useState<string>('');
+  const [selectedMidterm, setSelectedMidterm] = useState<Midterm | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!course) {
@@ -43,9 +44,19 @@ export const CourseDetailsPage: React.FC = () => {
     });
   };
 
-  const totalPrice = bookingType === 'full' ? course.priceFull : course.priceSingle;
+  const totalPrice = bookingType === 'full' 
+    ? course.priceFull 
+    : bookingType === 'midterm' && selectedMidterm 
+      ? selectedMidterm.price 
+      : course.priceSingle;
 
   const handleBookClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleMidtermBook = (midterm: Midterm) => {
+    setBookingType('midterm');
+    setSelectedMidterm(midterm);
     setIsModalOpen(true);
   };
 
@@ -89,14 +100,45 @@ export const CourseDetailsPage: React.FC = () => {
               </div>
             )}
 
+            {/* Midterms Section - Only if available */}
+            {course.midterms && course.midterms.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-6 border-b border-gray-100">
+                  <h3 className="text-xl font-bold text-gray-900">Midterm Bundles</h3>
+                  <p className="text-gray-500 text-sm mt-1">
+                     Book specific midterm preparation bundles.
+                  </p>
+                </div>
+                <div className="p-6 grid gap-4 md:grid-cols-2">
+                  {course.midterms.map((midterm) => (
+                    <div key={midterm.id} className="border border-indigo-100 rounded-xl p-6 bg-indigo-50/50 hover:bg-indigo-50 transition-colors">
+                      <h4 className="font-bold text-lg text-gray-900 mb-2">{midterm.title}</h4>
+                      <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+                        <span className="bg-white px-2 py-1 rounded border border-indigo-100 font-medium text-indigo-700">
+                          {midterm.sessions} Sessions
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center mt-4">
+                        <span className="text-2xl font-bold text-gray-900">{midterm.price} <span className="text-sm font-normal text-gray-500">MKD</span></span>
+                        <button 
+                          onClick={() => handleMidtermBook(midterm)}
+                          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-indigo-700 transition-colors shadow-md"
+                        >
+                          Book Now
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Course Syllabus & Dates */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-6 border-b border-gray-100">
                 <h3 className="text-xl font-bold text-gray-900">{t('courseSchedule')}</h3>
                 <p className="text-gray-500 text-sm mt-1">
-                   {bookingType === 'full' 
-                      ? `${t('courseScheduleFull')} ${formatDate(startDate.toISOString())} - ${formatDate(endDate.toISOString())}.`
-                      : t('courseScheduleSingle')}
+                   {t('datesConfirmedPhone')}
                 </p>
               </div>
               
@@ -112,9 +154,8 @@ export const CourseDetailsPage: React.FC = () => {
                             if (bookingType === 'single') setSelectedLectureId(lecture.id);
                         }}
                     >
-                        <div className="flex-shrink-0 w-16 text-center pt-1">
-                        <span className="block text-xs font-bold text-gray-400 uppercase">{new Date(lecture.date).toLocaleString('default', { month: 'short' })}</span>
-                        <span className={`block text-xl font-bold ${bookingType === 'single' && selectedLectureId === lecture.id ? 'text-indigo-600' : 'text-gray-900'}`}>{new Date(lecture.date).getDate()}</span>
+                        <div className="flex-shrink-0 w-16 text-center pt-1 flex flex-col items-center justify-center h-full">
+                           <span className="text-2xl font-bold text-gray-300">#{index + 1}</span>
                         </div>
                         
                         <div className="flex-1">
@@ -148,13 +189,19 @@ export const CourseDetailsPage: React.FC = () => {
                 {/* Tabs */}
                 <div className="flex p-1 bg-gray-100 rounded-xl mb-6">
                   <button 
-                    onClick={() => setBookingType('full')}
+                    onClick={() => {
+                        setBookingType('full');
+                        setSelectedMidterm(undefined);
+                    }}
                     className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${bookingType === 'full' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                   >
                     {t('fullCourseBundle')}
                   </button>
                   <button 
-                    onClick={() => setBookingType('single')}
+                    onClick={() => {
+                        setBookingType('single');
+                        setSelectedMidterm(undefined);
+                    }}
                     className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${bookingType === 'single' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                   >
                     {t('singleLecture')}
@@ -170,8 +217,17 @@ export const CourseDetailsPage: React.FC = () => {
                         {course.lectures.length} {t('totalSessions')}
                       </p>
                       <p className="text-xs text-indigo-700 mt-1 pl-6">
-                        Start: {formatDate(startDate.toISOString())}<br/>
-                        End: {formatDate(endDate.toISOString())}
+                        {t('datesConfirmedPhone')}
+                      </p>
+                    </div>
+                  ) : bookingType === 'midterm' && selectedMidterm ? (
+                    <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                      <p className="text-sm font-medium text-purple-900 flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        {selectedMidterm.title}
+                      </p>
+                      <p className="text-xs text-purple-700 mt-1 pl-6">
+                        {selectedMidterm.sessions} Sessions
                       </p>
                     </div>
                   ) : (
@@ -179,7 +235,7 @@ export const CourseDetailsPage: React.FC = () => {
                       <p className={`text-sm font-medium flex items-center gap-2 ${selectedLectureId ? 'text-indigo-900' : 'text-gray-500'}`}>
                         <Calendar className="h-4 w-4" />
                         {selectedLectureId 
-                          ? `Date: ${formatDate(course.lectures.find(l => l.id === selectedLectureId)?.date || '')}` 
+                          ? `${course.lectures.find(l => l.id === selectedLectureId)?.title}` 
                           : t('selectLecture')}
                       </p>
                     </div>
@@ -217,6 +273,7 @@ export const CourseDetailsPage: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         bookingType={bookingType}
         selectedLectureId={selectedLectureId}
+        selectedMidterm={selectedMidterm}
         price={totalPrice}
       />
     </div>

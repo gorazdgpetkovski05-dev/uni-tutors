@@ -14,15 +14,26 @@ export const Navbar: React.FC = () => {
 
   const handlePricingClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    
+    const scrollToPricing = () => {
+      const element = document.getElementById('pricing');
+      if (element) {
+        const headerOffset = 80; // Adjust based on navbar height
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth"
+        });
+      }
+    };
+
     if (location.pathname !== '/') {
       navigate('/');
-      setTimeout(() => {
-        const element = document.getElementById('pricing');
-        if (element) element.scrollIntoView({ behavior: 'smooth' });
-      }, 300);
+      setTimeout(scrollToPricing, 500);
     } else {
-      const element = document.getElementById('pricing');
-      if (element) element.scrollIntoView({ behavior: 'smooth' });
+      scrollToPricing();
     }
   };
 

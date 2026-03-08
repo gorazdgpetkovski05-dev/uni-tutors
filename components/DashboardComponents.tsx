@@ -5,7 +5,7 @@ import { chatWithGemini } from '../services/geminiService';
 
 export const AiTutor: React.FC = () => {
   const [messages, setMessages] = useState<{role: 'user'|'ai', text: string}[]>([
-    {role: 'ai', text: 'Hi! I am your FINKI AI Tutor. Ask me anything about your courses!'}
+    {role: 'ai', text: 'Hi! I am your AI Tutor. Ask me anything about your courses!'}
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);

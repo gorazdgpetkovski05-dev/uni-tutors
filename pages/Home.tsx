@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Hero } from '../components/Hero';
-import { ArrowRight, Clock, Check, Trophy, Users, BookOpen, Calendar, ShieldCheck, GraduationCap } from 'lucide-react';
+import { ArrowRight, Clock, Check, Trophy, Users, BookOpen, Calendar, ShieldCheck, GraduationCap, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -63,49 +63,6 @@ export const Home: React.FC = () => {
     <div className="overflow-x-hidden">
       <Hero />
       
-      {/* STATS SECTION */}
-      <section className="bg-slate-900 text-white py-12 border-b border-indigo-500/30">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <FadeInSection delay={0.1} direction="none">
-              <div className="space-y-2 group">
-                <div className="text-4xl font-bold text-indigo-400 group-hover:scale-110 transition-transform duration-300 inline-block">
-                  <Counter value={landingPageData.statsStudents} suffix="+" />
-                </div>
-                <div className="text-sm text-slate-400 uppercase tracking-wider font-medium">{t('statStudents')}</div>
-              </div>
-            </FadeInSection>
-            
-            <FadeInSection delay={0.2} direction="none">
-              <div className="space-y-2 group">
-                <div className="text-4xl font-bold text-indigo-400 group-hover:scale-110 transition-transform duration-300 inline-block">
-                  <Counter value={landingPageData.statsSuccessStories} suffix="+" />
-                </div>
-                <div className="text-sm text-slate-400 uppercase tracking-wider font-medium">{t('statSuccessStories')}</div>
-              </div>
-            </FadeInSection>
-            
-            <FadeInSection delay={0.3} direction="none">
-              <div className="space-y-2 group">
-                <div className="text-4xl font-bold text-indigo-400 group-hover:scale-110 transition-transform duration-300 inline-block">
-                  <Counter value={landingPageData.statsLectures} suffix="+" />
-                </div>
-                <div className="text-sm text-slate-400 uppercase tracking-wider font-medium">{t('statLectures')}</div>
-              </div>
-            </FadeInSection>
-            
-            <FadeInSection delay={0.4} direction="none">
-              <div className="space-y-2 group">
-                <div className="text-4xl font-bold text-indigo-400 group-hover:scale-110 transition-transform duration-300 inline-block">
-                  <Counter value={landingPageData.statsPassRate} suffix="%" />
-                </div>
-                <div className="text-sm text-slate-400 uppercase tracking-wider font-medium">{t('statPassRate')}</div>
-              </div>
-            </FadeInSection>
-          </div>
-        </div>
-      </section>
-
       {/* HOW IT WORKS */}
       <section className="py-24 bg-white overflow-hidden">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
@@ -160,7 +117,7 @@ export const Home: React.FC = () => {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeInSection direction="right">
               <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-6">
-                {t('whyChoose')} <span className="text-indigo-600">FINKI Tutors</span>?
+                {t('whyChoose')} <span className="text-indigo-600">UniTutors</span>?
               </h2>
               <p className="text-lg text-gray-500 mb-8">
                 {t('whyChooseSub')}
@@ -204,21 +161,6 @@ export const Home: React.FC = () => {
                 alt="Students collaborating" 
                 className="relative rounded-3xl shadow-2xl object-cover h-full w-full cursor-pointer"
               />
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.8, x: -20 }}
-                whileInView={{ opacity: 1, scale: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.6 }}
-                className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-xl border border-gray-100 max-w-xs"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                   <Trophy className="h-8 w-8 text-yellow-500" />
-                   <div>
-                      <p className="font-bold text-gray-900">#1 Platform</p>
-                      <p className="text-xs text-gray-500">Voted by Student Parliament</p>
-                   </div>
-                </div>
-              </motion.div>
             </FadeInSection>
           </div>
         </div>
@@ -245,7 +187,7 @@ export const Home: React.FC = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('singleLecture')}</h3>
                 <p className="text-gray-500 mb-6">{t('singleLectureDesc')}</p>
-                <div className="text-4xl font-bold text-gray-900 mb-6">800 <span className="text-base font-medium text-gray-400">{t('perLecture')}</span></div>
+                <div className="text-4xl font-bold text-gray-900 mb-6">750 <span className="text-base font-medium text-gray-400">{t('perLecture')}</span></div>
                 <ul className="space-y-4 mb-8 flex-1">
                   <li className="flex items-center text-gray-600"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureLive')}</li>
                   <li className="flex items-center text-gray-600"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureQA')}</li>
@@ -262,16 +204,22 @@ export const Home: React.FC = () => {
                  <div className="absolute top-0 right-0 bg-gradient-to-l from-yellow-400 to-yellow-500 text-slate-900 text-xs font-bold px-4 py-2 rounded-bl-2xl uppercase tracking-wider shadow-md">
                     {t('mostPopular')}
                  </div>
+                 <div className="absolute top-10 right-0 bg-gradient-to-l from-green-400 to-green-500 text-slate-900 text-xs font-bold px-4 py-2 rounded-bl-2xl uppercase tracking-wider shadow-md">
+                    10% OFF
+                 </div>
                 <div className="h-14 w-14 bg-white/10 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-sm">
                   <GraduationCap className="h-7 w-7 text-yellow-400" />
                 </div>
                 <h3 className="text-2xl font-bold mb-2">{t('fullCourseBundle')}</h3>
-                <p className="text-indigo-200 mb-6">{t('fullCourseDesc')}</p>
-                <div className="text-4xl font-bold mb-6">6500 <span className="text-base font-medium text-indigo-300">{t('perCourse')}</span></div>
+                <p className="text-indigo-200 mb-2">{t('fullCourseDesc')}</p>
+                <p className="text-green-400 text-sm font-bold mb-6">{t('discountText')}</p>
+                <div className="text-4xl font-bold mb-6 flex items-center gap-2">
+                  5500ден <span className="text-yellow-400 text-5xl">+</span>
+                </div>
                 <ul className="space-y-4 mb-8 flex-1">
                   <li className="flex items-center text-indigo-100"><span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>{t('featureAllLectures')}</li>
                   <li className="flex items-center text-indigo-100"><span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>{t('featureSave')}</li>
-                  <li className="flex items-center text-indigo-100"><span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>{t('featureCert')}</li>
+                  <li className="flex items-center text-indigo-100"><span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>{t('featureFeedback')}</li>
                   <li className="flex items-center text-indigo-100"><span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>{t('featureSupport')}</li>
                 </ul>
                 <Link to="/courses" className="block w-full text-center py-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 font-bold rounded-xl hover:from-yellow-300 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20">

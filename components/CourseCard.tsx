@@ -44,7 +44,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
              </div>
              <div className="text-right">
                 <span className="block text-xs text-green-600 font-semibold uppercase tracking-wider">{t('fullCourseBundle')}</span>
-                <span className="text-lg font-bold text-indigo-600">{course.priceFull} MKD</span>
+                <span className="text-lg font-bold text-indigo-600">
+                  {course.customPriceDisplay ? course.customPriceDisplay : `${course.priceFull} MKD`}
+                </span>
              </div>
           </div>
           

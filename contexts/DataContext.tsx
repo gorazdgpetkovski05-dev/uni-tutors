@@ -87,7 +87,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         professorId: '1',
         university: 'ФИНКИ',
         priceSingle: 800,
-        priceFull: 6500,
+        priceFull: 12000,
+        customPriceDisplay: '6000 / midterm',
+        hidden: true,
+        midterms: [
+          { id: 'mt1', title: 'First Midterm', sessions: 15, price: 6000 },
+          { id: 'mt2', title: 'Second Midterm', sessions: 17, price: 6000 }
+        ],
         lectures: [
           { id: 'aps1', title: 'Вовед во алгоритми', date: '2026-03-02T12:00:00Z', duration: 120 },
           { id: 'aps2', title: 'Линеарни структури', date: '2026-03-05T12:00:00Z', duration: 120 }
@@ -103,6 +109,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         university: 'ФИНКИ',
         priceSingle: 700,
         priceFull: 5500,
+        hidden: true,
         lectures: [
           { id: 'oop1', title: 'Класи и објекти', date: '2026-03-03T14:00:00Z', duration: 90 },
           { id: 'oop2', title: 'Наследување', date: '2026-03-06T14:00:00Z', duration: 90 }

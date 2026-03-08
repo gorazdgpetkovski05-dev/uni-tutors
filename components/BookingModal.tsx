@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { Course, BookingType } from '../types';
-import { X, Copy, Phone, Wallet, Info, Check } from 'lucide-react';
+import { Course, BookingType, Midterm } from '../types';
+import { X, Copy, Phone, Wallet, Info, Check, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface BookingModalProps {
@@ -10,6 +10,7 @@ interface BookingModalProps {
   onClose: () => void;
   bookingType: BookingType;
   selectedLectureId?: string;
+  selectedMidterm?: Midterm;
   price: number;
 }
 
@@ -19,6 +20,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   onClose, 
   bookingType, 
   selectedLectureId, 
+  selectedMidterm,
   price 
 }) => {
   const { t } = useLanguage();
@@ -46,11 +48,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           <div className="flex justify-between items-start mb-6">
             <div>
               <h3 className="text-xl font-bold text-gray-900">
-                 {t('contactToBook')}
+                 {t('completeBooking')}
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
-                 {t('contactDesc')}
-              </p>
             </div>
             <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 transition-colors">
               <X className="h-6 w-6 text-gray-400" />
@@ -60,11 +59,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           <div className="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100">
             <h4 className="font-semibold text-gray-900 mb-2">{course.title}</h4>
             <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-              <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${bookingType === 'full' ? 'bg-indigo-100 text-indigo-700' : 'bg-blue-100 text-blue-700'}`}>
-                {bookingType === 'full' ? t('fullCourseBundle') : t('singleLecture')}
+              <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${bookingType === 'full' ? 'bg-indigo-100 text-indigo-700' : bookingType === 'midterm' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                {bookingType === 'full' ? t('fullCourseBundle') : bookingType === 'midterm' ? 'Midterm Bundle' : t('singleLecture')}
               </span>
               {bookingType === 'single' && selectedLecture && (
                 <span className="truncate max-w-[200px]">- {selectedLecture.title}</span>
+              )}
+              {bookingType === 'midterm' && selectedMidterm && (
+                <span className="truncate max-w-[200px]">- {selectedMidterm.title}</span>
               )}
             </div>
             
@@ -90,28 +92,21 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           </div>
 
           <div className="mb-8">
-            <button 
-              onClick={handleCopy}
-              className="w-full flex items-center justify-between p-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl transition-all group active:scale-[0.98]"
+            <a 
+              href={`https://wa.me/38970356541?text=${encodeURIComponent(`Hello, I would like to book: ${course.title} (${bookingType === 'full' ? 'Full Course' : bookingType === 'midterm' ? `Midterm: ${selectedMidterm?.title}` : 'Single Session'}).`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-between p-4 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl transition-all group active:scale-[0.98] shadow-lg hover:shadow-xl"
             >
               <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-indigo-400" />
-                <span className="text-lg font-mono font-medium tracking-wide">{phoneNumber}</span>
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-white fill-current"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                <span className="text-lg font-bold tracking-wide">Message on WhatsApp</span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-400 group-hover:text-white transition-colors">
-                {copied ? (
-                  <>
-                    <Check className="h-4 w-4 text-green-400" />
-                    <span className="text-green-400">{t('copied')}</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-4 w-4" />
-                    <span>{t('copy')}</span>
-                  </>
-                )}
+              <div className="flex items-center gap-2 text-xs font-medium text-white/90 group-hover:text-white transition-colors">
+                 <span>Open App</span>
+                 <ArrowRight className="h-4 w-4" />
               </div>
-            </button>
+            </a>
           </div>
 
           <button 
