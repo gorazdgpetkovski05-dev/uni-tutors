@@ -5,67 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UniTutors MK - Expert University Tutoring</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      html, body {
-        max-width: 100%;
-        overflow-x: hidden;
-        position: relative;
-        touch-action: pan-y;
-      }
-
-      body {
-        font-family: 'Inter', sans-serif;
-        scroll-behavior: smooth;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-      
-      /* Animation Classes */
-      .fade-in-section {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        will-change: opacity, visibility;
-      }
-      
-      .fade-in-section.is-visible {
-        opacity: 1;
-        transform: none;
-      }
-
-      .scale-in {
-        animation: scaleIn 0.5s ease-out forwards;
-      }
-
-      @keyframes scaleIn {
-        from { transform: scale(0.95); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-      }
-      
-      .stagger-1 { transition-delay: 100ms; }
-      .stagger-2 { transition-delay: 200ms; }
-      .stagger-3 { transition-delay: 300ms; }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
-    "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
-    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@^2.95.3"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
+    <link rel="stylesheet" href="/index.css">
+  </head>
   <body class="bg-gray-50 text-slate-900 antialiased">
     <div id="root"></div>
-    <script type="module" src="./index.tsx"></script>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>

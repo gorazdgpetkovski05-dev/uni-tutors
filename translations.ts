@@ -6,11 +6,22 @@ export const translations = {
     // Navbar
     home: "Home",
     courses: "Courses",
-    pricing: "Pricing",
+    pricing: "Contact",
+    contact: "Contact",
     dashboard: "Dashboard",
     login: "Login",
     signup: "Sign Up",
     logout: "Logout",
+    
+    // Contact Modal
+    contactModalTitle: "Contact for Information",
+    contactModalDesc: "This contact is only for information.",
+    bookingModalTitle: "Book Your Sessions",
+    bookingModalDesc: "Contact us to schedule your flexible sessions. We'll tailor the schedule to your needs.",
+    flexibleSessionsInfo: "Flexible Sessions: The number and timing of sessions are tailored to your progress.",
+    message: "Message",
+    call: "Call",
+    email: "Email",
     
     // Hero
     heroTitle: "Master your university courses at",
@@ -49,16 +60,18 @@ export const translations = {
     benefit4Desc: "Sessions are held via high-quality online streams.",
 
     // Pricing
-    pricingTitle: "Student-Friendly Pricing",
-    pricingSub: "Transparent costs. Pay per session or subscribe for the full course.",
+    pricingTitle: "Contact Us for More Info",
+    pricingSub: "Get in touch with us to learn more about our courses and pricing.",
+    contactForInfo: "Contact us for more information.",
     singleLecture: "Single Session",
-    singleLectureDesc: "Perfect for clarifying specific topics or preparing for a specific midterm exam. Payment required before attending.",
-    perLecture: "MKD / session",
-    bookLecture: "Book Session",
+    singleLectureDesc: "Perfect for clarifying specific topics or preparing for a specific midterm exam.",
+    perLecture: "Contact for Price",
+    bookLecture: "Contact Us",
     fullCourseBundle: "Full Course Bundle",
-    fullCourseDesc: "Complete mastery. Includes all scheduled lectures/workshops. Payment: Half before, half after.",
-    perCourse: "MKD",
-    getFullCourse: "Get Full Bundle",
+    midtermBundle: "Midterm Bundle",
+    fullCourseDesc: "Complete mastery. Includes all scheduled lectures/workshops.",
+    perCourse: "Contact for Price",
+    getFullCourse: "Learn More",
     mostPopular: "Best Value",
     featureLive: "1 - 1.5 hours remote session",
     featureQA: "Q&A with Expert",
@@ -67,7 +80,7 @@ export const translations = {
     featureSave: "Save with bundle",
     featureFeedback: "Personalized Feedback",
     featureSupport: "Priority Support",
-    discountText: "10% discount for first-time users!",
+    discountText: "Contact us for special student discounts!",
 
     // CTA
     readyToBoost: "Ready to ace your exams?",
@@ -76,9 +89,9 @@ export const translations = {
     // Booking
     bookAppt: "Book Appointment",
     fullCourse: "Full Course",
-    confirmBooking: "Contact via WhatsApp",
+    confirmBooking: "Contact",
     cashOnly: "Payment: Cash / Transaction Account",
-    paymentInfo: "Contact us on WhatsApp to schedule. If paying by card/transaction account, authorization via WhatsApp message is required.",
+    paymentInfo: "Contact us to schedule. If paying by card/transaction account, authorization via message is required.",
     requestSent: "Request Sent!",
     requestSentDesc: "Your booking is pending approval. You can track its status in your dashboard.",
     close: "Close",
@@ -93,6 +106,7 @@ export const translations = {
     // Course Details
     backToCourses: "Back to Courses",
     lectures: "Sessions",
+    whatYouWillStudy: "What you will study",
     courseSchedule: "Course Schedule",
     courseScheduleFull: "Full program schedule.",
     courseScheduleSingle: "Select a specific session.",
@@ -103,6 +117,8 @@ export const translations = {
     teacherCannotBook: "Tutors cannot book courses.",
     approvalRequired: "Booking requires Admin/Tutor approval.",
     datesConfirmedPhone: "Dates and times will be confirmed via phone call.",
+    dynamicSessions: "The number of sessions is flexible and tailored to your individual progress and needs.",
+    flexibleSessions: "Flexible Sessions",
 
     // Courses Page
     availableCourses: "Available Courses",
@@ -119,25 +135,36 @@ export const translations = {
     privacy: "Privacy",
     terms: "Terms",
     support: "Support",
-    contactForInfo: "For more info on this topic, please contact: +389 70 356 541",
+    footerContactForInfo: "For more info on this topic, please contact: +389 70 356 541",
     footerPrivacyMsg: "For privacy inquiries, please contact our support team at: +389 70 356 541",
     footerTermsMsg: "For terms inquiries, please contact our support team at: +389 70 356 541",
     footerSupportMsg: "For support, please contact our team at: +389 70 356 541",
 
     // Discount Popup
-    discountTitle: "Student Discount!",
-    discountDesc: "Get 10% off on the whole course bundle!",
-    discountButton: "Great, let's go!",
+    discountTitle: "Special Offer!",
+    discountDesc: "Contact us to get a special student discount on our course bundles!",
+    discountButton: "Contact Us Now",
   },
   mk: {
     // Navbar
     home: "Дома",
     courses: "Курсеви",
-    pricing: "Ценовник",
+    pricing: "Контакт",
+    contact: "Контакт",
     dashboard: "Табла",
     login: "Најави се",
     signup: "Регистрирај се",
     logout: "Одјави се",
+    
+    // Contact Modal
+    contactModalTitle: "Контакт за информации",
+    contactModalDesc: "Овој контакт е само за информации.",
+    bookingModalTitle: "Закажи ги твоите сесии",
+    bookingModalDesc: "Контактирајте нè за да ги закажете вашите флексибилни сесии. Ќе го прилагодиме распоредот според вашите потреби.",
+    flexibleSessionsInfo: "Флексибилни сесии: Бројот и времето на сесиите се прилагодуваат на вашиот напредок.",
+    message: "Порака",
+    call: "Јави се",
+    email: "Емаил",
     
     // Hero
     heroTitle: "Совладај ги курсевите на",
@@ -176,16 +203,18 @@ export const translations = {
     benefit4Desc: "Часовите се одржуваат преку висококвалитетен онлајн стрим.",
 
     // Pricing
-    pricingTitle: "Студентски Цени",
-    pricingSub: "Транспарентно. Плаќање по сесија или за цел курс.",
+    pricingTitle: "Контактирајте нè за повеќе инфо",
+    pricingSub: "Контактирајте нè за да дознаете повеќе за нашите курсеви и цени.",
+    contactForInfo: "Контактирајте нè за повеќе информации.",
     singleLecture: "Една Сесија",
-    singleLectureDesc: "Совршено за разјаснување на специфични теми. Плаќање пред присуство.",
-    perLecture: "МКД / сесија",
-    bookLecture: "Закажи Час",
+    singleLectureDesc: "Совршено за разјаснување на специфични теми.",
+    perLecture: "Контакт за цена",
+    bookLecture: "Контактирај нè",
     fullCourseBundle: "Цел Курс Пакет",
-    fullCourseDesc: "Целосно совладување на материјалот. Плаќање: Пола пред, пола потоа.",
-    perCourse: "ден",
-    getFullCourse: "Земи Цел Пакет",
+    midtermBundle: "Колоквиум Пакет",
+    fullCourseDesc: "Целосно совладување на материјалот.",
+    perCourse: "Контакт за цена",
+    getFullCourse: "Дознај повеќе",
     mostPopular: "Најпопуларно",
     featureLive: "1 - 1.5 часа онлајн сесија",
     featureQA: "Прашања и Одговори со Експерт",
@@ -194,7 +223,7 @@ export const translations = {
     featureSave: "Заштеди со пакет",
     featureFeedback: "Персонализиран Фидбек",
     featureSupport: "Приоритетна поддршка",
-    discountText: "10% попуст за нови корисници!",
+    discountText: "Контактирајте нè за специјални студентски попусти!",
 
     // CTA
     readyToBoost: "Спремни за десетки?",
@@ -203,9 +232,9 @@ export const translations = {
     // Booking
     bookAppt: "Закажи Термин",
     fullCourse: "Цел Курс",
-    confirmBooking: "Контакт преку WhatsApp",
+    confirmBooking: "Контакт",
     cashOnly: "Плаќање: Готовина / Платежна Сметка",
-    paymentInfo: "Контактирајте нè на WhatsApp за закажување. За плаќање на Платежна Сметка, задолжителна е авторизација преку WhatsApp порака.",
+    paymentInfo: "Контактирајте нè за закажување. За плаќање на Платежна Сметка, задолжителна е авторизација преку порака.",
     requestSent: "Барањето е испратено!",
     requestSentDesc: "Вашата резервација чека одобрување. Можете да го следите статусот во вашата табла.",
     close: "Затвори",
@@ -220,6 +249,7 @@ export const translations = {
     // Course Details
     backToCourses: "Назад кон Курсеви",
     lectures: "Сесии",
+    whatYouWillStudy: "Што ќе се изучува",
     courseSchedule: "Распоред",
     courseScheduleFull: "Целиот распоред.",
     courseScheduleSingle: "Изберете специфична сесија.",
@@ -230,6 +260,8 @@ export const translations = {
     teacherCannotBook: "Експертите не можат да закажуваат курсеви.",
     approvalRequired: "Резервацијата бара одобрување.",
     datesConfirmedPhone: "Датумите и времињата ќе бидат потврдени преку телефонски повик.",
+    dynamicSessions: "Бројот на сесии е флексибилен и се прилагодува според твојот напредок и индивидуални потреби.",
+    flexibleSessions: "Флексибилни сесии",
 
     // Courses Page
     availableCourses: "Достапни Курсеви",
@@ -246,14 +278,14 @@ export const translations = {
     privacy: "Приватност",
     terms: "Услови",
     support: "Поддршка",
-    contactForInfo: "За повеќе информации на оваа тема, ве молиме контактирајте: +389 70 356 541",
+    footerContactForInfo: "За повеќе информации на оваа тема, ве молиме контактирајте: +389 70 356 541",
     footerPrivacyMsg: "За прашања за приватност, ве молиме контактирајте го нашиот тим за поддршка на: +389 70 356 541",
     footerTermsMsg: "За прашања за услови, ве молиме контактирајте го нашиот тим за поддршка на: +389 70 356 541",
     footerSupportMsg: "За поддршка, ве молиме контактирајте го нашиот тим на: +389 70 356 541",
 
     // Discount Popup
-    discountTitle: "Студентски Попуст!",
-    discountDesc: "Добиј 10% попуст на целиот пакет курсеви!",
-    discountButton: "Супер, ајде!",
+    discountTitle: "Специјална Понуда!",
+    discountDesc: "Контактирајте нè за да добиете специјален студентски попуст!",
+    discountButton: "Контактирај нè сега",
   }
 };

@@ -19,8 +19,13 @@ export interface Lecture {
 export interface Midterm {
   id: string;
   title: string;
-  sessions: number;
+  sessions?: number;
   price: number;
+}
+
+export interface CurriculumItem {
+  title: string;
+  description: string;
 }
 
 export interface Course {
@@ -33,6 +38,7 @@ export interface Course {
   image: string;
   university?: string;
   lectures: Lecture[];
+  curriculum?: CurriculumItem[];
   priceFull: number; // 6000
   priceSingle: number; // 750
   midterms?: Midterm[];

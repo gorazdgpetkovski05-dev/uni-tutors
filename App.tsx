@@ -9,22 +9,42 @@ import { DataProvider } from './contexts/DataContext';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 
 import { DiscountPopup } from './components/DiscountPopup';
+import { InfoModal } from './components/InfoModal';
 
 const Footer: React.FC = () => {
     const { t } = useLanguage();
+    const [modalConfig, setModalConfig] = React.useState<{ isOpen: boolean; title: string; message: string }>({
+        isOpen: false,
+        title: '',
+        message: ''
+    });
 
     const handleLinkClick = (e: React.MouseEvent, topic: string) => {
         e.preventDefault();
         let message = "";
-        if (topic === 'Privacy') message = t('footerPrivacyMsg');
-        else if (topic === 'Terms') message = t('footerTermsMsg');
-        else if (topic === 'Support') message = t('footerSupportMsg');
+        let title = "";
+        if (topic === 'Privacy') {
+            message = t('footerPrivacyMsg');
+            title = t('privacy');
+        } else if (topic === 'Terms') {
+            message = t('footerTermsMsg');
+            title = t('terms');
+        } else if (topic === 'Support') {
+            message = t('footerSupportMsg');
+            title = t('support');
+        }
         
-        alert(message);
+        setModalConfig({ isOpen: true, title, message });
     };
 
     return (
         <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+            <InfoModal 
+                isOpen={modalConfig.isOpen} 
+                onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
+                title={modalConfig.title}
+                message={modalConfig.message}
+            />
             <div className="max-w-7xl mx-auto px-4 text-center">
             <p className="mb-2 font-medium text-slate-300">{t('footerContact')}</p>
             <p>&copy; {new Date().getFullYear()} {t('footerRights')}</p>
@@ -38,17 +58,17 @@ const Footer: React.FC = () => {
     );
 };
 
-// Component to handle initial redirect logic more aggressively
-const RedirectHandler: React.FC = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
+const ScrollToTop = () => {
+    const { pathname } = useLocation();
 
     useEffect(() => {
-        // If we are at the root (or hash root), ensure we render Home
-        if (location.pathname === '/' || location.pathname === '') {
-            // Already there
-        }
-    }, [location, navigate]);
+        // Use a small timeout to ensure the new page content has rendered
+        const timeoutId = setTimeout(() => {
+            window.scrollTo(0, 0);
+        }, 10);
+        
+        return () => clearTimeout(timeoutId);
+    }, [pathname]);
 
     return null;
 };
@@ -56,17 +76,14 @@ const RedirectHandler: React.FC = () => {
 const AppContent: React.FC = () => {
     return (
         <div className="flex flex-col min-h-screen">
-            <RedirectHandler />
+            <ScrollToTop />
             <DiscountPopup />
             <Navbar />
-            <main className="flex-grow">
+            <main className="flex-grow pt-16">
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route index element={<Home />} />
-                    
                     <Route path="/courses" element={<CoursesPage />} />
                     <Route path="/courses/:id" element={<CourseDetailsPage />} />
-                    
                     <Route path="/pricing" element={<Navigate to="/" replace />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>

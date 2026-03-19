@@ -4,15 +4,9 @@ import { GoogleGenAI } from "@google/genai";
 // Helper to safely access environment variables without crashing in browser environments
 const getApiKey = () => {
   try {
-    // Check if process is defined (Node.js or polyfilled)
-    if (typeof process !== 'undefined' && process.env) {
-      return process.env.API_KEY;
-    }
-    // Check for Vite's import.meta.env
-    // @ts-ignore
-    if (typeof import.meta !== 'undefined' && import.meta.env) {
-      // @ts-ignore
-      return import.meta.env.VITE_API_KEY || import.meta.env.API_KEY;
+    // Always use process.env.GEMINI_API_KEY for the Gemini API as per guidelines
+    if (typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY) {
+      return process.env.GEMINI_API_KEY;
     }
   } catch (e) {
     // Ignore errors
@@ -20,12 +14,11 @@ const getApiKey = () => {
   return undefined;
 };
 
-const apiKey = getApiKey();
-const ai = new GoogleGenAI({ apiKey: apiKey || '123' }); // Pass dummy key if missing to prevent init crash
-
 export const chatWithGemini = async (message: string, history: string[] = []) => {
+  const apiKey = getApiKey();
+  
   // Check if we have a valid key before calling API
-  if (!apiKey || apiKey === '123') {
+  if (!apiKey) {
     // Fallback for demo purposes if no API key is present
     return new Promise<string>((resolve) => {
       setTimeout(() => {
@@ -35,6 +28,8 @@ export const chatWithGemini = async (message: string, history: string[] = []) =>
   }
 
   try {
+    // Create a new GoogleGenAI instance right before making an API call to ensure it always uses the most up-to-date API key
+    const ai = new GoogleGenAI({ apiKey });
     const model = 'gemini-3-flash-preview';
     const response = await ai.models.generateContent({
       model: model,

@@ -34,3 +34,6 @@ export const PROFESSORS: Professor[] = [
 ];
 
 export const COURSES: Course[] = [];
+
+export const WHATSAPP_NUMBER = "+38970356541";
+export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER.replace(/\+/g, '').replace(/\s/g, '')}`;

@@ -1,57 +1,47 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { GraduationCap, Globe } from 'lucide-react';
+import { GraduationCap, Globe, Menu, X } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ContactModal } from './ContactModal';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { t, language, setLanguage } = useLanguage();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   
   const isActive = (path: string) => location.pathname === path ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-indigo-600';
 
-  const handlePricingClick = (e: React.MouseEvent) => {
+  const handleContactClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    
-    const scrollToPricing = () => {
-      const element = document.getElementById('pricing');
-      if (element) {
-        const headerOffset = 80; // Adjust based on navbar height
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: "smooth"
-        });
-      }
-    };
-
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(scrollToPricing, 500);
-    } else {
-      scrollToPricing();
-    }
+    setIsMenuOpen(false);
+    setIsContactModalOpen(true);
   };
 
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'mk' : 'en');
   };
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
-    <motion.nav 
-      initial={{ y: -100 }}
+    <>
+      <ContactModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />
+      <motion.nav 
+        initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm md:backdrop-blur-md border-b border-gray-200 transition-all duration-300"
+      className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm md:backdrop-blur-md border-b border-gray-200 transition-all duration-300 will-change-transform"
     >
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2 group">
+            <Link to="/" className="flex items-center gap-2 group" onClick={() => setIsMenuOpen(false)}>
               <motion.div 
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 className="relative"
@@ -71,24 +61,69 @@ export const Navbar: React.FC = () => {
             <div className="hidden md:flex ml-10 space-x-8">
               <Link to="/" className={`${isActive('/')} transition-colors`}>{t('home')}</Link>
               <Link to="/courses" className={`${isActive('/courses')} transition-colors`}>{t('courses')}</Link>
-              <a href="#pricing" onClick={handlePricingClick} className="text-gray-600 hover:text-indigo-600 transition-colors">{t('pricing')}</a>
+              <a href="#contact" onClick={handleContactClick} className="text-gray-600 hover:text-indigo-600 transition-colors">{t('contact')}</a>
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             {/* Language Toggle */}
             <motion.button 
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={toggleLanguage}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm font-bold text-gray-700 transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm font-bold text-gray-700 transition-all duration-300 hover:shadow-md"
             >
                 <Globe className="h-4 w-4" />
                 {language === 'en' ? 'MK' : 'EN'}
             </motion.button>
+
+            {/* Mobile Menu Button */}
+            <button 
+              onClick={toggleMenu}
+              className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Dropdown */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden absolute top-16 right-4 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden py-2"
+          >
+            <Link 
+              to="/" 
+              className={`block px-6 py-3 text-sm ${isActive('/')}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {t('home')}
+            </Link>
+            <Link 
+              to="/courses" 
+              className={`block px-6 py-3 text-sm ${isActive('/courses')}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {t('courses')}
+            </Link>
+            <a 
+              href="#contact" 
+              onClick={handleContactClick}
+              className="block px-6 py-3 text-sm text-gray-600 hover:text-indigo-600"
+            >
+              {t('contact')}
+            </a>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
+    </>
   );
 };

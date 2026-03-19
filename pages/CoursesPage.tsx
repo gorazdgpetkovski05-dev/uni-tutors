@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { CourseCard } from '../components/CourseCard';
 import { Search, Filter } from 'lucide-react';
@@ -23,14 +22,13 @@ export const CoursesPage: React.FC = () => {
     return matchesSearch && matchesUni;
   });
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
           className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4"
         >
           <div>
@@ -69,18 +67,16 @@ export const CoursesPage: React.FC = () => {
         </motion.div>
 
         <motion.div 
-          layout={!isMobile}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           <AnimatePresence mode="popLayout">
-            {filteredCourses.map(course => (
+            {filteredCourses.map((course, index) => (
               <motion.div
-                layout={!isMobile}
                 key={course.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3, delay: index * 0.05, ease: "easeOut" }}
               >
                 <CourseCard course={course} />
               </motion.div>
@@ -100,7 +96,7 @@ export const CoursesPage: React.FC = () => {
             <p className="text-gray-500 font-medium">{t('noCoursesFound')}</p>
             <button 
                 onClick={() => {setSearchTerm(''); setSelectedUniversity('All');}}
-                className="mt-4 text-indigo-600 font-bold hover:underline"
+                className="mt-4 text-indigo-600 font-bold hover:text-indigo-800 transition-all duration-300 hover:-translate-y-0.5"
             >
                 Clear Filters
             </button>

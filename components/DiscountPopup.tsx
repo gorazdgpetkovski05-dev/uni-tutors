@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Gift, Sparkles } from 'lucide-react';
+import { WHATSAPP_URL } from '../constants';
+import { MessageCircle, X, Gift, Sparkles } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -14,7 +15,7 @@ export const DiscountPopup: React.FC = () => {
     // Show popup after a short delay
     const timer = setTimeout(() => {
       setIsVisible(true);
-    }, 1500);
+    }, 3000); // Increased delay to be less intrusive
 
     return () => clearTimeout(timer);
   }, []);
@@ -25,28 +26,8 @@ export const DiscountPopup: React.FC = () => {
 
   const handleButtonClick = () => {
     setIsVisible(false);
-    
-    const scrollToPricing = () => {
-      const element = document.getElementById('pricing');
-      if (element) {
-        const headerOffset = 80; // Adjust based on navbar height
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: "smooth"
-        });
-      }
-    };
-
-    if (location.pathname !== '/') {
-      navigate('/');
-      // Wait for navigation to complete
-      setTimeout(scrollToPricing, 500);
-    } else {
-      scrollToPricing();
-    }
+    const message = encodeURIComponent("Hello, I saw the special offer and I'm interested in a discount!");
+    window.open(`${WHATSAPP_URL}?text=${message}`, '_blank');
   };
 
   return (
@@ -82,8 +63,9 @@ export const DiscountPopup: React.FC = () => {
               </p>
               <button 
                 onClick={handleButtonClick}
-                className="w-full py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-indigo-500/30 active:scale-95"
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-green-500/30 hover:-translate-y-1 active:scale-95"
               >
+                <MessageCircle className="h-5 w-5" />
                 {t('discountButton')}
               </button>
             </div>

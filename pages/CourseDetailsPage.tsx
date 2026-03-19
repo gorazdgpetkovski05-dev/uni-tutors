@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { BookingModal } from '../components/BookingModal';
-import { ArrowLeft, Calendar, Clock, MapPin, CheckCircle2, AlertCircle } from 'lucide-react';
-import { BookingType, Midterm } from '../types';
+import { ArrowLeft, Calendar, Clock, MapPin, CheckCircle2, AlertCircle, MessageCircle, BookOpen } from 'lucide-react';
+import { BookingType } from '../types';
 import { useData } from '../contexts/DataContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { WHATSAPP_URL } from '../constants';
+import { ContactModal } from '../components/ContactModal';
 
 export const CourseDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,10 +17,8 @@ export const CourseDetailsPage: React.FC = () => {
   const course = courses.find(c => c.id === id);
   const professor = course ? professors.find(p => p.id === course.professorId) : null;
 
-  const [bookingType, setBookingType] = useState<BookingType>('full');
-  const [selectedLectureId, setSelectedLectureId] = useState<string>('');
-  const [selectedMidterm, setSelectedMidterm] = useState<Midterm | undefined>(undefined);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bookingType] = useState<BookingType>('full');
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   if (!course) {
     return (
@@ -32,50 +31,32 @@ export const CourseDetailsPage: React.FC = () => {
     );
   }
 
-  const startDate = course.lectures.length > 0 ? new Date(course.lectures[0].date) : new Date();
-  const endDate = course.lectures.length > 0 ? new Date(course.lectures[course.lectures.length - 1].date) : new Date();
-  
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-GB', { 
-      weekday: 'short', 
-      day: 'numeric', 
-      month: 'short', 
-      year: 'numeric' 
-    });
-  };
-
-  const totalPrice = bookingType === 'full' 
-    ? course.priceFull 
-    : bookingType === 'midterm' && selectedMidterm 
-      ? selectedMidterm.price 
-      : course.priceSingle;
-
   const handleBookClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleMidtermBook = (midterm: Midterm) => {
-    setBookingType('midterm');
-    setSelectedMidterm(midterm);
-    setIsModalOpen(true);
+    setIsContactModalOpen(true);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header Image */}
-      <div className="min-h-[320px] md:h-80 w-full relative overflow-hidden group">
-        <img src={course.image} alt={course.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+      <div className="min-h-[400px] md:h-80 w-full relative overflow-hidden group">
+        <img 
+          src={course.image} 
+          alt={course.title} 
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform" 
+          loading="eager"
+          decoding="async"
+        />
         <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-[1px] md:backdrop-blur-[2px]"></div>
-        <div className="absolute inset-0 flex flex-col justify-end max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 pb-10 pt-24">
+        <div className="absolute inset-0 flex flex-col justify-end max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 pb-10 pt-20 md:pt-24">
           <Link to="/courses" className="text-white/80 hover:text-white flex items-center gap-2 mb-6 w-fit transition-colors">
             <ArrowLeft className="h-5 w-5" /> {t('backToCourses')}
           </Link>
           <div className="flex flex-wrap items-center gap-4 mb-2 animate-fade-in-up">
             <span className="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold">{course.code}</span>
-            <span className="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm md:backdrop-blur-md">{course.lectures.length} {t('lectures')}</span>
+            <span className="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm md:backdrop-blur-md">{t('flexibleSessions')}</span>
           </div>
-          <h1 className="text-2xl md:text-5xl font-bold text-white mb-2">{course.title}</h1>
-          <p className="text-base md:text-lg text-white/90 max-w-2xl">{course.description}</p>
+          <h1 className="text-2xl md:text-5xl font-bold text-white mb-2 leading-tight">{course.title}</h1>
+          <p className="text-base md:text-lg text-white/90 max-w-2xl line-clamp-3 md:line-clamp-none">{course.description}</p>
         </div>
       </div>
 
@@ -100,80 +81,40 @@ export const CourseDetailsPage: React.FC = () => {
               </div>
             )}
 
-            {/* Midterms Section - Only if available */}
-            {course.midterms && course.midterms.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-6 border-b border-gray-100">
-                  <h3 className="text-xl font-bold text-gray-900">Midterm Bundles</h3>
-                  <p className="text-gray-500 text-sm mt-1">
-                     Book specific midterm preparation bundles.
-                  </p>
-                </div>
-                <div className="p-6 grid gap-4 md:grid-cols-2">
-                  {course.midterms.map((midterm) => (
-                    <div key={midterm.id} className="border border-indigo-100 rounded-xl p-6 bg-indigo-50/50 hover:bg-indigo-50 transition-colors">
-                      <h4 className="font-bold text-lg text-gray-900 mb-2">{midterm.title}</h4>
-                      <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                        <span className="bg-white px-2 py-1 rounded border border-indigo-100 font-medium text-indigo-700">
-                          {midterm.sessions} Sessions
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center mt-4">
-                        <span className="text-2xl font-bold text-gray-900">{midterm.price} <span className="text-sm font-normal text-gray-500">MKD</span></span>
-                        <button 
-                          onClick={() => handleMidtermBook(midterm)}
-                          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-indigo-700 transition-colors shadow-md"
-                        >
-                          Book Now
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Course Syllabus & Dates */}
+            {/* Course Curriculum */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 border-b border-gray-100">
-                <h3 className="text-xl font-bold text-gray-900">{t('courseSchedule')}</h3>
-                <p className="text-gray-500 text-sm mt-1">
-                   {t('datesConfirmedPhone')}
-                </p>
+              <div className="p-6 border-b border-gray-100 bg-slate-50">
+                <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-indigo-600" />
+                  {t('whatYouWillStudy')}
+                </h3>
               </div>
               
-              <div className="divide-y divide-gray-50">
-                {course.lectures.length === 0 ? (
-                    <div className="p-8 text-center text-gray-400 italic">{t('noLectures')}</div>
-                ) : (
-                    course.lectures.map((lecture, index) => (
-                    <div 
-                        key={lecture.id} 
-                        className={`p-4 transition-colors hover:bg-gray-50 flex items-start gap-4 cursor-pointer ${bookingType === 'single' && selectedLectureId === lecture.id ? 'bg-indigo-50 hover:bg-indigo-50 ring-1 ring-inset ring-indigo-500' : ''}`}
-                        onClick={() => {
-                            if (bookingType === 'single') setSelectedLectureId(lecture.id);
-                        }}
-                    >
-                        <div className="flex-shrink-0 w-16 text-center pt-1 flex flex-col items-center justify-center h-full">
-                           <span className="text-2xl font-bold text-gray-300">#{index + 1}</span>
+              <div className="p-6 sm:p-8">
+                {course.curriculum && course.curriculum.length > 0 ? (
+                  <div className="space-y-6">
+                    {course.curriculum.map((item, index) => (
+                      <div key={index} className="relative pl-10 sm:pl-12 group">
+                        {/* Vertical Line */}
+                        {index !== course.curriculum.length - 1 && (
+                          <div className="absolute left-[15px] sm:left-[19px] top-10 bottom-[-24px] w-0.5 bg-indigo-100 group-hover:bg-indigo-200 transition-colors"></div>
+                        )}
+                        
+                        {/* Number Indicator */}
+                        <div className="absolute left-0 sm:left-1 top-1 w-8 h-8 rounded-full bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition-colors z-10 shadow-sm">
+                          {index + 1}
                         </div>
                         
-                        <div className="flex-1">
-                        <div className="flex justify-between items-start">
-                            <h4 className={`font-semibold ${bookingType === 'single' && selectedLectureId === lecture.id ? 'text-indigo-900' : 'text-gray-900'}`}>{lecture.title}</h4>
-                            {bookingType === 'single' && (
-                                <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${selectedLectureId === lecture.id ? 'border-indigo-600 bg-indigo-600' : 'border-gray-300'}`}>
-                                    {selectedLectureId === lecture.id && <CheckCircle2 className="h-3 w-3 text-white" />}
-                                </div>
-                            )}
+                        {/* Content */}
+                        <div className="bg-white rounded-xl p-5 sm:p-6 border border-gray-100 shadow-sm hover:border-indigo-300 hover:shadow-xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-300 ease-out">
+                          <h4 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h4>
+                          <p className="text-gray-600 leading-relaxed text-sm sm:text-base">{item.description}</p>
                         </div>
-                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {lecture.duration} mins</span>
-                            <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> Study Hub / Online</span>
-                        </div>
-                        </div>
-                    </div>
-                    ))
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-400 italic py-4">{t('noLectures')}</div>
                 )}
               </div>
             </div>
@@ -186,80 +127,36 @@ export const CourseDetailsPage: React.FC = () => {
               <div className="bg-white p-6 rounded-2xl shadow-lg border border-indigo-50">
                 <h3 className="text-lg font-bold text-gray-900 mb-6">{t('bookingOptions')}</h3>
                 
-                {/* Tabs */}
-                <div className="flex p-1 bg-gray-100 rounded-xl mb-6">
-                  <button 
-                    onClick={() => {
-                        setBookingType('full');
-                        setSelectedMidterm(undefined);
-                    }}
-                    className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${bookingType === 'full' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                  >
-                    {t('fullCourseBundle')}
-                  </button>
-                  <button 
-                    onClick={() => {
-                        setBookingType('single');
-                        setSelectedMidterm(undefined);
-                    }}
-                    className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${bookingType === 'single' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                  >
-                    {t('singleLecture')}
-                  </button>
-                </div>
-
                 {/* Details */}
                 <div className="mb-6 space-y-3">
-                  {bookingType === 'full' ? (
-                    <div className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
-                      <p className="text-sm font-medium text-indigo-900 flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        {course.lectures.length} {t('totalSessions')}
-                      </p>
-                      <p className="text-xs text-indigo-700 mt-1 pl-6">
-                        {t('datesConfirmedPhone')}
-                      </p>
-                    </div>
-                  ) : bookingType === 'midterm' && selectedMidterm ? (
-                    <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
-                      <p className="text-sm font-medium text-purple-900 flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        {selectedMidterm.title}
-                      </p>
-                      <p className="text-xs text-purple-700 mt-1 pl-6">
-                        {selectedMidterm.sessions} Sessions
-                      </p>
-                    </div>
-                  ) : (
-                    <div className={`p-3 rounded-lg border ${selectedLectureId ? 'bg-indigo-50 border-indigo-100' : 'bg-gray-50 border-gray-100'}`}>
-                      <p className={`text-sm font-medium flex items-center gap-2 ${selectedLectureId ? 'text-indigo-900' : 'text-gray-500'}`}>
-                        <Calendar className="h-4 w-4" />
-                        {selectedLectureId 
-                          ? `${course.lectures.find(l => l.id === selectedLectureId)?.title}` 
-                          : t('selectLecture')}
-                      </p>
-                    </div>
-                  )}
+                  <div className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
+                    <p className="text-sm font-medium text-indigo-900 flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      {t('flexibleSessions')}
+                    </p>
+                    <p className="text-xs text-indigo-700 mt-2 pl-6 leading-relaxed">
+                      {t('dynamicSessions')}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Price & Action */}
-                <div className="flex justify-between items-end mb-4">
-                  <span className="text-sm text-gray-500 font-medium">{t('totalAmount')}</span>
-                  <span className="text-3xl font-bold text-gray-900">{totalPrice} <span className="text-base font-normal text-gray-500">MKD</span></span>
+                <div className="flex justify-center items-center mb-6 py-4 border-y border-gray-50">
+                  <div className="text-center">
+                    <span className="block text-xs text-indigo-600 font-bold uppercase tracking-widest mb-1">{t('pricingTitle')}</span>
+                    <span className="text-sm font-semibold text-gray-900">
+                      {t('perCourse')}
+                    </span>
+                  </div>
                 </div>
 
                 <button 
-                disabled={bookingType === 'single' && !selectedLectureId}
                 onClick={handleBookClick}
-                className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-3 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-1 active:scale-[0.98]"
                 >
-                {t('bookAppt')}
+                <MessageCircle className="h-5 w-5" />
+                {t('confirmBooking')}
                 </button>
-                
-                <p className="text-center text-xs text-gray-400 mt-4 flex flex-col items-center justify-center gap-2">
-                  <span className="flex items-center gap-1"><AlertCircle className="h-3 w-3" /> {t('approvalRequired')}</span>
-                  <span className="font-medium text-gray-500">Контакт: +389 70 356 541</span>
-                </p>
               </div>
             </div>
           </div>
@@ -267,14 +164,10 @@ export const CourseDetailsPage: React.FC = () => {
         </div>
       </div>
 
-      <BookingModal 
-        course={course}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        bookingType={bookingType}
-        selectedLectureId={selectedLectureId}
-        selectedMidterm={selectedMidterm}
-        price={totalPrice}
+      <ContactModal 
+        isOpen={isContactModalOpen} 
+        onClose={() => setIsContactModalOpen(false)} 
+        courseTitle={course.title}
       />
     </div>
   );

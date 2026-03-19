@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Hero } from '../components/Hero';
 import { ArrowRight, Clock, Check, Trophy, Users, BookOpen, Calendar, ShieldCheck, GraduationCap, Sparkles } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { motion, useInView, useSpring, useTransform } from 'motion/react';
@@ -32,13 +32,11 @@ const Counter: React.FC<{ value: string, suffix?: string }> = ({ value, suffix =
 };
 
 const FadeInSection: React.FC<{ children: React.ReactNode, className?: string, delay?: number, direction?: 'up' | 'down' | 'left' | 'right' | 'none' }> = ({ children, className = "", delay = 0, direction = 'up' }) => {
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  
   const directions = {
-    up: { y: isMobile ? 20 : 40 },
-    down: { y: isMobile ? -20 : -40 },
-    left: { x: isMobile ? 20 : 40 },
-    right: { x: isMobile ? -20 : -40 },
+    up: { y: 20 },
+    down: { y: -20 },
+    left: { x: 20 },
+    right: { x: -20 },
     none: {}
   };
 
@@ -46,18 +44,31 @@ const FadeInSection: React.FC<{ children: React.ReactNode, className?: string, d
     <motion.div
       initial={{ opacity: 0, ...directions[direction] }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: isMobile ? "-50px" : "-100px" }}
-      transition={{ duration: isMobile ? 0.5 : 0.8, delay: isMobile ? delay * 0.5 : delay, ease: [0.16, 1, 0.3, 1] }}
-      className={className}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ 
+        duration: 0.5, 
+        delay: delay, 
+        ease: [0.21, 1.02, 0.73, 1] 
+      }}
+      className={`${className} will-change-transform will-change-opacity`}
     >
       {children}
     </motion.div>
   );
 };
 
+import { WHATSAPP_URL } from '../constants';
+import { MessageCircle } from 'lucide-react';
+
 export const Home: React.FC = () => {
   const { landingPageData } = useData();
   const { t } = useLanguage();
+
+  const navigate = useNavigate();
+
+  const handleContactClick = () => {
+    navigate('/courses');
+  };
 
   return (
     <div className="overflow-x-hidden">
@@ -159,7 +170,9 @@ export const Home: React.FC = () => {
                 transition={{ duration: 0.5 }}
                 src="https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
                 alt="Students collaborating" 
-                className="relative rounded-3xl shadow-2xl object-cover h-full w-full cursor-pointer"
+                loading="lazy"
+                decoding="async"
+                className="relative rounded-3xl shadow-2xl object-cover h-full w-full cursor-pointer will-change-transform"
               />
             </FadeInSection>
           </div>
@@ -187,15 +200,19 @@ export const Home: React.FC = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('singleLecture')}</h3>
                 <p className="text-gray-500 mb-6">{t('singleLectureDesc')}</p>
-                <div className="text-4xl font-bold text-gray-900 mb-6">750 <span className="text-base font-medium text-gray-400">{t('perLecture')}</span></div>
+                <div className="text-2xl font-bold text-indigo-600 mb-6">{t('perLecture')}</div>
                 <ul className="space-y-4 mb-8 flex-1">
                   <li className="flex items-center text-gray-600"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureLive')}</li>
                   <li className="flex items-center text-gray-600"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureQA')}</li>
                   <li className="flex items-center text-gray-600"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureMaterials')}</li>
                 </ul>
-                <Link to="/courses" className="block w-full text-center py-4 border-2 border-indigo-600 text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-colors">
-                  {t('bookLecture')}
-                </Link>
+                <button 
+                  onClick={() => handleContactClick()}
+                  className="flex items-center justify-center gap-2 w-full text-center py-4 border-2 border-indigo-600 text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95"
+                >
+                  <BookOpen className="h-5 w-5" />
+                  {t('browseCourses')}
+                </button>
               </div>
             </FadeInSection>
 
@@ -204,17 +221,14 @@ export const Home: React.FC = () => {
                  <div className="absolute top-0 right-0 bg-gradient-to-l from-yellow-400 to-yellow-500 text-slate-900 text-xs font-bold px-4 py-2 rounded-bl-2xl uppercase tracking-wider shadow-md">
                     {t('mostPopular')}
                  </div>
-                 <div className="absolute top-10 right-0 bg-gradient-to-l from-green-400 to-green-500 text-slate-900 text-xs font-bold px-4 py-2 rounded-bl-2xl uppercase tracking-wider shadow-md">
-                    10% OFF
-                 </div>
                 <div className="h-14 w-14 bg-white/10 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-sm">
                   <GraduationCap className="h-7 w-7 text-yellow-400" />
                 </div>
                 <h3 className="text-2xl font-bold mb-2">{t('fullCourseBundle')}</h3>
                 <p className="text-indigo-200 mb-2">{t('fullCourseDesc')}</p>
                 <p className="text-green-400 text-sm font-bold mb-6">{t('discountText')}</p>
-                <div className="text-4xl font-bold mb-6 flex items-center gap-2">
-                  5500ден <span className="text-yellow-400 text-5xl">+</span>
+                <div className="text-2xl font-bold mb-6 flex items-center gap-2 text-yellow-400">
+                  {t('perCourse')}
                 </div>
                 <ul className="space-y-4 mb-8 flex-1">
                   <li className="flex items-center text-indigo-100"><span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>{t('featureAllLectures')}</li>
@@ -222,9 +236,13 @@ export const Home: React.FC = () => {
                   <li className="flex items-center text-indigo-100"><span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>{t('featureFeedback')}</li>
                   <li className="flex items-center text-indigo-100"><span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>{t('featureSupport')}</li>
                 </ul>
-                <Link to="/courses" className="block w-full text-center py-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 font-bold rounded-xl hover:from-yellow-300 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20">
-                  {t('getFullCourse')}
-                </Link>
+                <button 
+                  onClick={() => handleContactClick()}
+                  className="flex items-center justify-center gap-2 w-full text-center py-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 font-bold rounded-xl hover:from-yellow-300 hover:to-yellow-400 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-yellow-500/40 hover:-translate-y-1 active:scale-95"
+                >
+                  <BookOpen className="h-5 w-5" />
+                  {t('browseCourses')}
+                </button>
               </div>
             </FadeInSection>
           </div>
@@ -255,7 +273,7 @@ export const Home: React.FC = () => {
                <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">{t('readyToBoost')}</h2>
                <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">{t('joinThousands')}</p>
                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                 <Link to="/courses" className="inline-flex items-center justify-center gap-3 text-indigo-900 bg-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1">
+                 <Link to="/courses" className="inline-flex items-center justify-center gap-3 text-indigo-900 bg-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-2 active:scale-95">
                     {t('browseCourses')} <ArrowRight className="h-5 w-5" />
                  </Link>
                </div>

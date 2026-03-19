@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Course, BookingType, Midterm } from '../types';
-import { X, Copy, Phone, Wallet, Info, Check, ArrowRight } from 'lucide-react';
+import { X, Copy, Phone, Wallet, Info, Check, ArrowRight, Mail } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface BookingModalProps {
@@ -60,7 +60,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <h4 className="font-semibold text-gray-900 mb-2">{course.title}</h4>
             <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
               <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${bookingType === 'full' ? 'bg-indigo-100 text-indigo-700' : bookingType === 'midterm' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
-                {bookingType === 'full' ? t('fullCourseBundle') : bookingType === 'midterm' ? 'Midterm Bundle' : t('singleLecture')}
+                {bookingType === 'full' ? t('fullCourseBundle') : bookingType === 'midterm' ? t('midtermBundle') : t('singleLecture')}
               </span>
               {bookingType === 'single' && selectedLecture && (
                 <span className="truncate max-w-[200px]">- {selectedLecture.title}</span>
@@ -91,19 +91,47 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             </p>
           </div>
 
-          <div className="mb-8">
+          <div className="mb-8 space-y-3">
             <a 
-              href={`https://wa.me/38970356541?text=${encodeURIComponent(`Hello, I would like to book: ${course.title} (${bookingType === 'full' ? 'Full Course' : bookingType === 'midterm' ? `Midterm: ${selectedMidterm?.title}` : 'Single Session'}).`)}`}
+              href={`https://wa.me/38970356541?text=${encodeURIComponent(`Здраво, би сакал/а да резервирам: ${course.title} (${bookingType === 'full' ? 'Цел курс' : bookingType === 'midterm' ? `Колоквиум: ${selectedMidterm?.title}` : 'Една сесија'}).`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-between p-4 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl transition-all group active:scale-[0.98] shadow-lg hover:shadow-xl"
             >
               <div className="flex items-center gap-3">
                 <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-white fill-current"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                <span className="text-lg font-bold tracking-wide">Message on WhatsApp</span>
+                <span className="text-lg font-bold tracking-wide">WhatsApp</span>
               </div>
               <div className="flex items-center gap-2 text-xs font-medium text-white/90 group-hover:text-white transition-colors">
-                 <span>Open App</span>
+                 <span>{t('message')}</span>
+                 <ArrowRight className="h-4 w-4" />
+              </div>
+            </a>
+
+            <a 
+              href={`tel:+38970356541`}
+              className="w-full flex items-center justify-between p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all group active:scale-[0.98] shadow-lg hover:shadow-xl"
+            >
+              <div className="flex items-center gap-3">
+                <Phone className="h-6 w-6 text-white" />
+                <span className="text-lg font-bold tracking-wide">+389 70 356 541</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-medium text-white/90 group-hover:text-white transition-colors">
+                 <span>{t('call')}</span>
+                 <ArrowRight className="h-4 w-4" />
+              </div>
+            </a>
+
+            <a 
+              href={`mailto:uni.tutors.mk@gmail.com?subject=${encodeURIComponent(`Резервација: ${course.title}`)}&body=${encodeURIComponent(`Здраво, би сакал/а да резервирам: ${course.title} (${bookingType === 'full' ? 'Цел курс' : bookingType === 'midterm' ? `Колоквиум: ${selectedMidterm?.title}` : 'Една сесија'}).`)}`}
+              className="w-full flex items-center justify-between p-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-all group active:scale-[0.98] shadow-lg hover:shadow-xl"
+            >
+              <div className="flex items-center gap-3">
+                <Mail className="h-6 w-6 text-white" />
+                <span className="text-lg font-bold tracking-wide">uni.tutors.mk@gmail.com</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-medium text-white/90 group-hover:text-white transition-colors">
+                 <span>{t('email')}</span>
                  <ArrowRight className="h-4 w-4" />
               </div>
             </a>
@@ -111,7 +139,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
           <button 
             onClick={onClose}
-            className="w-full py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors"
+            className="w-full py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-md active:scale-95"
            >
             {t('close')}
            </button>

@@ -40,7 +40,7 @@ export const Hero: React.FC = () => {
         >
           <motion.h1 
             variants={itemVariants}
-            className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl lg:leading-[1.1]"
+            className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl lg:leading-[1.1] will-change-transform will-change-opacity"
           >
             <span className="block xl:inline">{t('heroTitle')}</span>{' '}
             <span className="block text-indigo-600 xl:inline relative">
@@ -100,15 +100,17 @@ export const Hero: React.FC = () => {
       {/* Hero Image / Background */}
       <div className="relative h-64 sm:h-72 md:h-96 lg:h-full overflow-hidden">
         <motion.div 
-          initial={{ scale: 1.1, opacity: 0 }}
+          initial={{ scale: 1.05, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-          className="h-full w-full relative"
+          transition={{ duration: 1, ease: [0.21, 1.02, 0.73, 1] }}
+          className="h-full w-full relative will-change-transform will-change-opacity"
         >
              <img
               className="h-full w-full object-cover object-center"
               src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80"
               alt="Students learning"
+              loading="eager"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-indigo-900/10 mix-blend-multiply"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent hidden lg:block"></div>

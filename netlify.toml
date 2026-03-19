@@ -1,4 +1,8 @@
 
+[[edge_functions]]
+  path = "/*"
+  function = "block-non-mk"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
