@@ -36,7 +36,7 @@ export const CourseDetailsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20 transition-colors duration-300">
       {/* Header Image */}
       <div className="min-h-[400px] md:h-80 w-full relative overflow-hidden group">
         <img 
@@ -68,24 +68,26 @@ export const CourseDetailsPage: React.FC = () => {
             
             {/* Professor Card */}
             {professor && (
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 transition-transform hover:-translate-y-1 duration-300">
-                <img src={professor.avatar} alt={professor.name} className="h-16 w-16 rounded-full border-2 border-indigo-100" />
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">{professor.name}</h3>
-                  <p className="text-indigo-600 text-sm font-medium">{professor.specialty}</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <span className="text-yellow-500">★</span>
-                    <span className="text-sm text-gray-600 font-bold">{professor.rating}</span>
+              <div className="group">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-200 dark:border-slate-700 flex items-center gap-4 transition-all duration-300 ease-out group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:shadow-2xl dark:group-hover:shadow-indigo-500/40 group-hover:border-indigo-300 dark:group-hover:border-indigo-500 active:scale-[0.98]">
+                  <img src={professor.avatar} alt={professor.name} className="h-16 w-16 rounded-full border-2 border-indigo-100 dark:border-indigo-900" />
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">{professor.name}</h3>
+                    <p className="text-indigo-600 dark:text-indigo-400 text-sm font-medium">{professor.specialty}</p>
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-yellow-500">★</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400 font-bold">{professor.rating}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             )}
 
             {/* Course Curriculum */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 border-b border-gray-100 bg-slate-50">
-                <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-indigo-600" />
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-200 dark:border-slate-700 overflow-hidden">
+              <div className="p-6 border-b border-gray-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                   {t('whatYouWillStudy')}
                 </h3>
               </div>
@@ -97,24 +99,25 @@ export const CourseDetailsPage: React.FC = () => {
                       <div key={index} className="relative pl-10 sm:pl-12 group">
                         {/* Vertical Line */}
                         {index !== course.curriculum.length - 1 && (
-                          <div className="absolute left-[15px] sm:left-[19px] top-10 bottom-[-24px] w-0.5 bg-indigo-100 group-hover:bg-indigo-200 transition-colors"></div>
+                          <div className="absolute left-[15px] sm:left-[19px] top-10 bottom-[-24px] w-0.5 bg-indigo-100 dark:bg-indigo-900/50 group-hover:bg-indigo-300 dark:group-hover:bg-indigo-500/50 transition-colors"></div>
                         )}
                         
                         {/* Number Indicator */}
-                        <div className="absolute left-0 sm:left-1 top-1 w-8 h-8 rounded-full bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition-colors z-10 shadow-sm">
+                        <div className="absolute left-0 sm:left-1 top-1 w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-sm group-hover:bg-indigo-600 group-hover:border-indigo-600 dark:group-hover:bg-indigo-500 dark:group-hover:border-indigo-500 group-hover:text-white transition-all duration-300 z-10 shadow-sm group-hover:scale-110 group-hover:-translate-y-1">
                           {index + 1}
                         </div>
                         
                         {/* Content */}
-                        <div className="bg-white rounded-xl p-5 sm:p-6 border border-gray-100 shadow-sm hover:border-indigo-300 hover:shadow-xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-300 ease-out">
-                          <h4 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h4>
-                          <p className="text-gray-600 leading-relaxed text-sm sm:text-base">{item.description}</p>
+                        <div className="bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm group-hover:border-indigo-300 dark:group-hover:border-indigo-500 group-hover:shadow-2xl dark:group-hover:shadow-indigo-500/40 group-hover:-translate-y-2 group-hover:scale-[1.02] transition-all duration-300 ease-out relative overflow-hidden active:scale-[0.98]">
+                          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                          <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2 relative z-10">{item.title}</h4>
+                          <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm sm:text-base relative z-10">{item.description}</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-gray-400 italic py-4">{t('noLectures')}</div>
+                  <div className="text-gray-400 dark:text-gray-500 italic py-4">{t('noLectures')}</div>
                 )}
               </div>
             </div>
@@ -124,39 +127,41 @@ export const CourseDetailsPage: React.FC = () => {
           {/* Sidebar Booking Card */}
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-4">
-              <div className="bg-white p-6 rounded-2xl shadow-lg border border-indigo-50">
-                <h3 className="text-lg font-bold text-gray-900 mb-6">{t('bookingOptions')}</h3>
+              <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg dark:shadow-slate-900/50 border border-indigo-100 dark:border-slate-700">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">{t('bookingOptions')}</h3>
                 
                 {/* Details */}
                 <div className="mb-6 space-y-3">
-                  <div className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
-                    <p className="text-sm font-medium text-indigo-900 flex items-center gap-2">
+                  <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-100 dark:border-indigo-800/30">
+                    <p className="text-sm font-medium text-indigo-900 dark:text-indigo-300 flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       {t('flexibleSessions')}
                     </p>
-                    <p className="text-xs text-indigo-700 mt-2 pl-6 leading-relaxed">
+                    <p className="text-xs text-indigo-700 dark:text-indigo-400 mt-2 pl-6 leading-relaxed">
                       {t('dynamicSessions')}
                     </p>
                   </div>
                 </div>
 
                 {/* Price & Action */}
-                <div className="flex justify-center items-center mb-6 py-4 border-y border-gray-50">
+                <div className="flex justify-center items-center mb-6 py-4 border-y border-gray-50 dark:border-slate-700">
                   <div className="text-center">
-                    <span className="block text-xs text-indigo-600 font-bold uppercase tracking-widest mb-1">{t('pricingTitle')}</span>
-                    <span className="text-sm font-semibold text-gray-900">
+                    <span className="block text-xs text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-widest mb-1">{t('pricingTitle')}</span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-slate-200">
                       {t('perCourse')}
                     </span>
                   </div>
                 </div>
 
-                <button 
-                onClick={handleBookClick}
-                className="w-full flex items-center justify-center gap-3 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-1 active:scale-[0.98]"
-                >
-                <MessageCircle className="h-5 w-5" />
-                {t('confirmBooking')}
-                </button>
+                <div className="group">
+                  <button 
+                  onClick={handleBookClick}
+                  className="w-full flex items-center justify-center gap-3 bg-indigo-600 text-white py-4 rounded-xl font-bold transition-all duration-300 shadow-lg group-hover:bg-indigo-700 group-hover:shadow-xl group-hover:shadow-indigo-500/30 group-hover:-translate-y-1 group-hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                  <MessageCircle className="h-5 w-5" />
+                  {t('confirmBooking')}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

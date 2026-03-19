@@ -7,6 +7,7 @@ import { CoursesPage } from './pages/CoursesPage';
 import { CourseDetailsPage } from './pages/CourseDetailsPage';
 import { DataProvider } from './contexts/DataContext';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 import { DiscountPopup } from './components/DiscountPopup';
 import { InfoModal } from './components/InfoModal';
@@ -38,7 +39,7 @@ const Footer: React.FC = () => {
     };
 
     return (
-        <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <footer className="bg-white dark:bg-slate-900 text-gray-500 dark:text-slate-400 py-12 border-t border-gray-200 dark:border-slate-800 transition-colors duration-300">
             <InfoModal 
                 isOpen={modalConfig.isOpen} 
                 onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
@@ -46,37 +47,21 @@ const Footer: React.FC = () => {
                 message={modalConfig.message}
             />
             <div className="max-w-7xl mx-auto px-4 text-center">
-            <p className="mb-2 font-medium text-slate-300">{t('footerContact')}</p>
+            <p className="mb-2 font-medium text-gray-700 dark:text-slate-300">{t('footerContact')}</p>
             <p>&copy; {new Date().getFullYear()} {t('footerRights')}</p>
             <div className="mt-4 flex justify-center space-x-6 text-sm">
-                <a href="#" onClick={(e) => handleLinkClick(e, 'Privacy')} className="hover:text-white">{t('privacy')}</a>
-                <a href="#" onClick={(e) => handleLinkClick(e, 'Terms')} className="hover:text-white">{t('terms')}</a>
-                <a href="#" onClick={(e) => handleLinkClick(e, 'Support')} className="hover:text-white">{t('support')}</a>
+                <a href="#" onClick={(e) => handleLinkClick(e, 'Privacy')} className="hover:text-indigo-600 dark:hover:text-white transition-colors">{t('privacy')}</a>
+                <a href="#" onClick={(e) => handleLinkClick(e, 'Terms')} className="hover:text-indigo-600 dark:hover:text-white transition-colors">{t('terms')}</a>
+                <a href="#" onClick={(e) => handleLinkClick(e, 'Support')} className="hover:text-indigo-600 dark:hover:text-white transition-colors">{t('support')}</a>
             </div>
             </div>
         </footer>
     );
 };
 
-const ScrollToTop = () => {
-    const { pathname } = useLocation();
-
-    useEffect(() => {
-        // Use a small timeout to ensure the new page content has rendered
-        const timeoutId = setTimeout(() => {
-            window.scrollTo(0, 0);
-        }, 10);
-        
-        return () => clearTimeout(timeoutId);
-    }, [pathname]);
-
-    return null;
-};
-
 const AppContent: React.FC = () => {
     return (
-        <div className="flex flex-col min-h-screen">
-            <ScrollToTop />
+        <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300">
             <DiscountPopup />
             <Navbar />
             <main className="flex-grow pt-16">
@@ -95,13 +80,15 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <LanguageProvider>
-        <DataProvider>
-            <Router>
-                <AppContent />
-            </Router>
-        </DataProvider>
-    </LanguageProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+          <DataProvider>
+              <Router>
+                  <AppContent />
+              </Router>
+          </DataProvider>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 };
 

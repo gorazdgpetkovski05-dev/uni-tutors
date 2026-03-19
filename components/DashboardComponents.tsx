@@ -25,8 +25,8 @@ export const AiTutor: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-[500px]">
-      <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex justify-between items-center">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col h-[500px] transition-colors duration-300">
+      <div className="p-4 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex justify-between items-center">
         <div className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5" />
             <h3 className="font-bold">AI Tutor</h3>
@@ -34,13 +34,13 @@ export const AiTutor: React.FC = () => {
         <span className="text-xs bg-white/20 px-2 py-0.5 rounded text-white/90">Powered by Gemini</span>
       </div>
       
-      <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50/50">
+      <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50/50 dark:bg-slate-900/50">
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${
               m.role === 'user' 
               ? 'bg-indigo-600 text-white rounded-br-none' 
-              : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm'
+              : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-gray-200 rounded-bl-none shadow-sm'
             }`}>
               {m.text}
             </div>
@@ -48,7 +48,7 @@ export const AiTutor: React.FC = () => {
         ))}
         {loading && (
           <div className="flex justify-start">
-             <div className="bg-white border border-gray-200 p-3 rounded-2xl rounded-bl-none shadow-sm">
+             <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-3 rounded-2xl rounded-bl-none shadow-sm">
                 <div className="flex gap-1">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75"></div>
@@ -59,7 +59,7 @@ export const AiTutor: React.FC = () => {
         )}
       </div>
 
-      <div className="p-3 bg-white border-t border-gray-100">
+      <div className="p-3 bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700">
         <div className="relative">
           <input 
             type="text" 
@@ -67,7 +67,7 @@ export const AiTutor: React.FC = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Explain recursion..."
-            className="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+            className="w-full pl-4 pr-12 py-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all"
           />
           <button 
             onClick={handleSend}

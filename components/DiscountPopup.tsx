@@ -40,12 +40,12 @@ export const DiscountPopup: React.FC = () => {
           transition={{ type: "spring", damping: 20, stiffness: 300 }}
           className="fixed bottom-4 right-4 z-[100] max-w-sm w-full mx-auto md:right-8 md:bottom-8"
         >
-          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-indigo-100 relative">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden border-2 border-indigo-100 dark:border-indigo-500/30 relative transition-colors duration-300">
             <button 
               onClick={handleClose}
-              className="absolute top-2 right-2 p-1 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors z-10"
+              className="absolute top-2 right-2 p-1 bg-gray-100 dark:bg-slate-700 rounded-full hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors z-10"
             >
-              <X className="h-4 w-4 text-gray-500" />
+              <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
             </button>
             
             <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 text-white text-center relative overflow-hidden">
@@ -55,15 +55,15 @@ export const DiscountPopup: React.FC = () => {
             </div>
             
             <div className="p-5 text-center">
-              <div className="bg-indigo-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
-                <Gift className="h-8 w-8 text-indigo-600" />
+              <div className="bg-indigo-50 dark:bg-indigo-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
+                <Gift className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
               </div>
-              <p className="text-gray-600 mb-4 font-medium">
+              <p className="text-gray-600 dark:text-gray-300 mb-4 font-medium">
                 {t('discountDesc')}
               </p>
               <button 
                 onClick={handleButtonClick}
-                className="w-full flex items-center justify-center gap-2 py-2.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-green-500/30 hover:-translate-y-1 active:scale-95"
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-green-500/30 hover:-translate-y-2 hover:scale-105 active:scale-95"
               >
                 <MessageCircle className="h-5 w-5" />
                 {t('discountButton')}

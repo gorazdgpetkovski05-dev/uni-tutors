@@ -75,13 +75,13 @@ export const Home: React.FC = () => {
       <Hero />
       
       {/* HOW IT WORKS */}
-      <section className="py-24 bg-white overflow-hidden">
+      <section className="py-24 bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-300">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
           <FadeInSection className="text-center mb-16">
-            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
               {t('howItWorks')}
             </h2>
-            <p className="mt-4 text-xl text-gray-500 max-w-2xl mx-auto">
+            <p className="mt-4 text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
               {t('howItWorksSub')}
             </p>
           </FadeInSection>
@@ -102,20 +102,22 @@ export const Home: React.FC = () => {
               { icon: Calendar, title: t('step3Title'), desc: t('step3Desc') },
               { icon: ShieldCheck, title: t('step4Title'), desc: t('step4Desc') }
             ].map((step, idx) => (
-              <FadeInSection key={idx} delay={idx * 0.15} className="text-center bg-white p-4 group">
-                <div className="w-24 h-24 mx-auto bg-white rounded-full border-4 border-indigo-50 flex items-center justify-center mb-6 relative z-10 shadow-sm group-hover:border-indigo-200 transition-colors">
-                  <motion.div 
-                    whileHover={{ rotate: 10, scale: 1.1 }}
-                    className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg"
-                  >
-                    <step.icon className="h-8 w-8" />
-                  </motion.div>
-                  <div className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 border-white">
-                    {idx + 1}
+              <FadeInSection key={idx} delay={idx * 0.15} className="h-full group">
+                <div className="text-center bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm dark:shadow-none border border-gray-200 dark:border-slate-700 transition-all duration-300 ease-out group-hover:shadow-xl group-hover:shadow-indigo-500/20 dark:group-hover:shadow-indigo-500/30 group-hover:border-indigo-300 dark:group-hover:border-indigo-500 group-hover:-translate-y-2 h-full active:scale-[0.98]">
+                  <div className="w-24 h-24 mx-auto bg-white dark:bg-slate-900 rounded-full border-4 border-indigo-50 dark:border-slate-700 flex items-center justify-center mb-6 relative z-10 shadow-sm group-hover:border-indigo-200 dark:group-hover:border-indigo-500/30 transition-colors">
+                    <motion.div 
+                      whileHover={{ rotate: 10, scale: 1.1 }}
+                      className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg"
+                    >
+                      <step.icon className="h-8 w-8" />
+                    </motion.div>
+                    <div className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 border-white dark:border-slate-800">
+                      {idx + 1}
+                    </div>
                   </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{step.title}</h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{step.desc}</p>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
               </FadeInSection>
             ))}
           </div>
@@ -123,14 +125,14 @@ export const Home: React.FC = () => {
       </section>
 
       {/* BENEFITS GRID */}
-      <section className="py-24 bg-gray-50 overflow-hidden">
+      <section className="py-24 bg-gray-50 dark:bg-slate-800/50 overflow-hidden transition-colors duration-300">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeInSection direction="right">
-              <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-6">
-                {t('whyChoose')} <span className="text-indigo-600">UniTutors</span>?
+              <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl mb-6">
+                {t('whyChoose')} <span className="text-indigo-600 dark:text-indigo-400">UniTutors</span>?
               </h2>
-              <p className="text-lg text-gray-500 mb-8">
+              <p className="text-lg text-gray-500 dark:text-gray-400 mb-8">
                 {t('whyChooseSub')}
               </p>
               
@@ -150,13 +152,13 @@ export const Home: React.FC = () => {
                     className="flex gap-4 group"
                   >
                     <div className="flex-shrink-0 mt-1">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-600 group-hover:text-white transition-colors">
-                        <Check className="h-5 w-5 text-green-600 group-hover:text-white" />
+                      <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center group-hover:bg-green-600 group-hover:text-white transition-colors">
+                        <Check className="h-5 w-5 text-green-600 dark:text-green-400 group-hover:text-white" />
                       </div>
                     </div>
                     <div>
-                      <h4 className="text-lg font-bold text-gray-900">{item.title}</h4>
-                      <p className="text-gray-500">{item.desc}</p>
+                      <h4 className="text-lg font-bold text-gray-900 dark:text-white">{item.title}</h4>
+                      <p className="text-gray-500 dark:text-gray-400">{item.desc}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -180,35 +182,35 @@ export const Home: React.FC = () => {
       </section>
       
       {/* PRICING SECTION */}
-      <section id="pricing" className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute top-0 inset-x-0 h-64 bg-slate-900/5 -z-10 skew-y-3 transform origin-top-left"></div>
+      <section id="pricing" className="py-24 bg-white dark:bg-slate-900 relative overflow-hidden transition-colors duration-300">
+        <div className="absolute top-0 inset-x-0 h-64 bg-slate-900/5 dark:bg-slate-800/30 -z-10 skew-y-3 transform origin-top-left"></div>
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
           <FadeInSection className="text-center mb-16">
-            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
               {t('pricingTitle')}
             </h2>
-            <p className="mt-4 text-xl text-gray-500 max-w-2xl mx-auto">
+            <p className="mt-4 text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
               {t('pricingSub')}
             </p>
           </FadeInSection>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <FadeInSection className="h-full" delay={0.1}>
-              <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 hover:border-indigo-100 transition-all hover:shadow-xl h-full flex flex-col group">
-                <div className="h-14 w-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Clock className="h-7 w-7 text-indigo-600" />
+            <FadeInSection className="h-full group" delay={0.1}>
+              <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-slate-700 transition-all duration-300 ease-out group-hover:shadow-xl group-hover:shadow-indigo-500/30 dark:group-hover:shadow-indigo-500/40 group-hover:border-indigo-300 dark:group-hover:border-indigo-500 group-hover:-translate-y-2 h-full flex flex-col active:scale-[0.98]">
+                <div className="h-14 w-14 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Clock className="h-7 w-7 text-indigo-600 dark:text-indigo-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('singleLecture')}</h3>
-                <p className="text-gray-500 mb-6">{t('singleLectureDesc')}</p>
-                <div className="text-2xl font-bold text-indigo-600 mb-6">{t('perLecture')}</div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('singleLecture')}</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">{t('singleLectureDesc')}</p>
+                <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-6">{t('perLecture')}</div>
                 <ul className="space-y-4 mb-8 flex-1">
-                  <li className="flex items-center text-gray-600"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureLive')}</li>
-                  <li className="flex items-center text-gray-600"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureQA')}</li>
-                  <li className="flex items-center text-gray-600"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureMaterials')}</li>
+                  <li className="flex items-center text-gray-600 dark:text-gray-300"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureLive')}</li>
+                  <li className="flex items-center text-gray-600 dark:text-gray-300"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureQA')}</li>
+                  <li className="flex items-center text-gray-600 dark:text-gray-300"><span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>{t('featureMaterials')}</li>
                 </ul>
                 <button 
                   onClick={() => handleContactClick()}
-                  className="flex items-center justify-center gap-2 w-full text-center py-4 border-2 border-indigo-600 text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95"
+                  className="flex items-center justify-center gap-2 w-full text-center py-4 border-2 border-indigo-600 dark:border-indigo-500 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all duration-300 hover:-translate-y-2 hover:scale-105 hover:shadow-lg active:scale-95"
                 >
                   <BookOpen className="h-5 w-5" />
                   {t('browseCourses')}
@@ -216,12 +218,12 @@ export const Home: React.FC = () => {
               </div>
             </FadeInSection>
 
-            <FadeInSection className="h-full" delay={0.2}>
-              <div className="bg-slate-900 p-8 rounded-3xl shadow-2xl text-white relative overflow-hidden h-full flex flex-col transform hover:-translate-y-2 transition-all duration-300 hover:shadow-indigo-500/20">
-                 <div className="absolute top-0 right-0 bg-gradient-to-l from-yellow-400 to-yellow-500 text-slate-900 text-xs font-bold px-4 py-2 rounded-bl-2xl uppercase tracking-wider shadow-md">
+            <FadeInSection className="h-full group" delay={0.2}>
+              <div className="bg-slate-900 dark:bg-slate-800 p-8 rounded-3xl shadow-xl text-white relative overflow-hidden h-full flex flex-col transition-all duration-300 ease-out group-hover:shadow-2xl group-hover:shadow-indigo-500/40 group-hover:-translate-y-2 border border-slate-700/50 group-hover:border-indigo-500 dark:border-slate-700 dark:group-hover:border-indigo-500 active:scale-[0.98]">
+                 <div className="absolute top-0 right-0 bg-gradient-to-l from-yellow-400 to-yellow-500 dark:from-slate-900 dark:to-black text-slate-900 dark:text-yellow-400 text-xs font-bold px-4 py-2 rounded-bl-2xl uppercase tracking-wider shadow-md dark:border-b dark:border-l dark:border-slate-700">
                     {t('mostPopular')}
                  </div>
-                <div className="h-14 w-14 bg-white/10 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-sm">
+                <div className="h-14 w-14 bg-white/10 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-sm group-hover:scale-110 transition-transform">
                   <GraduationCap className="h-7 w-7 text-yellow-400" />
                 </div>
                 <h3 className="text-2xl font-bold mb-2">{t('fullCourseBundle')}</h3>
@@ -238,7 +240,7 @@ export const Home: React.FC = () => {
                 </ul>
                 <button 
                   onClick={() => handleContactClick()}
-                  className="flex items-center justify-center gap-2 w-full text-center py-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 font-bold rounded-xl hover:from-yellow-300 hover:to-yellow-400 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-yellow-500/40 hover:-translate-y-1 active:scale-95"
+                  className="flex items-center justify-center gap-2 w-full text-center py-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 font-bold rounded-xl hover:from-yellow-300 hover:to-yellow-400 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-yellow-500/40 hover:-translate-y-2 hover:scale-105 active:scale-95"
                 >
                   <BookOpen className="h-5 w-5" />
                   {t('browseCourses')}
@@ -273,7 +275,7 @@ export const Home: React.FC = () => {
                <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">{t('readyToBoost')}</h2>
                <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">{t('joinThousands')}</p>
                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                 <Link to="/courses" className="inline-flex items-center justify-center gap-3 text-indigo-900 bg-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-2 active:scale-95">
+                 <Link to="/courses" className="inline-flex items-center justify-center gap-3 text-indigo-900 bg-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-105 active:scale-95">
                     {t('browseCourses')} <ArrowRight className="h-5 w-5" />
                  </Link>
                </div>

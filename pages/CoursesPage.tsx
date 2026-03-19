@@ -23,7 +23,7 @@ export const CoursesPage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-800/50 dark:to-indigo-950 py-12 transition-colors duration-300">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -32,18 +32,18 @@ export const CoursesPage: React.FC = () => {
           className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{t('availableCourses')}</h1>
-            <p className="mt-2 text-gray-600">{t('selectSubject')}</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('availableCourses')}</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">{t('selectSubject')}</p>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-3">
              {/* University Filter */}
              <div className="relative">
-                <Filter className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Filter className="absolute left-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-500" />
                 <select
                   value={selectedUniversity}
                   onChange={(e) => setSelectedUniversity(e.target.value)}
-                  className="pl-10 pr-8 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white w-full sm:w-48 appearance-none cursor-pointer"
+                  className="pl-10 pr-8 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-white w-full sm:w-48 appearance-none cursor-pointer transition-colors"
                 >
                     <option value="All">{t('allUniversities')}</option>
                     {universities.filter(u => u !== 'All').map(uni => (
@@ -54,13 +54,13 @@ export const CoursesPage: React.FC = () => {
 
              {/* Search */}
              <div className="relative">
-                <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-500" />
                 <input 
                 type="text" 
                 placeholder={t('searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-64"
+                className="pl-10 pr-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-white w-full sm:w-64 transition-colors placeholder-gray-400 dark:placeholder-gray-500"
                 />
             </div>
           </div>
@@ -88,15 +88,15 @@ export const CoursesPage: React.FC = () => {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100 mt-4"
+            className="text-center py-20 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 mt-4 transition-colors"
           >
-            <div className="text-gray-400 mb-2">
+            <div className="text-gray-400 dark:text-gray-500 mb-2">
                 <Search className="h-10 w-10 mx-auto opacity-50" />
             </div>
-            <p className="text-gray-500 font-medium">{t('noCoursesFound')}</p>
+            <p className="text-gray-500 dark:text-gray-400 font-medium">{t('noCoursesFound')}</p>
             <button 
                 onClick={() => {setSearchTerm(''); setSelectedUniversity('All');}}
-                className="mt-4 text-indigo-600 font-bold hover:text-indigo-800 transition-all duration-300 hover:-translate-y-0.5"
+                className="mt-4 text-indigo-600 dark:text-indigo-400 font-bold hover:text-indigo-800 dark:hover:text-indigo-300 transition-all duration-300 hover:-translate-y-0.5"
             >
                 Clear Filters
             </button>

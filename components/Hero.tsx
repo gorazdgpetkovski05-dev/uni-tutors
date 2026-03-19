@@ -30,7 +30,7 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <div className="relative overflow-hidden bg-white min-h-[85vh] grid lg:grid-cols-2">
+    <div className="relative overflow-hidden bg-white dark:bg-slate-900 min-h-[85vh] grid lg:grid-cols-2 transition-colors duration-300">
       <div className="flex items-center px-4 sm:px-6 lg:px-12 xl:px-24 py-16 lg:py-24">
         <motion.div 
           variants={containerVariants}
@@ -40,16 +40,16 @@ export const Hero: React.FC = () => {
         >
           <motion.h1 
             variants={itemVariants}
-            className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl lg:leading-[1.1] will-change-transform will-change-opacity"
+            className="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white sm:text-5xl md:text-6xl lg:leading-[1.1] will-change-transform will-change-opacity"
           >
             <span className="block xl:inline">{t('heroTitle')}</span>{' '}
-            <span className="block text-indigo-600 xl:inline relative">
+            <span className="block text-indigo-600 dark:text-indigo-400 xl:inline relative">
               UniTutors MK
               <motion.svg 
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 1 }}
                 transition={{ duration: 1.5, delay: 1, ease: "easeInOut" }}
-                className="absolute w-full h-3 -bottom-1 left-0 text-yellow-300 -z-10" 
+                className="absolute w-full h-3 -bottom-1 left-0 text-yellow-300 dark:text-yellow-500 -z-10" 
                 viewBox="0 0 100 10" 
                 preserveAspectRatio="none"
               >
@@ -60,7 +60,7 @@ export const Hero: React.FC = () => {
           
           <motion.p 
             variants={itemVariants}
-            className="mt-6 text-base text-gray-500 sm:mt-8 sm:text-lg md:mt-8 md:text-xl"
+            className="mt-6 text-base text-gray-500 dark:text-gray-400 sm:mt-8 sm:text-lg md:mt-8 md:text-xl"
           >
             {t('heroSubtitle')}
           </motion.p>
@@ -71,7 +71,7 @@ export const Hero: React.FC = () => {
           >
             <Link
               to="/courses"
-              className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-lg hover:shadow-indigo-500/30 transform hover:-translate-y-1"
+              className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-2 hover:scale-105 active:scale-95"
             >
               {t('browseCourses')}
             </Link>
@@ -79,18 +79,18 @@ export const Hero: React.FC = () => {
 
           <motion.div 
             variants={itemVariants}
-            className="mt-10 flex flex-col sm:flex-row gap-6 text-sm text-gray-500"
+            className="mt-10 flex flex-col sm:flex-row gap-6 text-sm text-gray-500 dark:text-gray-400"
           >
              <div className="flex items-center gap-2">
-                <div className="bg-green-100 p-1 rounded-full"><CheckCircle2 className="h-4 w-4 text-green-600" /></div>
+                <div className="bg-green-100 dark:bg-green-900/30 p-1 rounded-full"><CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" /></div>
                 <span>{t('verifiedProfs')}</span>
              </div>
              <div className="flex items-center gap-2">
-                <div className="bg-green-100 p-1 rounded-full"><CheckCircle2 className="h-4 w-4 text-green-600" /></div>
+                <div className="bg-green-100 dark:bg-green-900/30 p-1 rounded-full"><CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" /></div>
                 <span>{t('onlineGroup')}</span>
              </div>
              <div className="flex items-center gap-2">
-                <div className="bg-green-100 p-1 rounded-full"><CheckCircle2 className="h-4 w-4 text-green-600" /></div>
+                <div className="bg-green-100 dark:bg-green-900/30 p-1 rounded-full"><CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" /></div>
                 <span>{t('flexPay')}</span>
              </div>
           </motion.div>
@@ -112,8 +112,8 @@ export const Hero: React.FC = () => {
               loading="eager"
               decoding="async"
             />
-            <div className="absolute inset-0 bg-indigo-900/10 mix-blend-multiply"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent hidden lg:block"></div>
+            <div className="absolute inset-0 bg-indigo-900/10 dark:bg-indigo-900/30 mix-blend-multiply"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-white dark:from-slate-900 via-transparent to-transparent hidden lg:block"></div>
             
             {/* Floating Decorative Elements */}
             <motion.div 
