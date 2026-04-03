@@ -9,6 +9,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { WHATSAPP_URL } from '../constants';
 import { ContactModal } from '../components/ContactModal';
+import { EnrollmentCount, RecentActivity, LiveViewers } from '../components/SocialProof';
 
 export const CourseDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -156,11 +157,11 @@ export const CourseDetailsPage: React.FC = () => {
 
             {/* Professor Card */}
             {professor && (
-              <div className="group">
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-200 dark:border-slate-700 flex items-center gap-4 transition-all duration-300 ease-out group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:shadow-2xl dark:group-hover:shadow-indigo-500/40 group-hover:border-indigo-300 dark:group-hover:border-indigo-500 active:scale-[0.98]">
+              <Link to={`/professor/${professor.id}`} className="block group">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-200 dark:border-slate-700 flex items-center gap-4 transition-all duration-300 ease-out group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:shadow-2xl dark:group-hover:shadow-indigo-500/40 group-hover:border-indigo-300 dark:group-hover:border-indigo-500 active:scale-[0.98] cursor-pointer">
                   <img src={professor.avatar} alt={professor.name} className="h-16 w-16 rounded-full border-2 border-indigo-100 dark:border-indigo-900" />
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">{professor.name}</h3>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{professor.name}</h3>
                     <p className="text-indigo-600 dark:text-indigo-400 text-sm font-medium">{professor.specialty}</p>
                     <div className="flex items-center gap-1 mt-1">
                       <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
@@ -172,8 +173,9 @@ export const CourseDetailsPage: React.FC = () => {
                       )}
                     </div>
                   </div>
+                  <ArrowLeft className="h-5 w-5 text-gray-300 dark:text-gray-600 ml-auto rotate-180 group-hover:text-indigo-500 transition-colors" />
                 </div>
-              </div>
+              </Link>
             )}
 
             {/* Course Curriculum */}
@@ -237,12 +239,12 @@ export const CourseDetailsPage: React.FC = () => {
                     <div key={review.id} className="flex gap-4 border-b border-gray-100 dark:border-slate-700 last:border-0 pb-5 last:pb-0">
                       <img
                         src={review.student?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.student?.full_name || 'S')}&background=6366f1&color=fff`}
-                        alt={review.student?.full_name}
+                        alt={review.student?.full_name || t('student')}
                         className="w-10 h-10 rounded-full flex-shrink-0 object-cover"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <p className="font-semibold text-gray-900 dark:text-white text-sm">{review.student?.full_name || 'Student'}</p>
+                          <p className="font-semibold text-gray-900 dark:text-white text-sm">{review.student?.full_name || t('student')}</p>
                           <div className="flex items-center gap-1">
                             {[1,2,3,4,5].map(i => (
                               <Star key={i} className={`h-3.5 w-3.5 ${i <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
@@ -265,7 +267,16 @@ export const CourseDetailsPage: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-4">
               <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg dark:shadow-slate-900/50 border border-indigo-100 dark:border-slate-700">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">{t('bookingOptions')}</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">{t('bookingOptions')}</h3>
+
+                {/* Social Proof */}
+                {id && (
+                  <div className="flex flex-col gap-1.5 mb-4 pb-4 border-b border-gray-100 dark:border-slate-700">
+                    <EnrollmentCount courseId={id} />
+                    <RecentActivity courseId={id} />
+                    <LiveViewers />
+                  </div>
+                )}
 
                 {/* Details */}
                 <div className="mb-6 space-y-3">

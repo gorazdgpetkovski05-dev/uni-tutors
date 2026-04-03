@@ -505,3 +505,148 @@ create trigger set_updated_at before update on support_tickets
 -- After creating professor users, run:
 -- UPDATE profiles SET role = 'professor' WHERE id = '<professor-user-id>';
 -- INSERT INTO professors (id, specialty, custom_tag) VALUES ('<professor-user-id>', 'Computer Science', 'Top Rated');
+
+-- ============================================
+-- SCHEMA MIGRATIONS (safe to re-run)
+-- Add missing columns if not present
+-- ============================================
+
+-- Profiles: XP and Level for gamification
+alter table profiles add column if not exists xp int not null default 0;
+alter table profiles add column if not exists level int not null default 1;
+
+-- Student XP tracking table
+create table if not exists student_xp (
+  id uuid default uuid_generate_v4() primary key,
+  student_id uuid references profiles(id) on delete cascade not null,
+  amount int not null,
+  reason text not null default '',
+  reference_id uuid,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_student_xp_student on student_xp(student_id);
+
+-- Student XP table RLS
+alter table student_xp enable row level security;
+
+create policy "Students can view own XP" on student_xp
+  for select using (auth.uid() = student_id);
+
+create policy "System can insert XP" on student_xp
+  for insert with check (is_admin() or auth.uid() = student_id);
+
+create policy "Admins can manage XP" on student_xp
+  for all using (is_admin());
+
+-- Professors: bio, avatar_url, updated_at
+alter table professors add column if not exists bio text not null default '';
+alter table professors add column if not exists avatar_url text;
+alter table professors add column if not exists rating numeric not null default 0;
+alter table professors add column if not exists updated_at timestamptz not null default now();
+
+create trigger if not exists set_updated_at before update on professors
+  for each row execute function update_updated_at();
+
+-- Courses: bilingual fields
+alter table courses add column if not exists title_en text;
+alter table courses add column if not exists description_en text;
+
+-- Curriculum items: bilingual fields
+alter table curriculum_items add column if not exists title_en text;
+alter table curriculum_items add column if not exists description_en text;
+
+-- Midterms: bilingual fields
+alter table midterms add column if not exists title_en text;
+
+-- Enrollments: payment tracking
+alter table enrollments add column if not exists discount_percent numeric not null default 0;
+alter table enrollments add column if not exists price_paid numeric;
+
+-- XP auto-update trigger: recalculate XP and level on student_xp insert
+create or replace function update_student_xp()
+returns trigger as $$
+declare
+  total_xp int;
+  new_level int;
+begin
+  select coalesce(sum(amount), 0) into total_xp
+  from student_xp where student_id = new.student_id;
+
+  new_level := case
+    when total_xp >= 500 then 3
+    when total_xp >= 200 then 2
+    else 1
+  end;
+
+  update profiles set xp = total_xp, level = new_level
+  where id = new.student_id;
+
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists on_xp_insert on student_xp;
+create trigger on_xp_insert
+  after insert on student_xp
+  for each row execute function update_student_xp();
+
+-- ============================================
+-- FAVORITES (Wishlist)
+-- ============================================
+
+create table if not exists favorites (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references profiles(id) on delete cascade not null,
+  course_id uuid references courses(id) on delete cascade not null,
+  created_at timestamptz not null default now(),
+  unique(user_id, course_id)
+);
+
+alter table favorites enable row level security;
+
+create policy "Users can manage own favorites" on favorites
+  for all using (auth.uid() = user_id);
+
+-- ============================================
+-- MESSAGES (Student-Professor messaging)
+-- ============================================
+
+create table if not exists messages (
+  id uuid default uuid_generate_v4() primary key,
+  enrollment_id uuid references enrollments(id) on delete cascade not null,
+  sender_id uuid references profiles(id) on delete cascade not null,
+  content text not null,
+  read boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_messages_enrollment on messages(enrollment_id);
+
+alter table messages enable row level security;
+
+create policy "Users can view messages for their enrollments" on messages
+  for select using (
+    exists (select 1 from enrollments where enrollments.id = messages.enrollment_id
+      and (enrollments.student_id = auth.uid() or exists (
+        select 1 from courses where courses.id = enrollments.course_id and courses.professor_id = auth.uid()
+      ) or is_admin()))
+  );
+
+create policy "Users can send messages to their enrollments" on messages
+  for insert with check (
+    auth.uid() = sender_id and exists (
+      select 1 from enrollments where enrollments.id = messages.enrollment_id
+      and (enrollments.student_id = auth.uid() or exists (
+        select 1 from courses where courses.id = enrollments.course_id and courses.professor_id = auth.uid()
+      ))
+    )
+  );
+
+create policy "Users can mark own messages as read" on messages
+  for update using (
+    exists (select 1 from enrollments where enrollments.id = messages.enrollment_id
+      and (enrollments.student_id = auth.uid() or exists (
+        select 1 from courses where courses.id = enrollments.course_id and courses.professor_id = auth.uid()
+      )))
+  );

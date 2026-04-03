@@ -42,6 +42,7 @@ export const NotificationBell: React.FC = () => {
     <div ref={ref} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={t('notifications')}
         className="relative p-2 rounded-lg bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-all"
       >
         <Bell className="h-5 w-5" />

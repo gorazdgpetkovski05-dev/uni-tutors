@@ -36,7 +36,7 @@ export const SessionsTab: React.FC<SessionsTabProps> = ({ enrollments, addSessio
   };
 
   const handleAddSession = async (enrollmentId: string) => {
-    const title = newSessionTitle[enrollmentId] || `Session ${(sessions[enrollmentId]?.length || 0) + 1}`;
+    const title = newSessionTitle[enrollmentId] || `${t('session')} ${(sessions[enrollmentId]?.length || 0) + 1}`;
     await addSession(enrollmentId, title, 'scheduled');
     setNewSessionTitle({ ...newSessionTitle, [enrollmentId]: '' });
     fetchSessions();
@@ -52,7 +52,7 @@ export const SessionsTab: React.FC<SessionsTabProps> = ({ enrollments, addSessio
             className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
             <div className="text-left">
               <p className="font-bold text-gray-900 dark:text-white">{(e as any).student?.full_name} → {(e as any).course?.title}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{sessions[e.id]?.length || 0} sessions • {e.status}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{sessions[e.id]?.length || 0} {t('lectures').toLowerCase()} • {t(e.status)}</p>
             </div>
             {expanded === e.id ? <ChevronUp className="h-5 w-5 text-gray-400" /> : <ChevronDown className="h-5 w-5 text-gray-400" />}
           </button>

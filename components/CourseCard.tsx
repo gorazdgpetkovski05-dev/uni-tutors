@@ -1,10 +1,13 @@
 
 import React from 'react';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight, Star, Heart } from 'lucide-react';
 import { Course } from '../types';
 import { useData } from '../contexts/DataContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useFavorites } from '../hooks/useFavorites';
+import { VerifiedBadge, TopRatedBadge } from './badges/TrustBadges';
 
 interface CourseCardProps {
   course: Course;
@@ -14,6 +17,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   const { professors } = useData();
   const professor = professors.find(p => p.id === course.professorId);
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { favorites, toggleFavorite } = useFavorites();
+  const isFavorited = favorites.has(course.id);
 
   return (
     <Link to={`/courses/${course.id}`} className="block group h-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-600 rounded-2xl">
@@ -22,6 +29,15 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         <div className="relative h-48 overflow-hidden">
           <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors duration-300 z-10"></div>
           <img src={course.image} alt={course.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out" loading="lazy" decoding="async" />
+          {user && (
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(course.id); }}
+              aria-label={isFavorited ? t('removeFromFavorites') : t('addToFavorites')}
+              className="absolute top-4 left-4 z-20 p-1.5 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm shadow-sm hover:scale-110 transition-transform duration-200"
+            >
+              <Heart className={`h-4 w-4 ${isFavorited ? 'text-red-500 fill-red-500' : 'text-gray-500 dark:text-gray-400'}`} />
+            </button>
+          )}
           <div className="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-indigo-600 dark:text-indigo-400 z-20 shadow-sm">
             {course.code}
           </div>
@@ -31,12 +47,20 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{course.title}</h3>
           <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-2">{course.description}</p>
           
-          <div className="flex items-center gap-3 mb-3">
+          <div
+            className="flex items-center gap-3 mb-3 cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 -mx-2 px-2 py-1 rounded-lg transition-colors"
+            onClick={(e) => { if (professor) { e.preventDefault(); e.stopPropagation(); navigate(`/professor/${professor.id}`); } }}
+          >
             <img src={professor?.avatar || 'https://ui-avatars.com/api/?name=Prof'} alt={professor?.name} className="h-8 w-8 rounded-full border border-gray-200 dark:border-slate-600" loading="lazy" />
             <div className="text-sm">
-              <p className="font-medium text-gray-900 dark:text-slate-200">{professor?.name || t('unknownProfessor')}</p>
+              <p className="font-medium text-gray-900 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{professor?.name || t('unknownProfessor')}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">{professor?.specialty}</p>
             </div>
+          </div>
+
+          <div className="flex flex-wrap gap-1.5 mb-1">
+            <VerifiedBadge verified={true} />
+            {professor?.rating !== undefined && <TopRatedBadge rating={professor.rating} />}
           </div>
 
           {course.reviewCount !== undefined && course.reviewCount > 0 && course.averageRating !== undefined ? (

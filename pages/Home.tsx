@@ -8,6 +8,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { CourseCard } from '../components/CourseCard';
 import { supabase } from '../lib/supabase';
 import { motion, useInView, useSpring, useTransform, AnimatePresence } from 'motion/react';
+import { VerifiedBadge } from '../components/badges/TrustBadges';
 
 const Counter: React.FC<{ value: string, suffix?: string }> = ({ value, suffix = "" }) => {
   const ref = useRef(null);
@@ -121,10 +122,10 @@ export const Home: React.FC = () => {
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { value: landingPageData?.statsStudents ?? "1200", label: t('statsStudents') || "Students", suffix: "+" },
-              { value: landingPageData?.statsSuccessStories ?? "450", label: t('statsSuccess') || "Success Stories", suffix: "+" },
-              { value: landingPageData?.statsLectures ?? "3500", label: t('statsLectures') || "Lectures", suffix: "+" },
-              { value: landingPageData?.statsPassRate ?? "98", label: t('statsPassRate') || "Pass Rate", suffix: "%" },
+              { value: landingPageData?.statsStudents ?? "1200", label: t('statsStudents'), suffix: "+" },
+              { value: landingPageData?.statsSuccessStories ?? "450", label: t('statsSuccess'), suffix: "+" },
+              { value: landingPageData?.statsLectures ?? "3500", label: t('statsLectures'), suffix: "+" },
+              { value: landingPageData?.statsPassRate ?? "98", label: t('statsPassRate'), suffix: "%" },
             ].map((stat, idx) => (
               <FadeInSection key={idx} delay={idx * 0.1} className="text-center">
                 <div className="text-4xl font-extrabold text-indigo-600 dark:text-indigo-400 mb-2">
@@ -355,7 +356,10 @@ export const Home: React.FC = () => {
                       alt={prof.name}
                       className="w-20 h-20 rounded-full mx-auto mb-4 object-cover ring-4 ring-indigo-50 dark:ring-indigo-900/30"
                     />
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{prof.name}</h3>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 flex items-center justify-center gap-1.5">
+                      {prof.name}
+                      <VerifiedBadge verified={true} />
+                    </h3>
                     <p className="text-indigo-600 dark:text-indigo-400 text-sm font-medium mb-3">{prof.specialty}</p>
                     {prof.rating > 0 && (
                       <div className="flex items-center justify-center gap-2 mb-4">
@@ -366,7 +370,7 @@ export const Home: React.FC = () => {
                     {(prof.courseCount ?? 0) > 0 && (
                       <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{prof.courseCount} {t('courses')}</p>
                     )}
-                    <Link to="/courses" className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
+                    <Link to={`/professor/${prof.id}`} className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
                       {t('viewProfile')} <ArrowRight className="h-4 w-4" />
                     </Link>
                   </div>
@@ -399,7 +403,7 @@ export const Home: React.FC = () => {
                     </div>
                     <p className="text-gray-600 dark:text-gray-300 italic flex-1 mb-4">"{review.comment}"</p>
                     <div className="border-t border-gray-100 dark:border-slate-700 pt-4">
-                      <p className="font-semibold text-gray-900 dark:text-white text-sm">{review.profiles?.full_name ?? 'Student'}</p>
+                      <p className="font-semibold text-gray-900 dark:text-white text-sm">{review.profiles?.full_name ?? t('student')}</p>
                       {review.courses?.title && (
                         <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">{review.courses.title}</p>
                       )}

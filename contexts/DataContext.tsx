@@ -63,7 +63,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .from('professors')
           .select('id, specialty, custom_tag, profiles(full_name, avatar_url)');
 
-        if (profError) console.error('Error fetching professors:', profError);
+        if (profError && import.meta.env.DEV) console.error('Error fetching professors:', profError.message);
 
         const mappedProfessors: Professor[] = (profData || []).map((p: any) => ({
           id: p.id,
@@ -84,7 +84,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .order('created_at', { ascending: true });
 
         if (courseError) {
-          console.error('Error fetching courses:', courseError);
+          if (import.meta.env.DEV) console.error('Error fetching courses:', courseError.message);
           return;
         }
 
@@ -97,14 +97,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .in('course_id', courseIds)
           .order('sort_order', { ascending: true });
 
-        if (currError) console.error('Error fetching curriculum:', currError);
+        if (currError && import.meta.env.DEV) console.error('Error fetching curriculum:', currError.message);
 
         const { data: midtermData, error: midError } = await supabase
           .from('midterms')
           .select('*')
           .in('course_id', courseIds);
 
-        if (midError) console.error('Error fetching midterms:', midError);
+        if (midError && import.meta.env.DEV) console.error('Error fetching midterms:', midError.message);
 
         // Fetch average ratings per course
         const { data: ratingData } = await supabase
@@ -119,12 +119,17 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           ratingsMap[r.course_id].count += 1;
         });
 
+        // Build professor name lookup
+        const profNameMap: Record<string, string> = {};
+        mappedProfessors.forEach(p => { profNameMap[p.id] = p.name; });
+
         const mappedCourses: Course[] = (courseData || []).map((c: any) => ({
           id: c.id,
           title: pick(c, 'title'),
           code: c.code,
           description: pick(c, 'description'),
           professorId: c.professor_id || '',
+          professorName: profNameMap[c.professor_id] || undefined,
           image: c.image || '',
           university: c.university || '',
           priceSingle: c.price_single,
@@ -153,12 +158,31 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }));
         setCourses(mappedCourses);
 
+        // Fetch professor ratings from reviews
+        const { data: profRatingData } = await supabase
+          .from('reviews')
+          .select('professor_id, rating');
+
+        const profRatingsMap: Record<string, { sum: number; count: number }> = {};
+        (profRatingData || []).forEach((r: any) => {
+          if (!profRatingsMap[r.professor_id]) profRatingsMap[r.professor_id] = { sum: 0, count: 0 };
+          profRatingsMap[r.professor_id].sum += r.rating;
+          profRatingsMap[r.professor_id].count += 1;
+        });
+
         // Compute course count per professor and update mappedProfessors
         const profCourseCount: Record<string, number> = {};
         mappedCourses.forEach(c => { if (c.professorId) profCourseCount[c.professorId] = (profCourseCount[c.professorId] || 0) + 1; });
-        mappedProfessors.forEach(p => { p.courseCount = profCourseCount[p.id] || 0; });
+        mappedProfessors.forEach(p => {
+          p.courseCount = profCourseCount[p.id] || 0;
+          if (profRatingsMap[p.id]) {
+            p.rating = Math.round((profRatingsMap[p.id].sum / profRatingsMap[p.id].count) * 10) / 10;
+          }
+        });
+
+        setProfessors(mappedProfessors);
       } catch (err) {
-        console.error('Error fetching data from Supabase:', err);
+        if (import.meta.env.DEV) console.error('Error fetching data from Supabase:', err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);
       }

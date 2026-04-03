@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Eye, EyeOff, Trash2, Edit3, Save, X } from 'lucide-react';
 import { motion } from 'motion/react';
 import { supabase } from '../../lib/supabase';
@@ -10,7 +10,13 @@ type EditableCourse = {
   image: string; university: string;
   price_full: number; price_single: number; custom_price_display: string;
   status: string;
+  professor_id: string;
 };
+
+interface ProfessorOption {
+  id: string;
+  full_name: string;
+}
 
 interface CoursesTabProps {
   courses: CourseRecord[];
@@ -21,12 +27,19 @@ interface CoursesTabProps {
 
 export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseStatus, fetchAll, t }) => {
   const [showAdd, setShowAdd] = useState(false);
-  const [newCourse, setNewCourse] = useState({ title: '', code: '', description: '', university: '', price_full: 0, price_single: 0, image: '' });
+  const [newCourse, setNewCourse] = useState({ title: '', code: '', description: '', university: '', price_full: 0, price_single: 0, image: '', professor_id: '' });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<EditableCourse>({
     title: '', title_en: '', code: '', description: '', description_en: '',
-    image: '', university: '', price_full: 0, price_single: 0, custom_price_display: '', status: 'draft',
+    image: '', university: '', price_full: 0, price_single: 0, custom_price_display: '', status: 'draft', professor_id: '',
   });
+  const [professors, setProfessors] = useState<ProfessorOption[]>([]);
+
+  useEffect(() => {
+    supabase.from('professors').select('id, profiles(full_name)').then(({ data }) => {
+      if (data) setProfessors(data.map((p: any) => ({ id: p.id, full_name: p.profiles?.full_name || 'Unknown' })));
+    });
+  }, []);
 
   const startEdit = (course: CourseRecord) => {
     setEditingId(course.id);
@@ -42,22 +55,25 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
       price_single: course.price_single ?? 0,
       custom_price_display: (course as any).custom_price_display || '',
       status: course.status || 'draft',
+      professor_id: course.professor_id || '',
     });
   };
 
   const saveEdit = async () => {
     if (!editingId) return;
     const { error } = await supabase.from('courses').update(editForm).eq('id', editingId);
-    if (error) { alert(`Failed to save: ${error.message}`); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Save failed:', error.message); alert(t('operationFailed')); return; }
     setEditingId(null);
     fetchAll();
   };
 
   const addCourse = async () => {
-    const { error } = await supabase.from('courses').insert({ ...newCourse, status: 'draft' });
-    if (error) { alert(`Failed to add course: ${error.message}`); return; }
+    const courseData: any = { ...newCourse, status: 'draft' };
+    if (!courseData.professor_id) delete courseData.professor_id;
+    const { error } = await supabase.from('courses').insert(courseData);
+    if (error) { if (import.meta.env.DEV) console.error('Add course failed:', error.message); alert(t('operationFailed')); return; }
     setShowAdd(false);
-    setNewCourse({ title: '', code: '', description: '', university: '', price_full: 0, price_single: 0, image: '' });
+    setNewCourse({ title: '', code: '', description: '', university: '', price_full: 0, price_single: 0, image: '', professor_id: '' });
     fetchAll();
   };
 
@@ -83,6 +99,12 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
             <input placeholder={t('imageUrl')} value={newCourse.image} onChange={e => setNewCourse({...newCourse, image: e.target.value})} className={inputCls} />
             <input type="number" placeholder={t('priceSingle')} value={newCourse.price_single || ''} onChange={e => setNewCourse({...newCourse, price_single: Number(e.target.value)})} className={inputCls} />
             <input type="number" placeholder={t('priceFull')} value={newCourse.price_full || ''} onChange={e => setNewCourse({...newCourse, price_full: Number(e.target.value)})} className={inputCls} />
+            <div>
+              <select value={newCourse.professor_id} onChange={e => setNewCourse({...newCourse, professor_id: e.target.value})} className={inputCls}>
+                <option value="">{t('selectProfessor')}</option>
+                {professors.map(p => <option key={p.id} value={p.id}>{p.full_name}</option>)}
+              </select>
+            </div>
           </div>
           <textarea placeholder={t('descriptionLabel')} value={newCourse.description} onChange={e => setNewCourse({...newCourse, description: e.target.value})} rows={3}
             className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white mb-4 resize-none" />
@@ -99,7 +121,10 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
             <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="font-bold text-gray-900 dark:text-white">{course.title}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{course.code} • {course.university} • {course.price_single}/{course.price_full} MKD</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {course.code} • {course.university} • {course.price_single}/{course.price_full} MKD
+                  {course.professor_id && ` • ${professors.find(p => p.id === course.professor_id)?.full_name || t('unknownProfessor')}`}
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <button onClick={() => editingId === course.id ? setEditingId(null) : startEdit(course)}
@@ -128,21 +153,21 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
                   course.status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
                   course.status === 'draft' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
                   'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-                }`}>{course.status}</span>
+                }`}>{course.status === 'published' ? t('published') : course.status === 'draft' ? t('draft') : t('archived')}</span>
               </div>
             </div>
 
             {editingId === course.id && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
                 className="border-t border-gray-100 dark:border-slate-700 p-5 bg-gray-50 dark:bg-slate-900/50">
-                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Edit Course</p>
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">{t('editCourse')}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                   <div>
-                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Title (MK)</label>
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t('titleMk')}</label>
                     <input value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} className={inputCls} />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Title (EN)</label>
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t('titleEn')}</label>
                     <input value={editForm.title_en} onChange={e => setEditForm({...editForm, title_en: e.target.value})} className={inputCls} />
                   </div>
                   <div>
@@ -162,7 +187,7 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
                     <input type="number" value={editForm.price_full || ''} onChange={e => setEditForm({...editForm, price_full: Number(e.target.value)})} className={inputCls} />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Custom Price Display</label>
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t('customPriceDisplay')}</label>
                     <input value={editForm.custom_price_display} onChange={e => setEditForm({...editForm, custom_price_display: e.target.value})} placeholder="e.g. From 1200 MKD" className={inputCls} />
                   </div>
                   <div>
@@ -170,28 +195,35 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
                     <input value={editForm.image} onChange={e => setEditForm({...editForm, image: e.target.value})} className={inputCls} />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Status</label>
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t('statusLabel')}</label>
                     <select value={editForm.status} onChange={e => setEditForm({...editForm, status: e.target.value})} className={inputCls}>
-                      <option value="draft">Draft</option>
-                      <option value="published">Published</option>
-                      <option value="archived">Archived</option>
+                      <option value="draft">{t('draft')}</option>
+                      <option value="published">{t('published')}</option>
+                      <option value="archived">{t('archived')}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t('professor')}</label>
+                    <select value={editForm.professor_id} onChange={e => setEditForm({...editForm, professor_id: e.target.value})} className={inputCls}>
+                      <option value="">{t('selectProfessor')}</option>
+                      {professors.map(p => <option key={p.id} value={p.id}>{p.full_name}</option>)}
                     </select>
                   </div>
                 </div>
                 <div className="mb-3">
-                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Description (MK)</label>
+                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t('descriptionMk')}</label>
                   <textarea value={editForm.description} onChange={e => setEditForm({...editForm, description: e.target.value})} rows={3}
                     className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-gray-900 dark:text-white resize-none" />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Description (EN)</label>
+                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t('descriptionEn')}</label>
                   <textarea value={editForm.description_en} onChange={e => setEditForm({...editForm, description_en: e.target.value})} rows={3}
                     className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-gray-900 dark:text-white resize-none" />
                 </div>
                 <div className="flex gap-2">
                   <button onClick={saveEdit}
                     className="flex items-center gap-2 px-5 py-2 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition-colors">
-                    <Save className="h-4 w-4" /> Save Changes
+                    <Save className="h-4 w-4" /> {t('saveChanges')}
                   </button>
                   <button onClick={() => setEditingId(null)}
                     className="flex items-center gap-2 px-5 py-2 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 font-bold text-sm rounded-xl transition-colors">

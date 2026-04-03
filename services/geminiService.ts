@@ -46,7 +46,9 @@ export const chatWithGemini = async (message: string, history: string[] = []) =>
 
     return response.text || "I couldn't generate a response. Please try again.";
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    if (import.meta.env.DEV) {
+      console.error("Gemini API Error:", error instanceof Error ? error.message : 'Unknown error');
+    }
     return "Sorry, I'm having trouble connecting to the knowledge base right now.";
   }
 };
@@ -93,7 +95,9 @@ Recommend exactly 3 courses from the available list above that would be most use
       .map(title => allCourses.find(c => c.title === title))
       .filter(Boolean) as Course[];
   } catch (error) {
-    console.error('Gemini recommendations error:', error);
+    if (import.meta.env.DEV) {
+      console.error('Gemini recommendations error:', error instanceof Error ? error.message : 'Unknown error');
+    }
     return [];
   }
 };

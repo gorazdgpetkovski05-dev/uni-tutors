@@ -38,7 +38,7 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ proposals, updatePro
                 p.status === 'approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
                 p.status === 'in_review' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
                 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-              }`}>{p.status}</span>
+              }`}>{t(p.status === 'in_review' ? 'inProgress' : p.status)}</span>
             </div>
           </div>
         </div>

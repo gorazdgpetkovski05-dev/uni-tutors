@@ -201,6 +201,15 @@ export interface SupportTicketMessage {
   sender?: Profile;
 }
 
+export interface Message {
+  id: string;
+  enrollment_id: string;
+  sender_id: string;
+  content: string;
+  read: boolean;
+  created_at: string;
+}
+
 export type BookingType = 'single' | 'full' | 'midterm';
 
 export interface LandingPageData {

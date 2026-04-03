@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
 import { Enrollment, Session as SessionRecord, CourseRecord, StudentXP, Review } from '../types';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import {
   BookOpen, Clock, CheckCircle2, XCircle, AlertCircle, LogOut,
@@ -15,23 +15,43 @@ import { ReviewForm } from '../components/reviews/ReviewForm';
 import { XPProgressCard } from '../components/dashboard/XPProgressCard';
 import { SessionCalendar } from '../components/dashboard/SessionCalendar';
 import { UpcomingSessionsCard } from '../components/dashboard/UpcomingSessionsCard';
+import { CourseProgressCard } from '../components/dashboard/CourseProgressCard';
+import { StreakCard } from '../components/dashboard/StreakCard';
+import { SuccessModal } from '../components/SuccessModal';
+import { MessageThread } from '../components/messaging/MessageThread';
 
 // ─── Student Dashboard ─────────────────────────────────────────────────────────
 const StudentDashboard: React.FC = () => {
   const { user, profile, signOut } = useAuth();
   const { t } = useLanguage();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [enrollments, setEnrollments] = useState<(Enrollment & { course?: CourseRecord })[]>([]);
   const [sessions, setSessions] = useState<SessionRecord[]>([]);
   const [xpHistory, setXpHistory] = useState<StudentXP[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'courses' | 'history' | 'support'>('courses');
   const [reviewEnrollment, setReviewEnrollment] = useState<Enrollment | null>(null);
+  const [enrollSuccess, setEnrollSuccess] = useState(false);
+  const [messageEnrollment, setMessageEnrollment] = useState<(Enrollment & { course?: CourseRecord }) | null>(null);
+
+  // Detect enrollment success from URL param
+  useEffect(() => {
+    if (searchParams.get('enrolled') === 'true') {
+      setEnrollSuccess(true);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Support ticket state
   const [ticketSubject, setTicketSubject] = useState('');
   const [ticketDesc, setTicketDesc] = useState('');
   const [ticketSubmitting, setTicketSubmitting] = useState(false);
   const [ticketSuccess, setTicketSuccess] = useState(false);
+
+  // Profile edit state
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [editName, setEditName] = useState(profile?.full_name || '');
+  const [profileSaveSuccess, setProfileSaveSuccess] = useState(false);
 
   useEffect(() => { fetchData(); }, [user]);
 
@@ -60,11 +80,26 @@ const StudentDashboard: React.FC = () => {
   const submitSupportTicket = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    const sanitizedSubject = ticketSubject.trim().slice(0, 200);
+    const sanitizedDesc = ticketDesc.trim().slice(0, 2000);
+    if (!sanitizedSubject || !sanitizedDesc) return;
     setTicketSubmitting(true);
-    await supabase.from('support_tickets').insert({ user_id: user.id, subject: ticketSubject, description: ticketDesc });
+    const { error: ticketError } = await supabase.from('support_tickets').insert({ user_id: user.id, subject: sanitizedSubject, description: sanitizedDesc });
+    if (ticketError) { console.error('Failed to submit ticket:', ticketError.message); setTicketSubmitting(false); return; }
     setTicketSubject(''); setTicketDesc('');
     setTicketSubmitting(false); setTicketSuccess(true);
     setTimeout(() => setTicketSuccess(false), 3000);
+  };
+
+  const saveProfile = async () => {
+    if (!user) return;
+    const sanitizedName = editName.trim().slice(0, 100);
+    if (!sanitizedName) return;
+    await supabase.from('profiles').update({ full_name: sanitizedName }).eq('id', user.id);
+    setEditingProfile(false);
+    setProfileSaveSuccess(true);
+    setTimeout(() => setProfileSaveSuccess(false), 3000);
+    fetchData();
   };
 
   const statusColors: Record<string, string> = {
@@ -114,11 +149,45 @@ const StudentDashboard: React.FC = () => {
         </div>
         <div className="flex items-center gap-3">
           <NotificationBell />
+          <button onClick={() => setEditingProfile(!editingProfile)} className="flex items-center gap-2 px-4 py-2 text-sm bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors">
+            <User className="h-4 w-4" /> {t('editProfile')}
+          </button>
           <button onClick={signOut} className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
             <LogOut className="h-4 w-4" /> {t('logout')}
           </button>
         </div>
       </div>
+
+      {/* Profile Edit */}
+      {profileSaveSuccess && (
+        <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl text-green-700 dark:text-green-400 text-sm flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4" /> {t('profileUpdated')}
+        </div>
+      )}
+      {editingProfile && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-200 dark:border-slate-700 mb-6">
+          <h3 className="font-bold text-gray-900 dark:text-white mb-4">{t('editProfile')}</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('fullName')}</label>
+              <input type="text" value={editName} onChange={e => setEditName(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder={t('fullName')} />
+            </div>
+            <div className="flex gap-3">
+              <button onClick={saveProfile}
+                className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all">
+                <CheckCircle2 className="h-4 w-4" /> {t('saveChanges')}
+              </button>
+              <button onClick={() => { setEditingProfile(false); setEditName(profile?.full_name || ''); }}
+                className="px-6 py-2.5 text-gray-600 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                {t('cancel')}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Stats row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -144,11 +213,14 @@ const StudentDashboard: React.FC = () => {
         ))}
       </div>
 
-      {/* XP + Calendar + Upcoming row */}
+      {/* XP + Streak + Calendar + Upcoming row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         <XPProgressCard xp={profile?.xp || 0} level={profile?.level || 1} xpHistory={xpHistory} />
         <UpcomingSessionsCard sessions={sessions} enrollmentMap={enrollmentMap} />
-        <SessionCalendar sessions={sessions} />
+        <div className="flex flex-col gap-4">
+          <StreakCard />
+          <SessionCalendar sessions={sessions} />
+        </div>
       </div>
 
       {/* Quick Actions */}
@@ -216,11 +288,18 @@ const StudentDashboard: React.FC = () => {
                     {enrollment.status === 'approved' && enrollment.discord_link && (
                       <a href={enrollment.discord_link} target="_blank" rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 mt-3 px-4 py-2 text-sm bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-md">
-                        <MessageSquare className="h-4 w-4" /> Join Uni Tutors Study Hub
+                        <MessageSquare className="h-4 w-4" /> {t('joinDiscord')}
                       </a>
                     )}
                   </div>
                   <div className="flex gap-2">
+                    {enrollment.status === 'approved' && (
+                      <button onClick={() => setMessageEnrollment(enrollment)}
+                        className="flex items-center gap-1.5 px-3 py-2 text-sm bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg font-medium hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors"
+                        title={t('messages')}>
+                        <MessageSquare className="h-4 w-4" /> {t('messages')}
+                      </button>
+                    )}
                     {enrollment.status === 'completed' && (
                       <button onClick={() => setReviewEnrollment(enrollment)}
                         className="flex items-center gap-1.5 px-4 py-2 text-sm bg-gradient-to-r from-yellow-400 to-orange-400 text-slate-900 rounded-lg font-bold hover:from-yellow-300 hover:to-orange-300 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-md hover:shadow-yellow-400/30">
@@ -235,6 +314,9 @@ const StudentDashboard: React.FC = () => {
                     )}
                   </div>
                 </div>
+                {enrollment.status === 'approved' && (
+                  <CourseProgressCard enrollment={enrollment} sessions={sessions} courseName={enrollment.course?.title || t('unknownCourse')} />
+                )}
               </motion.div>
             ))
           )}
@@ -294,13 +376,13 @@ const StudentDashboard: React.FC = () => {
           <form onSubmit={submitSupportTicket} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('subject')}</label>
-              <input type="text" value={ticketSubject} onChange={e => setTicketSubject(e.target.value)} required
+              <input type="text" value={ticketSubject} onChange={e => setTicketSubject(e.target.value)} required maxLength={200}
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder={t('ticketSubjectPlaceholder')} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('descriptionLabel')}</label>
-              <textarea value={ticketDesc} onChange={e => setTicketDesc(e.target.value)} required rows={4}
+              <textarea value={ticketDesc} onChange={e => setTicketDesc(e.target.value)} required rows={4} maxLength={2000}
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
                 placeholder={t('ticketDescPlaceholder')} />
             </div>
@@ -320,6 +402,25 @@ const StudentDashboard: React.FC = () => {
           onSubmitted={() => { setReviewEnrollment(null); fetchData(); }}
         />
       )}
+
+      {/* Message Thread Modal */}
+      {messageEnrollment && user && (
+        <MessageThread
+          enrollmentId={messageEnrollment.id}
+          currentUserId={user.id}
+          otherUserName={messageEnrollment.course?.title || t('unknownCourse')}
+          onClose={() => setMessageEnrollment(null)}
+        />
+      )}
+
+      {/* Enrollment Success Modal */}
+      <SuccessModal
+        isOpen={enrollSuccess}
+        title={t('requestSent')}
+        description={t('requestSentDesc')}
+        xpEarned={50}
+        onClose={() => setEnrollSuccess(false)}
+      />
     </div>
   );
 };
@@ -334,6 +435,7 @@ const ProfessorDashboard: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'courses' | 'students' | 'schedule' | 'proposal'>('overview');
+  const [messageEnrollment, setMessageEnrollment] = useState<(Enrollment & { student?: any; course?: any }) | null>(null);
 
   // Course proposal state
   const [proposalTitle, setProposalTitle] = useState('');
@@ -356,6 +458,9 @@ const ProfessorDashboard: React.FC = () => {
   const [editingProfile, setEditingProfile] = useState(false);
   const [editName, setEditName] = useState(profile?.full_name || '');
   const [editSpecialty, setEditSpecialty] = useState('');
+  const [editAvatarUrl, setEditAvatarUrl] = useState(profile?.avatar_url || '');
+  const [editBio, setEditBio] = useState('');
+  const [profileSaveSuccess, setProfileSaveSuccess] = useState(false);
 
   useEffect(() => { fetchData(); }, [user]);
 
@@ -387,7 +492,10 @@ const ProfessorDashboard: React.FC = () => {
     }
 
     const { data: profData } = await supabase.from('professors').select('*').eq('id', user.id).single();
-    if (profData) setEditSpecialty(profData.specialty || '');
+    if (profData) {
+      setEditSpecialty(profData.specialty || '');
+      setEditBio((profData as any).bio || '');
+    }
 
     setLoading(false);
   };
@@ -395,11 +503,17 @@ const ProfessorDashboard: React.FC = () => {
   const submitProposal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    const sanitizedTitle = proposalTitle.trim().slice(0, 200);
+    const sanitizedDesc = proposalDesc.trim().slice(0, 2000);
+    const sanitizedCode = proposalCode.trim().slice(0, 20);
+    const sanitizedUni = proposalUni.trim().slice(0, 200);
+    if (!sanitizedTitle || !sanitizedDesc) return;
     setProposalSubmitting(true);
-    await supabase.from('course_proposals').insert({
-      professor_id: user.id, title: proposalTitle, description: proposalDesc,
-      course_code: proposalCode, university: proposalUni,
+    const { error: proposalError } = await supabase.from('course_proposals').insert({
+      professor_id: user.id, title: sanitizedTitle, description: sanitizedDesc,
+      course_code: sanitizedCode, university: sanitizedUni,
     });
+    if (proposalError) { console.error('Failed to submit proposal:', proposalError.message); setProposalSubmitting(false); return; }
     setProposalTitle(''); setProposalDesc(''); setProposalCode(''); setProposalUni('');
     setProposalSubmitting(false); setProposalSuccess(true);
     setTimeout(() => setProposalSuccess(false), 3000);
@@ -407,16 +521,37 @@ const ProfessorDashboard: React.FC = () => {
 
   const saveProfile = async () => {
     if (!user) return;
-    await supabase.from('profiles').update({ full_name: editName }).eq('id', user.id);
-    await supabase.from('professors').update({ specialty: editSpecialty }).eq('id', user.id);
+    const sanitizedName = editName.trim().slice(0, 100);
+    if (!sanitizedName) return;
+    const sanitizedSpecialty = editSpecialty.trim().slice(0, 200);
+    const sanitizedBio = editBio.trim().slice(0, 1000);
+    // Validate avatar URL if provided
+    let safeAvatarUrl = '';
+    if (editAvatarUrl) {
+      try {
+        const url = new URL(editAvatarUrl);
+        if (url.protocol === 'https:' || url.protocol === 'http:') {
+          safeAvatarUrl = editAvatarUrl.trim().slice(0, 500);
+        }
+      } catch {
+        // Invalid URL, skip it
+      }
+    }
+    const profileUpdate: any = { full_name: sanitizedName };
+    if (safeAvatarUrl) profileUpdate.avatar_url = safeAvatarUrl;
+    await supabase.from('profiles').update(profileUpdate).eq('id', user.id);
+    await supabase.from('professors').update({ specialty: sanitizedSpecialty, bio: sanitizedBio }).eq('id', user.id);
     setEditingProfile(false);
+    setProfileSaveSuccess(true);
+    setTimeout(() => setProfileSaveSuccess(false), 3000);
+    fetchData();
   };
 
   const scheduleSession = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!schedCourseId || !schedTitle || !schedDate) return;
     if (schedDate < new Date().toISOString().split('T')[0]) {
-      alert('Session date cannot be in the past.');
+      alert(t('sessionDatePastError'));
       return;
     }
     const naiveDate = schedTime ? `${schedDate}T${schedTime}:00` : `${schedDate}T00:00:00`;
@@ -441,7 +576,7 @@ const ProfessorDashboard: React.FC = () => {
       await Promise.all(courseEnrollments.map(en =>
         supabase.from('notifications').insert({
           user_id: en.student_id,
-          title: 'New Session Scheduled',
+          title: t('sessionScheduled'),
           message: `${schedTitle} — ${new Date(sessionDate).toLocaleString()}`,
           type: 'general',
           link: '/dashboard',
@@ -498,10 +633,28 @@ const ProfessorDashboard: React.FC = () => {
       </div>
 
       {/* Profile Edit */}
+      {profileSaveSuccess && (
+        <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl text-green-700 dark:text-green-400 text-sm flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4" /> {t('profileUpdated')}
+        </div>
+      )}
       {editingProfile && (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
           className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-200 dark:border-slate-700 mb-6">
           <h3 className="font-bold text-gray-900 dark:text-white mb-4">{t('editProfile')}</h3>
+          <div className="flex items-center gap-4 mb-4">
+            <img
+              src={editAvatarUrl || profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(editName)}&background=6366f1&color=fff&size=128`}
+              alt={editName}
+              className="w-16 h-16 rounded-full object-cover ring-4 ring-indigo-50 dark:ring-indigo-900/30"
+            />
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('avatarUrl')}</label>
+              <input type="url" value={editAvatarUrl} onChange={e => setEditAvatarUrl(e.target.value)}
+                placeholder="https://example.com/your-photo.jpg"
+                className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('fullName')}</label>
@@ -513,6 +666,12 @@ const ProfessorDashboard: React.FC = () => {
               <input type="text" value={editSpecialty} onChange={e => setEditSpecialty(e.target.value)}
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('bio')}</label>
+            <textarea value={editBio} onChange={e => setEditBio(e.target.value)} rows={3}
+              placeholder={t('bioPlaceholder')}
+              className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
           </div>
           <button onClick={saveProfile} className="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all">
             {t('saveChanges')}
@@ -586,7 +745,7 @@ const ProfessorDashboard: React.FC = () => {
         {(['overview', 'courses', 'students', 'schedule', 'proposal'] as const).map(tab => (
           <button key={tab} onClick={() => { setActiveTab(tab); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}>
-            {tab === 'overview' ? t('overview') : tab === 'courses' ? t('myCourses') : tab === 'students' ? t('myStudents') : tab === 'schedule' ? 'Schedule Session' : t('proposeCourse')}
+            {tab === 'overview' ? t('overview') : tab === 'courses' ? t('myCourses') : tab === 'students' ? t('myStudents') : tab === 'schedule' ? t('scheduleSession') : t('proposeCourse')}
           </button>
         ))}
       </div>
@@ -659,7 +818,7 @@ const ProfessorDashboard: React.FC = () => {
                     </div>
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${course.status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'}`}>
-                    {course.status}
+                    {course.status === 'published' ? t('published') : course.status === 'draft' ? t('draft') : t('archived')}
                   </span>
                 </div>
               </div>
@@ -686,9 +845,18 @@ const ProfessorDashboard: React.FC = () => {
                   <p className="text-xs text-gray-500 dark:text-gray-400">{e.course?.title} • {t(e.booking_type)}</p>
                 </div>
               </div>
-              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${e.status === 'approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : e.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'}`}>
-                {t(e.status)}
-              </span>
+              <div className="flex items-center gap-2">
+                {e.status === 'approved' && (
+                  <button onClick={() => setMessageEnrollment(e)}
+                    className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors"
+                    title={t('messages')}>
+                    <MessageSquare className="h-4 w-4" />
+                  </button>
+                )}
+                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${e.status === 'approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : e.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'}`}>
+                  {t(e.status)}
+                </span>
+              </div>
             </div>
           ))}
         </motion.div>
@@ -698,56 +866,56 @@ const ProfessorDashboard: React.FC = () => {
       {activeTab === 'schedule' && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
           className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-200 dark:border-slate-700">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Schedule a Session</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">Schedule a session for all enrolled students in a course. They will be notified automatically.</p>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{t('scheduleSession')}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">{t('scheduleSessionDesc')}</p>
           {schedSuccess && (
             <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl text-green-700 dark:text-green-400 text-sm flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4" /> Session scheduled and students notified!
+              <CheckCircle2 className="h-4 w-4" /> {t('sessionScheduled')}
             </div>
           )}
           <form onSubmit={scheduleSession} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('course')}</label>
-              <select value={schedCourseId} onChange={e => setSchedCourseId(e.target.value)} required
+              <label htmlFor="sched-course" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('course')}</label>
+              <select id="sched-course" value={schedCourseId} onChange={e => setSchedCourseId(e.target.value)} required
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <option value="">Select a course…</option>
+                <option value="">{t('selectCourse')}</option>
                 {courses.map(c => (
                   <option key={c.id} value={c.id}>{c.title}</option>
                 ))}
               </select>
               {schedCourseId && (
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {enrollments.filter(en => en.course_id === schedCourseId && en.status === 'approved').length} enrolled student(s) will be scheduled
+                  {enrollments.filter(en => en.course_id === schedCourseId && en.status === 'approved').length} {t('enrolledStudentsWillBeScheduled')}
                 </p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Session Title</label>
-              <input type="text" value={schedTitle} onChange={e => setSchedTitle(e.target.value)} required
-                placeholder="e.g. Chapter 3 Review, Exam Prep, Q&A"
+              <label htmlFor="sched-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('sessionTitle')}</label>
+              <input id="sched-title" type="text" value={schedTitle} onChange={e => setSchedTitle(e.target.value)} required
+                placeholder={t('sessionTitlePlaceholder')}
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date</label>
-                <input type="date" value={schedDate} onChange={e => setSchedDate(e.target.value)} required
+                <label htmlFor="sched-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('dateLabel')}</label>
+                <input id="sched-date" type="date" value={schedDate} onChange={e => setSchedDate(e.target.value)} required
                   className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time (optional)</label>
-                <input type="time" value={schedTime} onChange={e => setSchedTime(e.target.value)}
+                <label htmlFor="sched-time" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('timeOptional')}</label>
+                <input id="sched-time" type="time" value={schedTime} onChange={e => setSchedTime(e.target.value)}
                   className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Notes (optional)</label>
-              <textarea value={schedNotes} onChange={e => setSchedNotes(e.target.value)} rows={3}
-                placeholder="Any additional info for students (e.g. meeting link, topics covered)…"
+              <label htmlFor="sched-notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('notesOptional')}</label>
+              <textarea id="sched-notes" value={schedNotes} onChange={e => setSchedNotes(e.target.value)} rows={3}
+                placeholder={t('notesPlaceholder')}
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
             </div>
             <button type="submit" disabled={schedSubmitting}
               className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all disabled:opacity-50">
-              <Send className="h-4 w-4" /> Schedule Session
+              <Send className="h-4 w-4" /> {t('scheduleSession')}
             </button>
           </form>
         </motion.div>
@@ -792,6 +960,16 @@ const ProfessorDashboard: React.FC = () => {
             </button>
           </form>
         </motion.div>
+      )}
+
+      {/* Message Thread Modal */}
+      {messageEnrollment && user && (
+        <MessageThread
+          enrollmentId={messageEnrollment.id}
+          currentUserId={user.id}
+          otherUserName={messageEnrollment.student?.full_name || t('unknownStudent')}
+          onClose={() => setMessageEnrollment(null)}
+        />
       )}
     </div>
   );

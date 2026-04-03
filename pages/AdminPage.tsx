@@ -73,7 +73,7 @@ export const AdminPage: React.FC = () => {
       }
     }
     const { error: enrollUpdateError } = await supabase.from('enrollments').update(updates).eq('id', id);
-    if (enrollUpdateError) { console.error('Failed:', enrollUpdateError.message); alert(`Operation failed: ${enrollUpdateError.message}`); return; }
+    if (enrollUpdateError) { if (import.meta.env.DEV) console.error('Failed:', enrollUpdateError.message); alert(t('operationFailed')); return; }
 
     if (enrollment) {
       // Notify student
@@ -115,14 +115,14 @@ export const AdminPage: React.FC = () => {
   // Course actions
   const updateCourseStatus = async (id: string, status: string) => {
     const { error } = await supabase.from('courses').update({ status }).eq('id', id);
-    if (error) { console.error('Failed:', error.message); alert(`Operation failed: ${error.message}`); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
     fetchAll();
   };
 
   // User role update
   const updateUserRole = async (id: string, role: string) => {
     const { error } = await supabase.from('profiles').update({ role }).eq('id', id);
-    if (error) { console.error('Failed:', error.message); alert(`Operation failed: ${error.message}`); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
     if (role === 'professor') {
       const { data: existing } = await supabase.from('professors').select('id').eq('id', id).single();
       if (!existing) {
@@ -137,7 +137,7 @@ export const AdminPage: React.FC = () => {
     const updates: any = { status };
     if (notes !== undefined) updates.admin_notes = notes;
     const { error: proposalUpdateError } = await supabase.from('course_proposals').update(updates).eq('id', id);
-    if (proposalUpdateError) { console.error('Failed:', proposalUpdateError.message); alert(`Operation failed: ${proposalUpdateError.message}`); return; }
+    if (proposalUpdateError) { if (import.meta.env.DEV) console.error('Failed:', proposalUpdateError.message); alert(t('operationFailed')); return; }
 
     const proposal = proposals.find(p => p.id === id);
     if (proposal) {
@@ -154,7 +154,7 @@ export const AdminPage: React.FC = () => {
   // Support ticket actions
   const updateTicketStatus = async (id: string, status: string) => {
     const { error } = await supabase.from('support_tickets').update({ status }).eq('id', id);
-    if (error) { console.error('Failed:', error.message); alert(`Operation failed: ${error.message}`); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
     fetchAll();
   };
 
@@ -165,7 +165,7 @@ export const AdminPage: React.FC = () => {
       sender_id: profile.id,
       message,
     });
-    if (error) { console.error('Failed:', error.message); alert(`Operation failed: ${error.message}`); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
 
     const ticket = supportTickets.find(t => t.id === ticketId);
     if (ticket) {
@@ -182,7 +182,7 @@ export const AdminPage: React.FC = () => {
   // Mark payment received
   const markPaymentReceived = async (id: string, amount: number) => {
     const { error } = await supabase.from('enrollments').update({ price_paid: amount }).eq('id', id);
-    if (error) { console.error('Failed:', error.message); alert(`Operation failed: ${error.message}`); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
     fetchAll();
   };
 
@@ -228,7 +228,7 @@ export const AdminPage: React.FC = () => {
     const revenue = paidEnrollments.filter(e => { const ed = new Date(e.created_at); return ed.getFullYear() === d.getFullYear() && ed.getMonth() === d.getMonth(); }).reduce((sum, e) => sum + (e.price_paid ?? 0), 0);
     return { month: label, revenue };
   });
-  const coursePopularity = Object.entries(enrollments.reduce((acc, e) => { const title = (e as any).course?.title || 'Unknown'; acc[title] = (acc[title] || 0) + 1; return acc; }, {} as Record<string, number>)).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([name, count]) => ({ name: name.length > 22 ? name.slice(0, 22) + '…' : name, count }));
+  const coursePopularity = (Object.entries(enrollments.reduce((acc, e) => { const title = (e as any).course?.title || 'Unknown'; acc[title] = (acc[title] || 0) + 1; return acc; }, {} as Record<string, number>)) as [string, number][]).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([name, count]) => ({ name: name.length > 22 ? name.slice(0, 22) + '…' : name, count }));
 
   const tabs: { key: AdminTab; label: string; icon: React.ElementType; badge?: number }[] = [
     { key: 'overview', label: t('overview'), icon: LayoutDashboard },

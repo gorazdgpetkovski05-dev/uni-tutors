@@ -4,10 +4,11 @@ import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, useNavig
 import { Navbar } from './components/Navbar';
 import { Home } from './pages/Home';
 import { CoursesPage } from './pages/CoursesPage';
-import { CourseDetailsPage } from './pages/CourseDetailsPage';
-import { LoginPage } from './pages/LoginPage';
-import { SignupPage } from './pages/SignupPage';
-import { DashboardPage } from './pages/DashboardPage';
+const CourseDetailsPage = React.lazy(() => import('./pages/CourseDetailsPage').then(m => ({ default: m.CourseDetailsPage })));
+const ProfessorProfilePage = React.lazy(() => import('./pages/ProfessorProfilePage').then(m => ({ default: m.ProfessorProfilePage })));
+const LoginPage = React.lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
+const SignupPage = React.lazy(() => import('./pages/SignupPage').then(m => ({ default: m.SignupPage })));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
 const AdminPage = React.lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })));
 import { DataProvider } from './contexts/DataContext';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
@@ -19,6 +20,9 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { DiscountPopup } from './components/DiscountPopup';
 import { InfoModal } from './components/InfoModal';
 import { GeoNoticeBanner } from './components/GeoNoticeBanner';
+import { CookieConsent } from './components/CookieConsent';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { NotFoundPage } from './components/NotFoundPage';
 
 const Footer: React.FC = () => {
     const { t } = useLanguage();
@@ -87,30 +91,32 @@ const AppContent: React.FC = () => {
         <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300">
             <ScrollToTop />
             <GeoNoticeBanner />
+            <CookieConsent />
             <DiscountPopup />
             {!isAuthPage && <Navbar />}
             <main className={`flex-grow ${!isAuthPage ? 'pt-16' : ''}`}>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/courses" element={<CoursesPage />} />
-                    <Route path="/courses/:id" element={<CourseDetailsPage />} />
-                    <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
-                    <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignupPage />} />
-                    <Route path="/dashboard" element={
-                        <ProtectedRoute>
-                            {isAdmin ? <Navigate to="/admin" replace /> : <DashboardPage />}
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/admin" element={
-                        <ProtectedRoute allowedRoles={['admin']}>
-                            <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" /></div>}>
+                <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" /></div>}>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/courses" element={<CoursesPage />} />
+                        <Route path="/courses/:id" element={<CourseDetailsPage />} />
+                        <Route path="/professor/:id" element={<ProfessorProfilePage />} />
+                        <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
+                        <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignupPage />} />
+                        <Route path="/dashboard" element={
+                            <ProtectedRoute>
+                                {isAdmin ? <Navigate to="/admin" replace /> : <DashboardPage />}
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/admin" element={
+                            <ProtectedRoute allowedRoles={['admin']}>
                                 <AdminPage />
-                            </React.Suspense>
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/pricing" element={<Navigate to="/" replace />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/pricing" element={<Navigate to="/" replace />} />
+                        <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
+                </React.Suspense>
             </main>
             {!isAuthPage && !isAdminPage && <Footer />}
         </div>
@@ -120,17 +126,19 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <LanguageProvider>
-          <AuthProvider>
-            <NotificationProvider>
-              <DataProvider>
-                  <Router>
-                      <AppContent />
-                  </Router>
-              </DataProvider>
-            </NotificationProvider>
-          </AuthProvider>
-      </LanguageProvider>
+      <ErrorBoundary>
+        <LanguageProvider>
+            <AuthProvider>
+              <NotificationProvider>
+                <DataProvider>
+                    <Router>
+                        <AppContent />
+                    </Router>
+                </DataProvider>
+              </NotificationProvider>
+            </AuthProvider>
+        </LanguageProvider>
+      </ErrorBoundary>
     </ThemeProvider>
   );
 };

@@ -103,7 +103,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-5">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-indigo-500" /> Enrollment Trend (8 weeks)
+            <TrendingUp className="h-4 w-4 text-indigo-500" /> {t('enrollmentTrend')}
           </h3>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={weeklyData}>
@@ -111,29 +111,29 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
               <XAxis dataKey="week" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
               <Tooltip />
-              <Line type="monotone" dataKey="count" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1' }} name="Enrollments" />
+              <Line type="monotone" dataKey="count" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1' }} name={t('enrollments')} />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-5">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <DollarSign className="h-4 w-4 text-green-500" /> Monthly Revenue (MKD)
+            <DollarSign className="h-4 w-4 text-green-500" /> {t('monthlyRevenueMKD')}
           </h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={monthlyRevenue}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} />
-              <Tooltip formatter={(v: any) => [`${v} MKD`, 'Revenue']} />
-              <Bar dataKey="revenue" fill="#22c55e" radius={[4, 4, 0, 0]} name="Revenue" />
+              <Tooltip formatter={(v: any) => [`${v} MKD`, t('revenue')]} />
+              <Bar dataKey="revenue" fill="#22c55e" radius={[4, 4, 0, 0]} name={t('revenue')} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-5 lg:col-span-2">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <BarChart3 className="h-4 w-4 text-indigo-500" /> Course Popularity (Top 5)
+            <BarChart3 className="h-4 w-4 text-indigo-500" /> {t('coursePopularity')}
           </h3>
           {coursePopularity.length > 0 ? (
             <ResponsiveContainer width="100%" height={180}>
@@ -142,11 +142,11 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
                 <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
                 <YAxis type="category" dataKey="name" width={130} tick={{ fontSize: 11 }} />
                 <Tooltip />
-                <Bar dataKey="count" fill="#6366f1" radius={[0, 4, 4, 0]} name="Enrollments" />
+                <Bar dataKey="count" fill="#6366f1" radius={[0, 4, 4, 0]} name={t('enrollments')} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-sm text-gray-400 text-center py-8">No enrollment data yet</p>
+            <p className="text-sm text-gray-400 text-center py-8">{t('noEnrollmentData')}</p>
           )}
         </div>
       </div>

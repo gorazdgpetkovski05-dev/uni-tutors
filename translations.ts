@@ -352,6 +352,17 @@ export const translations = {
     sortPriceHigh: "Price: High → Low",
     sortTopRated: "Top Rated",
 
+    // Course categories
+    allCategories: "All",
+    computerScience: "Computer Science",
+    mathematics: "Mathematics",
+    economics: "Economics",
+    law: "Law",
+    engineering: "Engineering",
+    business: "Business",
+    languages: "Languages",
+    otherCategory: "Other",
+
     // Stats Bar
     statsStudents: "Students",
     statsSuccess: "Success Stories",
@@ -391,6 +402,133 @@ export const translations = {
     faq5A: "Every time you enroll and complete a course, you earn XP points. Reach Level 2 (100 XP) for a 5% discount and Level 3 (300 XP) for a 10% discount on future bookings.",
     faq6Q: "Can I cancel a booking?",
     faq6A: "Yes, you can cancel a pending booking. Once approved, please contact us directly via WhatsApp to arrange a cancellation or rescheduling.",
+
+    // Professor management
+    selectProfessor: "Select Professor",
+    scheduleSession: "Schedule Session",
+    scheduleSessionDesc: "Schedule a session for your students",
+    sessionScheduled: "Session scheduled successfully!",
+    editAvatar: "Change Photo",
+    avatarUrl: "Profile Photo URL",
+    bio: "Bio",
+    bioPlaceholder: "Tell students about yourself...",
+    profileUpdated: "Profile updated!",
+    scheduleSessionHeading: "Schedule a Session",
+    scheduleSessionFullDesc: "Schedule a session for all enrolled students in a course. They will be notified automatically.",
+    sessionScheduledNotified: "Session scheduled and students notified!",
+    selectCourse: "Select a course\u2026",
+    enrolledStudentsWillBeScheduled: "enrolled student(s) will be scheduled",
+    sessionTitleLabel: "Session Title",
+    sessionTitlePlaceholder: "e.g. Chapter 3 Review, Exam Prep, Q&A",
+    dateLabel: "Date",
+    timeOptional: "Time (optional)",
+    notesOptional: "Notes (optional)",
+    notesPlaceholder: "Any additional info for students (e.g. meeting link, topics covered)\u2026",
+    sessionDatePastError: "Session date cannot be in the past.",
+    newSessionScheduled: "New Session Scheduled",
+
+    // Admin course editing
+    editCourse: "Edit Course",
+    titleMk: "Title (MK)",
+    titleEn: "Title (EN)",
+    descriptionMk: "Description (MK)",
+    descriptionEn: "Description (EN)",
+    customPriceDisplay: "Custom Price Display",
+    statusLabel: "Status",
+    draft: "Draft",
+    published: "Published",
+    archived: "Archived",
+
+    // Admin overview charts
+    enrollmentTrend: "Enrollment Trend (8 weeks)",
+    enrollments: "Enrollments",
+    monthlyRevenueMKD: "Monthly Revenue (MKD)",
+    revenue: "Revenue",
+    coursePopularity: "Course Popularity (Top 5)",
+    noEnrollmentData: "No enrollment data yet",
+
+    // Confirm dialogs & error messages
+    changeRoleConfirm: "Change role to",
+    changeRoleWarning: "? This cannot be undone easily.",
+    operationFailed: "Operation failed",
+
+    // Professor Profile
+    aboutProfessor: "About",
+    coursesBy: "Courses by",
+    noBio: "No bio available yet.",
+    backToProfessors: "Back to Courses",
+    totalStudents: "Total Students",
+    memberSince: "Member since",
+
+    // Error Boundary
+    somethingWentWrong: "Something went wrong",
+    tryRefreshing: "Try refreshing the page",
+    refresh: "Refresh",
+
+    // Cookie Consent
+    cookieConsent: "We use cookies to improve your experience.",
+    acceptAll: "Accept All",
+    necessaryOnly: "Necessary Only",
+
+    // 404
+    pageNotFound: "Page Not Found",
+    pageNotFoundDesc: "The page you're looking for doesn't exist or has been moved.",
+    goHome: "Go Home",
+
+    // Users tab
+    admin: "Admin",
+    searchUsers: "Search users by name...",
+    noUsersFound: "No users found.",
+
+    // Favorites
+    addToFavorites: "Add to favorites",
+    removeFromFavorites: "Remove from favorites",
+
+    // Availability
+    available: "Available",
+    busy: "Busy",
+    nextSession: "Next session",
+    weeklySchedule: "Weekly Schedule",
+    mon: "Mon",
+    tue: "Tue",
+    wed: "Wed",
+    thu: "Thu",
+    fri: "Fri",
+    sat: "Sat",
+    sun: "Sun",
+
+    // Trust Badges
+    verified: "Verified",
+    topRated: "Top Rated",
+    sessionsLabel: "sessions",
+    fastResponse: "Fast Response",
+
+    // Social Proof
+    studentsEnrolled: "students enrolled",
+    enrolledThisWeek: "enrolled this week",
+    viewingNow: "viewing now",
+
+    // Micro-interactions
+    congratulations: "Congratulations!",
+    xpEarned: "XP Earned",
+    continueBtn: "Continue",
+    loading: "Loading...",
+
+    // Course Progress & Streak
+    courseProgress: "Course Progress",
+    dayStreak: "day streak",
+    keepItUp: "Keep it up!",
+    streakBroken: "Start a new streak!",
+    awaitingSession: "Awaiting first session",
+    progressPercent: "complete",
+    nextSessionOn: "Next session on",
+    milestoneReached: "Milestone reached!",
+
+    // Messaging
+    messages: "Messages",
+    sendMessage: "Send",
+    typeMessage: "Type a message...",
+    noMessages: "No messages yet. Start the conversation!",
   },
   mk: {
     // Navbar
@@ -742,6 +880,17 @@ export const translations = {
     sortPriceHigh: "Цена: Висока → Ниска",
     sortTopRated: "Највисоко оценети",
 
+    // Course categories
+    allCategories: "Сите",
+    computerScience: "Информатика",
+    mathematics: "Математика",
+    economics: "Економија",
+    law: "Право",
+    engineering: "Инженерство",
+    business: "Бизнис",
+    languages: "Јазици",
+    otherCategory: "Останато",
+
     // Featured Courses Section
     featuredCoursesTitle: "Популарни курсеви",
     featuredCoursesSub: "Истражете ги нашите најзапишани курсеви и пронајдете го вистинскиот за вашите студии.",
@@ -781,5 +930,132 @@ export const translations = {
     faq5A: "Со секое запишување и завршување на курс, освојувате XP поени. Достигнете Ниво 2 (100 XP) за 5% попуст и Ниво 3 (300 XP) за 10% попуст на идни резервации.",
     faq6Q: "Дали можам да ја откажам резервацијата?",
     faq6A: "Да, можете да откажете неодобрена резервација. По одобрување, ве молиме контактирајте не директно преку WhatsApp за откажување или промена на терминот.",
+
+    // Professor management
+    selectProfessor: "Избери Професор",
+    scheduleSession: "Закажи Сесија",
+    scheduleSessionDesc: "Закажи сесија за твоите студенти",
+    sessionScheduled: "Сесијата е успешно закажана!",
+    editAvatar: "Промени Слика",
+    avatarUrl: "URL на профилна слика",
+    bio: "Биографија",
+    bioPlaceholder: "Кажете им на студентите за себе...",
+    profileUpdated: "Профилот е обновен!",
+    scheduleSessionHeading: "Закажи сесија",
+    scheduleSessionFullDesc: "Закажете сесија за сите запишани студенти во курс. Тие ќе бидат автоматски известени.",
+    sessionScheduledNotified: "Сесијата е закажана и студентите се известени!",
+    selectCourse: "Избери курс\u2026",
+    enrolledStudentsWillBeScheduled: "запишан(и) студент(и) ќе бидат закажани",
+    sessionTitleLabel: "Наслов на сесија",
+    sessionTitlePlaceholder: "пр. Преглед на Глава 3, Подготовка за испит, Q&A",
+    dateLabel: "Датум",
+    timeOptional: "Време (опционално)",
+    notesOptional: "Белешки (опционално)",
+    notesPlaceholder: "Дополнителни информации за студентите (пр. линк за средба, теми)\u2026",
+    sessionDatePastError: "Датумот на сесијата не може да биде во минатото.",
+    newSessionScheduled: "Нова закажана сесија",
+
+    // Admin course editing
+    editCourse: "Уреди Курс",
+    titleMk: "Наслов (МК)",
+    titleEn: "Наслов (EN)",
+    descriptionMk: "Опис (МК)",
+    descriptionEn: "Опис (EN)",
+    customPriceDisplay: "Приказ на цена",
+    statusLabel: "Статус",
+    draft: "Нацрт",
+    published: "Објавен",
+    archived: "Архивиран",
+
+    // Admin overview charts
+    enrollmentTrend: "Тренд на запишувања (8 недели)",
+    enrollments: "Запишувања",
+    monthlyRevenueMKD: "Месечен приход (МКД)",
+    revenue: "Приход",
+    coursePopularity: "Популарност на курсеви (Топ 5)",
+    noEnrollmentData: "Сè уште нема податоци за запишувања",
+
+    // Confirm dialogs & error messages
+    changeRoleConfirm: "Промени улога во",
+    changeRoleWarning: "? Ова не може лесно да се врати.",
+    operationFailed: "Операцијата не успеа",
+
+    // Professor Profile
+    aboutProfessor: "За професорот",
+    coursesBy: "Курсеви од",
+    noBio: "Нема достапна биографија.",
+    backToProfessors: "Назад кон Курсеви",
+    totalStudents: "Вкупно Студенти",
+    memberSince: "Член од",
+
+    // Error Boundary
+    somethingWentWrong: "Нешто тргна наопаку",
+    tryRefreshing: "Обидете се да ја освежите страницата",
+    refresh: "Освежи",
+
+    // Cookie Consent
+    cookieConsent: "Користиме колачиња за подобрување на вашето искуство.",
+    acceptAll: "Прифати ги сите",
+    necessaryOnly: "Само неопходни",
+
+    // 404
+    pageNotFound: "Страницата не е пронајдена",
+    pageNotFoundDesc: "Страницата што ја барате не постои или е преместена.",
+    goHome: "Почетна",
+
+    // Users tab
+    admin: "Админ",
+    searchUsers: "Пребарај корисници по име...",
+    noUsersFound: "Не се пронајдени корисници.",
+
+    // Favorites
+    addToFavorites: "Додај во омилени",
+    removeFromFavorites: "Отстрани од омилени",
+
+    // Availability
+    available: "Достапен",
+    busy: "Зафатен",
+    nextSession: "Следна сесија",
+    weeklySchedule: "Неделен распоред",
+    mon: "Пон",
+    tue: "Вто",
+    wed: "Сре",
+    thu: "Чет",
+    fri: "Пет",
+    sat: "Саб",
+    sun: "Нед",
+
+    // Trust Badges
+    verified: "Верифициран",
+    topRated: "Најоценет",
+    sessionsLabel: "сесии",
+    fastResponse: "Брз Одговор",
+
+    // Social Proof
+    studentsEnrolled: "запишани студенти",
+    enrolledThisWeek: "запишани оваа недела",
+    viewingNow: "гледаат сега",
+
+    // Micro-interactions
+    congratulations: "Честитки!",
+    xpEarned: "Освоени XP",
+    continueBtn: "Продолжи",
+    loading: "Се вчитува...",
+
+    // Course Progress & Streak
+    courseProgress: "Напредок на курсот",
+    dayStreak: "дневна серија",
+    keepItUp: "Продолжи така!",
+    streakBroken: "Започни нова серија!",
+    awaitingSession: "Се чека прва сесија",
+    progressPercent: "завршено",
+    nextSessionOn: "Следна сесија на",
+    milestoneReached: "Достигнат е пресвртен момент!",
+
+    // Messaging
+    messages: "Пораки",
+    sendMessage: "Испрати",
+    typeMessage: "Напиши порака...",
+    noMessages: "Нема пораки. Започни разговор!",
   }
 };

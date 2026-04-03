@@ -33,13 +33,14 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ enrollment, onClose, onS
       return;
     }
 
+    const sanitizedComment = comment.trim().slice(0, 1000) || null;
     const { error: insertError } = await supabase.from('reviews').insert({
       student_id: user.id,
       course_id: enrollment.course_id,
       professor_id: course.professor_id,
       enrollment_id: enrollment.id,
       rating,
-      comment: comment || null,
+      comment: sanitizedComment,
     });
 
     if (insertError) {
@@ -109,6 +110,7 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ enrollment, onClose, onS
                 value={comment}
                 onChange={e => setComment(e.target.value)}
                 rows={4}
+                maxLength={1000}
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
                 placeholder={t('reviewPlaceholder')}
               />

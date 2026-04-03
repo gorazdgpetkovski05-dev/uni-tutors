@@ -41,7 +41,7 @@ export const BookingsTab: React.FC<BookingsTabProps> = ({ enrollments, updateEnr
                 <div>
                   <p className="font-bold text-gray-900 dark:text-white">{(e as any).student?.full_name || t('unknown')}</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {course?.title || t('unknown')} • {e.booking_type} • {new Date(e.created_at).toLocaleDateString()}
+                    {course?.title || t('unknown')} • {t(e.booking_type)} • {new Date(e.created_at).toLocaleDateString()}
                   </p>
                   {e.message && <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 italic">"{e.message}"</p>}
                   {(e.status === 'approved' || e.status === 'completed') && calculatedPrice !== null && (
