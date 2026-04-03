@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, BookOpen, Users, Calendar } from 'lucide-react';
+import { ArrowLeft, Star, BookOpen, Users, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import { Review, Session as SessionRecord } from '../types';
 import { useData } from '../contexts/DataContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -11,6 +11,67 @@ import { AvailabilityBadge } from '../components/AvailabilityBadge';
 import { VerifiedBadge, TopRatedBadge, ExperienceBadge, ResponseTimeBadge } from '../components/badges/TrustBadges';
 import { WeeklySchedule } from '../components/WeeklySchedule';
 import { motion } from 'motion/react';
+
+const BIO_CHAR_LIMIT = 300;
+
+const BioSection: React.FC<{ bio: string | null; noBioText: string; title: string; readMoreText: string; readLessText: string }> = ({ bio, noBioText, title, readMoreText, readLessText }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  if (!bio) {
+    return (
+      <div className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
+        <p className="text-gray-400 dark:text-gray-500 italic">{noBioText}</p>
+      </div>
+    );
+  }
+
+  const isLong = bio.length > BIO_CHAR_LIMIT;
+  const paragraphs = bio.split(/\n+/).filter(p => p.trim());
+
+  // For truncation: show text up to BIO_CHAR_LIMIT chars
+  const truncatedParagraphs = useMemo(() => {
+    if (!isLong || expanded) return paragraphs;
+    let remaining = BIO_CHAR_LIMIT;
+    const result: string[] = [];
+    for (const p of paragraphs) {
+      if (remaining <= 0) break;
+      if (p.length <= remaining) {
+        result.push(p);
+        remaining -= p.length;
+      } else {
+        // Cut at last word boundary
+        const cut = p.slice(0, remaining);
+        const lastSpace = cut.lastIndexOf(' ');
+        result.push((lastSpace > 0 ? cut.slice(0, lastSpace) : cut) + '...');
+        break;
+      }
+    }
+    return result;
+  }, [paragraphs, isLong, expanded]);
+
+  const displayParagraphs = expanded ? paragraphs : truncatedParagraphs;
+
+  return (
+    <div className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">{title}</h3>
+      <div className="text-gray-600 dark:text-gray-400 leading-relaxed space-y-3">
+        {displayParagraphs.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+      </div>
+      {isLong && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-3 flex items-center gap-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+        >
+          {expanded ? readLessText : readMoreText}
+          {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </button>
+      )}
+    </div>
+  );
+};
 
 export const ProfessorProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -175,10 +236,7 @@ export const ProfessorProfilePage: React.FC = () => {
           </div>
 
           {/* Bio */}
-          <div className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{t('aboutProfessor')}</h3>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{bio || t('noBio')}</p>
-          </div>
+          <BioSection bio={bio} noBioText={t('noBio')} title={t('aboutProfessor')} readMoreText={t('readMore')} readLessText={t('readLess')} />
         </motion.div>
 
         {/* Weekly Schedule */}

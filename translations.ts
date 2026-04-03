@@ -408,6 +408,10 @@ export const translations = {
     maxFileSize: "Max 2MB (JPG, PNG)",
     fileTooLarge: "File is too large. Maximum 2MB.",
 
+    // Read more
+    readMore: "Read more",
+    readLess: "Read less",
+
     // Professor management
     selectProfessor: "Select Professor",
     scheduleSession: "Schedule Session",
@@ -941,6 +945,10 @@ export const translations = {
     dragDropPhoto: "Кликни или повлечи слика",
     maxFileSize: "Макс 2MB (JPG, PNG)",
     fileTooLarge: "Датотеката е преголема. Максимум 2MB.",
+
+    // Read more
+    readMore: "Прочитај повеќе",
+    readLess: "Прочитај помалку",
 
     selectProfessor: "Избери Професор",
     scheduleSession: "Закажи Сесија",
