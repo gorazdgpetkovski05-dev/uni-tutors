@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { Upload, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useToast } from '../contexts/ToastContext';
 
 interface AvatarUploadProps {
   currentUrl: string;
@@ -12,6 +13,7 @@ interface AvatarUploadProps {
 
 export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentUrl, userId, onUploaded, size = 'w-20 h-20' }) => {
   const { t } = useLanguage();
+  const { showToast } = useToast();
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -19,7 +21,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentUrl, userId, 
 
   const uploadFile = useCallback(async (file: File) => {
     if (!file.type.startsWith('image/')) return;
-    if (file.size > 2 * 1024 * 1024) { alert(t('fileTooLarge')); return; }
+    if (file.size > 2 * 1024 * 1024) { showToast(t('fileTooLarge'), 'error'); return; }
 
     setUploading(true);
     setPreview(URL.createObjectURL(file));

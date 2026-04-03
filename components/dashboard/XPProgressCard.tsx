@@ -53,7 +53,7 @@ export const XPProgressCard: React.FC<XPProgressCardProps> = ({ xp, level, xpHis
             </div>
             <div>
               <p className="text-white/80 text-xs font-medium uppercase tracking-wider">{t('currentLevel')}</p>
-              <p className="text-xl font-bold">{t('level')} {level} - {t(LEVEL_LABELS[level])}</p>
+              <p className="text-xl font-bold">{t('level')} {level} - {t(LEVEL_LABELS[level] as any)}</p>
             </div>
           </div>
           {discount > 0 && (

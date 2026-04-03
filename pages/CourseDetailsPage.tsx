@@ -10,6 +10,7 @@ import { supabase } from '../lib/supabase';
 import { WHATSAPP_URL } from '../constants';
 import { ContactModal } from '../components/ContactModal';
 import { EnrollmentCount, RecentActivity, LiveViewers } from '../components/SocialProof';
+import { ShareButton } from '../components/ShareButton';
 
 export const CourseDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -144,7 +145,12 @@ export const CourseDetailsPage: React.FC = () => {
             <span className="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold">{course.code}</span>
             <span className="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm md:backdrop-blur-md">{t('flexibleSessions')}</span>
           </div>
-          <h1 className="text-2xl md:text-5xl font-bold text-white mb-2 leading-tight">{course.title}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl md:text-5xl font-bold text-white mb-2 leading-tight">{course.title}</h1>
+            <div className="mb-2 [&_button]:text-white/70 [&_button]:hover:text-white [&_button]:hover:bg-white/10">
+              <ShareButton title={course.title} />
+            </div>
+          </div>
           <p className="text-base md:text-lg text-white/90 max-w-2xl line-clamp-3 md:line-clamp-none">{course.description}</p>
         </div>
       </div>

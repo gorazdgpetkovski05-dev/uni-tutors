@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Eye, EyeOff, Trash2, Edit3, Save, X } from 'lucide-react';
 import { motion } from 'motion/react';
 import { supabase } from '../../lib/supabase';
+import { useToast } from '../../contexts/ToastContext';
 import { CourseRecord } from '../../types';
 
 type EditableCourse = {
@@ -26,6 +27,7 @@ interface CoursesTabProps {
 }
 
 export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseStatus, fetchAll, t }) => {
+  const { showToast } = useToast();
   const [showAdd, setShowAdd] = useState(false);
   const [newCourse, setNewCourse] = useState({ title: '', title_en: '', code: '', description: '', description_en: '', university: '', price_full: 0, price_single: 0, custom_price_display: '', image: '', professor_id: '' });
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -62,7 +64,7 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
   const saveEdit = async () => {
     if (!editingId) return;
     const { error } = await supabase.from('courses').update(editForm).eq('id', editingId);
-    if (error) { if (import.meta.env.DEV) console.error('Save failed:', error.message); alert(t('operationFailed')); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Save failed:', error.message); showToast(t('operationFailed'), 'error'); return; }
     setEditingId(null);
     fetchAll();
   };
@@ -75,7 +77,7 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
     if (!courseData.description_en) delete courseData.description_en;
     if (!courseData.custom_price_display) delete courseData.custom_price_display;
     const { error } = await supabase.from('courses').insert(courseData);
-    if (error) { if (import.meta.env.DEV) console.error('Add course failed:', error.message); alert(t('operationFailed')); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Add course failed:', error.message); showToast(t('operationFailed'), 'error'); return; }
     setShowAdd(false);
     setNewCourse({ title: '', title_en: '', code: '', description: '', description_en: '', university: '', price_full: 0, price_single: 0, custom_price_display: '', image: '', professor_id: '' });
     fetchAll();

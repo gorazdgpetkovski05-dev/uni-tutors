@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useToast } from '../contexts/ToastContext';
 import { supabase } from '../lib/supabase';
 import { Enrollment, CourseRecord, Profile, CourseProposal, SupportTicket } from '../types';
 import {
@@ -21,6 +22,7 @@ type AdminTab = 'overview' | 'bookings' | 'courses' | 'users' | 'proposals' | 's
 export const AdminPage: React.FC = () => {
   const { profile, signOut } = useAuth();
   const { t } = useLanguage();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [courses, setCourses] = useState<CourseRecord[]>([]);
@@ -73,7 +75,7 @@ export const AdminPage: React.FC = () => {
       }
     }
     const { error: enrollUpdateError } = await supabase.from('enrollments').update(updates).eq('id', id);
-    if (enrollUpdateError) { if (import.meta.env.DEV) console.error('Failed:', enrollUpdateError.message); alert(t('operationFailed')); return; }
+    if (enrollUpdateError) { if (import.meta.env.DEV) console.error('Failed:', enrollUpdateError.message); showToast(t('operationFailed'), 'error'); return; }
 
     if (enrollment) {
       // Notify student
@@ -115,14 +117,14 @@ export const AdminPage: React.FC = () => {
   // Course actions
   const updateCourseStatus = async (id: string, status: string) => {
     const { error } = await supabase.from('courses').update({ status }).eq('id', id);
-    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); showToast(t('operationFailed'), 'error'); return; }
     fetchAll();
   };
 
   // User role update
   const updateUserRole = async (id: string, role: string) => {
     const { error } = await supabase.from('profiles').update({ role }).eq('id', id);
-    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); showToast(t('operationFailed'), 'error'); return; }
     if (role === 'professor') {
       const { data: existing } = await supabase.from('professors').select('id').eq('id', id).single();
       if (!existing) {
@@ -137,7 +139,7 @@ export const AdminPage: React.FC = () => {
     const updates: any = { status };
     if (notes !== undefined) updates.admin_notes = notes;
     const { error: proposalUpdateError } = await supabase.from('course_proposals').update(updates).eq('id', id);
-    if (proposalUpdateError) { if (import.meta.env.DEV) console.error('Failed:', proposalUpdateError.message); alert(t('operationFailed')); return; }
+    if (proposalUpdateError) { if (import.meta.env.DEV) console.error('Failed:', proposalUpdateError.message); showToast(t('operationFailed'), 'error'); return; }
 
     const proposal = proposals.find(p => p.id === id);
     if (proposal) {
@@ -154,7 +156,7 @@ export const AdminPage: React.FC = () => {
   // Support ticket actions
   const updateTicketStatus = async (id: string, status: string) => {
     const { error } = await supabase.from('support_tickets').update({ status }).eq('id', id);
-    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); showToast(t('operationFailed'), 'error'); return; }
     fetchAll();
   };
 
@@ -165,7 +167,7 @@ export const AdminPage: React.FC = () => {
       sender_id: profile.id,
       message,
     });
-    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); showToast(t('operationFailed'), 'error'); return; }
 
     const ticket = supportTickets.find(t => t.id === ticketId);
     if (ticket) {
@@ -182,20 +184,20 @@ export const AdminPage: React.FC = () => {
   // Mark payment received
   const markPaymentReceived = async (id: string, amount: number) => {
     const { error } = await supabase.from('enrollments').update({ price_paid: amount }).eq('id', id);
-    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); showToast(t('operationFailed'), 'error'); return; }
     fetchAll();
   };
 
   // Session management
   const addSession = async (enrollmentId: string, title: string, status: string) => {
     const { error } = await supabase.from('sessions').insert({ enrollment_id: enrollmentId, title, status });
-    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); showToast(t('operationFailed'), 'error'); return; }
     fetchAll();
   };
 
   const updateSession = async (id: string, status: string) => {
     const { error } = await supabase.from('sessions').update({ status }).eq('id', id);
-    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); showToast(t('operationFailed'), 'error'); return; }
     fetchAll();
   };
 

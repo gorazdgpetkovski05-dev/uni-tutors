@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useToast } from '../contexts/ToastContext';
 import { supabase } from '../lib/supabase';
 import { Enrollment, Session as SessionRecord, CourseRecord, StudentXP, Review } from '../types';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -280,11 +281,11 @@ const StudentDashboard: React.FC = () => {
                     <div className="flex items-center gap-3 mb-1">
                       <h3 className="font-bold text-gray-900 dark:text-white">{enrollment.course?.title || t('unknownCourse')}</h3>
                       <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${statusColors[enrollment.status]}`}>
-                        {t(enrollment.status)}
+                        {t(enrollment.status as any)}
                       </span>
                     </div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {enrollment.course?.code} • {t(enrollment.booking_type)} • {new Date(enrollment.created_at).toLocaleDateString()}
+                      {enrollment.course?.code} • {t(enrollment.booking_type as any)} • {new Date(enrollment.created_at).toLocaleDateString()}
                     </p>
                     {enrollment.discount_percent > 0 && (
                       <p className="text-xs text-green-600 dark:text-green-400 mt-1 flex items-center gap-1">
@@ -441,6 +442,7 @@ const StudentDashboard: React.FC = () => {
 const ProfessorDashboard: React.FC = () => {
   const { user, profile, signOut } = useAuth();
   const { t } = useLanguage();
+  const { showToast } = useToast();
   const [courses, setCourses] = useState<CourseRecord[]>([]);
   const [enrollments, setEnrollments] = useState<(Enrollment & { student?: any; course?: any })[]>([]);
   const [sessions, setSessions] = useState<SessionRecord[]>([]);
@@ -563,7 +565,7 @@ const ProfessorDashboard: React.FC = () => {
     e.preventDefault();
     if (!schedCourseId || !schedTitle || !schedDate) return;
     if (schedDate < new Date().toISOString().split('T')[0]) {
-      alert(t('sessionDatePastError'));
+      showToast(t('sessionDatePastError'), 'error');
       return;
     }
     const naiveDate = schedTime ? `${schedDate}T${schedTime}:00` : `${schedDate}T00:00:00`;
@@ -574,7 +576,7 @@ const ProfessorDashboard: React.FC = () => {
       // Get all approved enrollments for this course
       const courseEnrollments = enrollments.filter(en => en.course_id === schedCourseId && en.status === 'approved');
       if (courseEnrollments.length === 0) {
-        alert(t('noStudents'));
+        showToast(t('noStudents'), 'info');
         setSchedSubmitting(false);
         return;
       }
@@ -859,7 +861,7 @@ const ProfessorDashboard: React.FC = () => {
                 </div>
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white">{e.student?.full_name || t('unknownStudent')}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{e.course?.title} • {t(e.booking_type)}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{e.course?.title} • {t(e.booking_type as any)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">

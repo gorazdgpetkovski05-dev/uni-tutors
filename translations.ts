@@ -561,11 +561,21 @@ export const translations = {
     onboardingStep1: "Find courses taught by certified experts",
     onboardingStep2: "Book sessions that fit your schedule",
     onboardingStep3: "Learn, pass exams, and earn XP!",
+    next: "Next",
+
+    // Share
+    shareCourse: "Share",
+    copyLink: "Copy Link",
+    linkCopied: "Copied!",
+    shareOn: "Share on",
 
     // Search Combobox
     recentSearches: "Recent Searches",
     clearRecent: "Clear",
     noResults: "No matching courses",
+
+    // Breadcrumbs
+    breadcrumbProfessor: "Professor",
   },
   mk: {
     // Navbar
@@ -1126,10 +1136,20 @@ export const translations = {
     onboardingStep1: "Најди курсеви од сертифицирани експерти",
     onboardingStep2: "Закажи сесии што одговараат на твојот распоред",
     onboardingStep3: "Учи, полагај испити и освојувај XP!",
+    next: "Следно",
+
+    // Share
+    shareCourse: "Сподели",
+    copyLink: "Копирај линк",
+    linkCopied: "Копирано!",
+    shareOn: "Сподели на",
 
     // Search Combobox
     recentSearches: "Последни пребарувања",
     clearRecent: "Избриши",
     noResults: "Нема курсеви што се совпаѓаат",
+
+    // Breadcrumbs
+    breadcrumbProfessor: "Професор",
   }
 };

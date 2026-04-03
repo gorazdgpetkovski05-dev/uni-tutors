@@ -17,6 +17,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { ToastProvider } from './contexts/ToastContext';
 
 import { DiscountPopup } from './components/DiscountPopup';
 import { InfoModal } from './components/InfoModal';
@@ -24,6 +25,9 @@ import { GeoNoticeBanner } from './components/GeoNoticeBanner';
 import { CookieConsent } from './components/CookieConsent';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NotFoundPage } from './components/NotFoundPage';
+import { ScrollToTopButton } from './components/ScrollToTopButton';
+import { TopProgressBar } from './components/TopProgressBar';
+import { Breadcrumbs } from './components/Breadcrumbs';
 
 const Footer: React.FC = () => {
     const { t } = useLanguage();
@@ -91,10 +95,12 @@ const AppContent: React.FC = () => {
     return (
         <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300">
             <ScrollToTop />
+            <TopProgressBar />
             <GeoNoticeBanner />
             <CookieConsent />
             <DiscountPopup />
             {!isAuthPage && <Navbar />}
+            {!isAuthPage && !isAdminPage && <Breadcrumbs />}
             <main className={`flex-grow ${!isAuthPage ? 'pt-16' : ''} ${!isAuthPage && !isAdminPage ? 'pb-16 md:pb-0' : ''}`}>
                 <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" /></div>}>
                     <Routes>
@@ -121,6 +127,7 @@ const AppContent: React.FC = () => {
             </main>
             {!isAuthPage && !isAdminPage && <Footer />}
             {!isAuthPage && !isAdminPage && <MobileBottomNav />}
+            <ScrollToTopButton />
         </div>
     );
 }
@@ -128,8 +135,9 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <LanguageProvider>
-        <ErrorBoundary>
+      <ToastProvider>
+        <LanguageProvider>
+          <ErrorBoundary>
             <AuthProvider>
               <NotificationProvider>
                 <DataProvider>
@@ -139,8 +147,9 @@ const App: React.FC = () => {
                 </DataProvider>
               </NotificationProvider>
             </AuthProvider>
-        </ErrorBoundary>
-      </LanguageProvider>
+          </ErrorBoundary>
+        </LanguageProvider>
+      </ToastProvider>
     </ThemeProvider>
   );
 };
