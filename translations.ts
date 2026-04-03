@@ -403,6 +403,11 @@ export const translations = {
     faq6Q: "Can I cancel a booking?",
     faq6A: "Yes, you can cancel a pending booking. Once approved, please contact us directly via WhatsApp to arrange a cancellation or rescheduling.",
 
+    // Photo upload
+    dragDropPhoto: "Click or drag & drop a photo",
+    maxFileSize: "Max 2MB (JPG, PNG)",
+    fileTooLarge: "File is too large. Maximum 2MB.",
+
     // Professor management
     selectProfessor: "Select Professor",
     scheduleSession: "Schedule Session",
@@ -932,6 +937,11 @@ export const translations = {
     faq6A: "Да, можете да откажете неодобрена резервација. По одобрување, ве молиме контактирајте не директно преку WhatsApp за откажување или промена на терминот.",
 
     // Professor management
+    // Photo upload
+    dragDropPhoto: "Кликни или повлечи слика",
+    maxFileSize: "Макс 2MB (JPG, PNG)",
+    fileTooLarge: "Датотеката е преголема. Максимум 2MB.",
+
     selectProfessor: "Избери Професор",
     scheduleSession: "Закажи Сесија",
     scheduleSessionDesc: "Закажи сесија за твоите студенти",

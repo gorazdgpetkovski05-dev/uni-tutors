@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { NotificationBell } from '../components/dashboard/NotificationBell';
 import { ReviewForm } from '../components/reviews/ReviewForm';
+import { AvatarUpload } from '../components/AvatarUpload';
 import { XPProgressCard } from '../components/dashboard/XPProgressCard';
 import { SessionCalendar } from '../components/dashboard/SessionCalendar';
 import { UpcomingSessionsCard } from '../components/dashboard/UpcomingSessionsCard';
@@ -642,18 +643,13 @@ const ProfessorDashboard: React.FC = () => {
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
           className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-200 dark:border-slate-700 mb-6">
           <h3 className="font-bold text-gray-900 dark:text-white mb-4">{t('editProfile')}</h3>
-          <div className="flex items-center gap-4 mb-4">
-            <img
-              src={editAvatarUrl || profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(editName)}&background=6366f1&color=fff&size=128`}
-              alt={editName}
-              className="w-16 h-16 rounded-full object-cover ring-4 ring-indigo-50 dark:ring-indigo-900/30"
+          <div className="mb-4">
+            <AvatarUpload
+              currentUrl={editAvatarUrl || profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(editName)}&background=6366f1&color=fff&size=128`}
+              userId={user!.id}
+              onUploaded={(url) => setEditAvatarUrl(url)}
+              size="w-20 h-20"
             />
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('avatarUrl')}</label>
-              <input type="url" value={editAvatarUrl} onChange={e => setEditAvatarUrl(e.target.value)}
-                placeholder="https://example.com/your-photo.jpg"
-                className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>

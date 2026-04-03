@@ -56,16 +56,56 @@ export const chatWithGemini = async (message: string, history: string[] = []) =>
 // Rate limit: 1 request per 4 seconds to stay well within free tier (15 req/min)
 let lastRecommendationCall = 0;
 
+// Smart fallback: recommend courses based on category similarity when no API key
+const getSmartRecommendations = (enrolledTitles: string[], allCourses: Course[]): Course[] => {
+  if (allCourses.length === 0) return [];
+
+  // If no enrollments, return top-rated courses
+  if (enrolledTitles.length === 0) {
+    return allCourses
+      .filter(c => !c.hidden)
+      .sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))
+      .slice(0, 3);
+  }
+
+  // Find courses the student is NOT enrolled in
+  const notEnrolled = allCourses.filter(c => !c.hidden && !enrolledTitles.includes(c.title));
+  if (notEnrolled.length === 0) return [];
+
+  // Score by keyword overlap with enrolled course titles
+  const enrolledWords = new Set(
+    enrolledTitles.flatMap(t => t.toLowerCase().split(/\s+/).filter(w => w.length > 2))
+  );
+
+  const scored = notEnrolled.map(course => {
+    const words = course.title.toLowerCase().split(/\s+/);
+    const overlap = words.filter(w => enrolledWords.has(w)).length;
+    const ratingBonus = (course.averageRating ?? 0) / 5;
+    return { course, score: overlap + ratingBonus };
+  });
+
+  return scored
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map(s => s.course);
+};
+
 export const getRecommendations = async (
   enrolledTitles: string[],
   allCourses: Course[]
 ): Promise<Course[]> => {
+  if (allCourses.length === 0) return [];
+
   const apiKey = getApiKey();
-  if (!apiKey || allCourses.length === 0) return [];
+
+  // No API key — use smart local recommendations
+  if (!apiKey) {
+    return getSmartRecommendations(enrolledTitles, allCourses);
+  }
 
   // Client-side rate limiting
   const now = Date.now();
-  if (now - lastRecommendationCall < 4000) return [];
+  if (now - lastRecommendationCall < 4000) return getSmartRecommendations(enrolledTitles, allCourses);
   lastRecommendationCall = now;
 
   const availableTitles = allCourses.map(c => c.title).join('\n');
@@ -98,6 +138,7 @@ Recommend exactly 3 courses from the available list above that would be most use
     if (import.meta.env.DEV) {
       console.error('Gemini recommendations error:', error instanceof Error ? error.message : 'Unknown error');
     }
-    return [];
+    // Fallback to smart local recommendations on API failure
+    return getSmartRecommendations(enrolledTitles, allCourses);
   }
 };
