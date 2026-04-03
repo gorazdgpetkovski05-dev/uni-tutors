@@ -42,7 +42,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, cou
                 {courseTitle ? t('bookingModalDesc') : t('contactModalDesc')}
               </p>
             </div>
-            <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+            <button onClick={onClose} aria-label="Close" className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
               <X className="h-6 w-6 text-gray-400 dark:text-gray-500" />
             </button>
           </div>
@@ -104,7 +104,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, cou
             >
               <div className="flex items-center gap-3">
                 <Mail className="h-6 w-6 text-white" />
-                <span className="text-lg font-bold tracking-wide">{email}</span>
+                <span className="text-base sm:text-lg font-bold tracking-wide break-all">{email}</span>
               </div>
               <div className="flex items-center gap-2 text-xs font-medium text-white/90 group-hover:text-white transition-colors">
                  <span>{t('email')}</span>

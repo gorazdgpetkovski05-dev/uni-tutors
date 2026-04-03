@@ -35,7 +35,7 @@ export const Confetti: React.FC<ConfettiProps> = ({ trigger, onComplete }) => {
     setParticles(items);
     const timer = setTimeout(() => { setParticles([]); onComplete?.(); }, 3000);
     return () => clearTimeout(timer);
-  }, [trigger]);
+  }, [trigger, onComplete]);
 
   return (
     <AnimatePresence>

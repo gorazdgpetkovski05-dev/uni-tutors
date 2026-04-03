@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { CourseCard } from '../components/CourseCard';
 import { SkeletonCard } from '../components/SkeletonCard';
 import { Search, Filter, ArrowUpDown, Sparkles } from 'lucide-react';
+import { SearchCombobox } from '../components/SearchCombobox';
+import { EmptyState } from '../components/EmptyState';
 import { useData } from '../contexts/DataContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -143,17 +145,7 @@ export const CoursesPage: React.FC = () => {
              </div>
 
              {/* Search */}
-             <div className="relative">
-                <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-500" />
-                <input
-                type="text"
-                aria-label={t('searchPlaceholder')}
-                placeholder={t('searchPlaceholder')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-white w-full sm:w-64 transition-colors placeholder-gray-400 dark:placeholder-gray-500"
-                />
-            </div>
+             <SearchCombobox courses={courses} onSearch={setSearchTerm} />
           </div>
         </motion.div>
 
@@ -229,22 +221,15 @@ export const CoursesPage: React.FC = () => {
         )}
 
         {filteredCourses.length === 0 && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-20 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 mt-4 transition-colors"
-          >
-            <div className="text-gray-400 dark:text-gray-500 mb-2">
-                <Search className="h-10 w-10 mx-auto opacity-50" />
-            </div>
-            <p className="text-gray-500 dark:text-gray-400 font-medium">{t('noCoursesFound')}</p>
-            <button 
-                onClick={() => {setSearchTerm(''); setSelectedUniversity('All'); setSelectedCategory('allCategories');}}
-                className="mt-4 text-indigo-600 dark:text-indigo-400 font-bold hover:text-indigo-800 dark:hover:text-indigo-300 transition-all duration-300 hover:-translate-y-0.5"
-            >
-                {t('clearFilters')}
-            </button>
-          </motion.div>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 mt-4 transition-colors">
+            <EmptyState
+              icon={Search}
+              title={t('emptyCoursesTitle')}
+              description={t('emptyCoursesDesc')}
+              actionLabel={t('clearFilters')}
+              onAction={() => {setSearchTerm(''); setSelectedUniversity('All'); setSelectedCategory('allCategories');}}
+            />
+          </div>
         )}
       </div>
     </div>

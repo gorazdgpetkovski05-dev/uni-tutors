@@ -299,7 +299,7 @@ export const ProfessorProfilePage: React.FC = () => {
                 <div key={review.id} className="flex gap-4 border-b border-gray-100 dark:border-slate-700 last:border-0 pb-5 last:pb-0">
                   <img
                     src={review.student?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.student?.full_name || 'S')}&background=6366f1&color=fff`}
-                    alt={review.student?.full_name}
+                    alt={review.student?.full_name || 'Student'}
                     className="w-10 h-10 rounded-full flex-shrink-0 object-cover"
                   />
                   <div className="flex-1 min-w-0">

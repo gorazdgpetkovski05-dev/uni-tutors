@@ -24,10 +24,12 @@ export const SupportTab: React.FC<SupportTabProps> = ({ tickets, updateTicketSta
       {tickets.map(ticket => (
         <div key={ticket.id} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
           <button onClick={() => setExpanded(expanded === ticket.id ? null : ticket.id)}
+            aria-expanded={expanded === ticket.id}
+            aria-label={`${ticket.subject} — ${expanded === ticket.id ? 'collapse' : 'expand'}`}
             className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
             <div className="text-left">
               <p className="font-bold text-gray-900 dark:text-white">{ticket.subject}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{(ticket as any).user?.full_name} • {new Date(ticket.created_at).toLocaleDateString()}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{(ticket as any).user?.full_name || t('unknown')} • {new Date(ticket.created_at).toLocaleDateString()}</p>
             </div>
             <div className="flex items-center gap-2">
               <select value={ticket.status} onChange={e => updateTicketStatus(ticket.id, e.target.value)} onClick={e => e.stopPropagation()}
@@ -57,12 +59,19 @@ export const SupportTab: React.FC<SupportTabProps> = ({ tickets, updateTicketSta
               </div>
 
               <div className="flex gap-2">
-                <input placeholder={t('typeReply')} value={replyText[ticket.id] || ''}
+                <textarea placeholder={t('typeReply')} aria-label={t('typeReply')} value={replyText[ticket.id] || ''}
                   onChange={e => setReplyText({ ...replyText, [ticket.id]: e.target.value })}
-                  onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleReply(ticket.id)}
-                  className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-gray-900 dark:text-white" />
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleReply(ticket.id);
+                    }
+                  }}
+                  rows={2}
+                  className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-gray-900 dark:text-white resize-none" />
                 <button onClick={() => handleReply(ticket.id)}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                  aria-label={t('sendMessage')}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 self-end">
                   <Send className="h-4 w-4" />
                 </button>
               </div>

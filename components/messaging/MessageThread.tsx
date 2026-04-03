@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Message } from '../../types';
 import { Send, X, MessageSquare } from 'lucide-react';
+import { EmptyState } from '../EmptyState';
 
 interface MessageThreadProps {
   enrollmentId: string;
@@ -76,7 +77,7 @@ export const MessageThread: React.FC<MessageThreadProps> = ({ enrollmentId, curr
             <MessageSquare className="h-5 w-5 text-indigo-500" />
             <h3 className="font-bold text-gray-900 dark:text-white">{otherUserName}</h3>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+          <button onClick={onClose} aria-label="Close" className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
             <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
@@ -84,7 +85,11 @@ export const MessageThread: React.FC<MessageThreadProps> = ({ enrollmentId, curr
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3 min-h-[200px]">
           {messages.length === 0 && (
-            <p className="text-center text-sm text-gray-400 dark:text-gray-500 py-8">{t('noMessages')}</p>
+            <EmptyState
+              icon={MessageSquare}
+              title={t('noMessages')}
+              description={t('startConversation')}
+            />
           )}
           {messages.map(msg => {
             const isOwn = msg.sender_id === currentUserId;

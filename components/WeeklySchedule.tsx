@@ -53,6 +53,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({ courseIds }) => 
     };
 
     fetchSessions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseIds.join(',')]);
 
   return (

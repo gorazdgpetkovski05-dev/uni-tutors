@@ -26,7 +26,7 @@ export const CourseDetailsPage: React.FC = () => {
   const [enrollmentStatus, setEnrollmentStatus] = useState<string | null>(null);
   const [enrolling, setEnrolling] = useState(false);
   const [enrollSuccess, setEnrollSuccess] = useState(false);
-  const [reviews, setReviews] = useState<(Review & { student?: { full_name: string } })[]>([]);
+  const [reviews, setReviews] = useState<(Review & { student?: { full_name: string; avatar_url: string | null } })[]>([]);
   const [avgRating, setAvgRating] = useState<number | null>(null);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export const CourseDetailsPage: React.FC = () => {
     if (!id) return;
     const { data } = await supabase
       .from('reviews')
-      .select('*, student:profiles!reviews_student_id_fkey(full_name)')
+      .select('*, student:profiles!reviews_student_id_fkey(full_name, avatar_url)')
       .eq('course_id', id)
       .order('created_at', { ascending: false });
     if (data) {

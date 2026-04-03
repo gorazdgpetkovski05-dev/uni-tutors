@@ -40,6 +40,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, title, me
                 </div>
                 <button
                   onClick={onClose}
+                  aria-label="Close"
                   className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
                 >
                   <X className="h-6 w-6 text-gray-400 dark:text-gray-500" />

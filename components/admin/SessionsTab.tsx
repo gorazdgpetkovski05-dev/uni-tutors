@@ -49,9 +49,10 @@ export const SessionsTab: React.FC<SessionsTabProps> = ({ enrollments, addSessio
       {approvedEnrollments.map(e => (
         <div key={e.id} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
           <button onClick={() => setExpanded(expanded === e.id ? null : e.id)}
+            aria-expanded={expanded === e.id}
             className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
             <div className="text-left">
-              <p className="font-bold text-gray-900 dark:text-white">{(e as any).student?.full_name} → {(e as any).course?.title}</p>
+              <p className="font-bold text-gray-900 dark:text-white">{(e as any).student?.full_name || t('unknown')} → {(e as any).course?.title || t('unknown')}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">{sessions[e.id]?.length || 0} {t('lectures').toLowerCase()} • {t(e.status)}</p>
             </div>
             {expanded === e.id ? <ChevronUp className="h-5 w-5 text-gray-400" /> : <ChevronDown className="h-5 w-5 text-gray-400" />}
@@ -72,10 +73,10 @@ export const SessionsTab: React.FC<SessionsTabProps> = ({ enrollments, addSessio
                 </div>
               ))}
               <div className="flex gap-2 mt-2">
-                <input placeholder={t('sessionTitle')} value={newSessionTitle[e.id] || ''}
+                <input placeholder={t('sessionTitle')} aria-label={t('sessionTitle')} value={newSessionTitle[e.id] || ''}
                   onChange={ev => setNewSessionTitle({ ...newSessionTitle, [e.id]: ev.target.value })}
                   className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-gray-900 dark:text-white" />
-                <button onClick={() => handleAddSession(e.id)}
+                <button onClick={() => handleAddSession(e.id)} aria-label={t('addSession')}
                   className="px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700">
                   <Plus className="h-4 w-4" />
                 </button>

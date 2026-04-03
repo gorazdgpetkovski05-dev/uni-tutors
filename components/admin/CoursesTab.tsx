@@ -27,7 +27,7 @@ interface CoursesTabProps {
 
 export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseStatus, fetchAll, t }) => {
   const [showAdd, setShowAdd] = useState(false);
-  const [newCourse, setNewCourse] = useState({ title: '', code: '', description: '', university: '', price_full: 0, price_single: 0, image: '', professor_id: '' });
+  const [newCourse, setNewCourse] = useState({ title: '', title_en: '', code: '', description: '', description_en: '', university: '', price_full: 0, price_single: 0, custom_price_display: '', image: '', professor_id: '' });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<EditableCourse>({
     title: '', title_en: '', code: '', description: '', description_en: '',
@@ -37,7 +37,7 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
 
   useEffect(() => {
     supabase.from('professors').select('id, profiles(full_name)').then(({ data }) => {
-      if (data) setProfessors(data.map((p: any) => ({ id: p.id, full_name: p.profiles?.full_name || 'Unknown' })));
+      if (data) setProfessors(data.map((p: any) => ({ id: p.id, full_name: p.profiles?.full_name || '' })));
     });
   }, []);
 
@@ -68,12 +68,16 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
   };
 
   const addCourse = async () => {
+    if (!newCourse.title.trim()) return;
     const courseData: any = { ...newCourse, status: 'draft' };
     if (!courseData.professor_id) delete courseData.professor_id;
+    if (!courseData.title_en) delete courseData.title_en;
+    if (!courseData.description_en) delete courseData.description_en;
+    if (!courseData.custom_price_display) delete courseData.custom_price_display;
     const { error } = await supabase.from('courses').insert(courseData);
     if (error) { if (import.meta.env.DEV) console.error('Add course failed:', error.message); alert(t('operationFailed')); return; }
     setShowAdd(false);
-    setNewCourse({ title: '', code: '', description: '', university: '', price_full: 0, price_single: 0, image: '', professor_id: '' });
+    setNewCourse({ title: '', title_en: '', code: '', description: '', description_en: '', university: '', price_full: 0, price_single: 0, custom_price_display: '', image: '', professor_id: '' });
     fetchAll();
   };
 
@@ -93,20 +97,26 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
           className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-200 dark:border-slate-700 mb-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <input placeholder={t('courseTitle')} value={newCourse.title} onChange={e => setNewCourse({...newCourse, title: e.target.value})} className={inputCls} />
-            <input placeholder={t('courseCode')} value={newCourse.code} onChange={e => setNewCourse({...newCourse, code: e.target.value})} className={inputCls} />
-            <input placeholder={t('university')} value={newCourse.university} onChange={e => setNewCourse({...newCourse, university: e.target.value})} className={inputCls} />
-            <input placeholder={t('imageUrl')} value={newCourse.image} onChange={e => setNewCourse({...newCourse, image: e.target.value})} className={inputCls} />
-            <input type="number" placeholder={t('priceSingle')} value={newCourse.price_single || ''} onChange={e => setNewCourse({...newCourse, price_single: Number(e.target.value)})} className={inputCls} />
-            <input type="number" placeholder={t('priceFull')} value={newCourse.price_full || ''} onChange={e => setNewCourse({...newCourse, price_full: Number(e.target.value)})} className={inputCls} />
+            <input placeholder={`${t('courseTitle')} (${t('titleMk')})`} aria-label={t('courseTitle')} value={newCourse.title} onChange={e => setNewCourse({...newCourse, title: e.target.value})} className={inputCls} />
+            <input placeholder={t('titleEn')} aria-label={t('titleEn')} value={newCourse.title_en} onChange={e => setNewCourse({...newCourse, title_en: e.target.value})} className={inputCls} />
+            <input placeholder={t('courseCode')} aria-label={t('courseCode')} value={newCourse.code} onChange={e => setNewCourse({...newCourse, code: e.target.value})} className={inputCls} />
+            <input placeholder={t('university')} aria-label={t('university')} value={newCourse.university} onChange={e => setNewCourse({...newCourse, university: e.target.value})} className={inputCls} />
+            <input placeholder={t('imageUrl')} aria-label={t('imageUrl')} value={newCourse.image} onChange={e => setNewCourse({...newCourse, image: e.target.value})} className={inputCls} />
+            <input placeholder={t('customPriceDisplay')} aria-label={t('customPriceDisplay')} value={newCourse.custom_price_display} onChange={e => setNewCourse({...newCourse, custom_price_display: e.target.value})} className={inputCls} />
+            <input type="number" placeholder={t('priceSingle')} aria-label={t('priceSingle')} value={newCourse.price_single || ''} onChange={e => setNewCourse({...newCourse, price_single: Number(e.target.value)})} className={inputCls} />
+            <input type="number" placeholder={t('priceFull')} aria-label={t('priceFull')} value={newCourse.price_full || ''} onChange={e => setNewCourse({...newCourse, price_full: Number(e.target.value)})} className={inputCls} />
             <div>
-              <select value={newCourse.professor_id} onChange={e => setNewCourse({...newCourse, professor_id: e.target.value})} className={inputCls}>
+              <select aria-label={t('selectProfessor')} value={newCourse.professor_id} onChange={e => setNewCourse({...newCourse, professor_id: e.target.value})} className={inputCls}>
                 <option value="">{t('selectProfessor')}</option>
-                {professors.map(p => <option key={p.id} value={p.id}>{p.full_name}</option>)}
+                {professors.map(p => <option key={p.id} value={p.id}>{p.full_name || t('unknownProfessor')}</option>)}
               </select>
             </div>
           </div>
-          <textarea placeholder={t('descriptionLabel')} value={newCourse.description} onChange={e => setNewCourse({...newCourse, description: e.target.value})} rows={3}
+          <div className="mb-3">
+            <textarea placeholder={`${t('descriptionLabel')} (${t('descriptionMk')})`} value={newCourse.description} onChange={e => setNewCourse({...newCourse, description: e.target.value})} rows={3}
+              className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white resize-none" />
+          </div>
+          <textarea placeholder={t('descriptionEn')} value={newCourse.description_en} onChange={e => setNewCourse({...newCourse, description_en: e.target.value})} rows={3}
             className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white mb-4 resize-none" />
           <div className="flex gap-2">
             <button onClick={addCourse} className="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700">{t('saveCourse')}</button>
@@ -206,7 +216,7 @@ export const CoursesTab: React.FC<CoursesTabProps> = ({ courses, updateCourseSta
                     <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t('professor')}</label>
                     <select value={editForm.professor_id} onChange={e => setEditForm({...editForm, professor_id: e.target.value})} className={inputCls}>
                       <option value="">{t('selectProfessor')}</option>
-                      {professors.map(p => <option key={p.id} value={p.id}>{p.full_name}</option>)}
+                      {professors.map(p => <option key={p.id} value={p.id}>{p.full_name || t('unknownProfessor')}</option>)}
                     </select>
                   </div>
                 </div>

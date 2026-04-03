@@ -68,6 +68,7 @@ export const BookingsTab: React.FC<BookingsTabProps> = ({ enrollments, updateEnr
                         <input
                           type="text"
                           placeholder={t('studyHubLink')}
+                          aria-label={t('studyHubLink')}
                           value={discordLinks[e.id] || ''}
                           onChange={ev => setDiscordLinks({ ...discordLinks, [e.id]: ev.target.value })}
                           className="px-3 py-1.5 text-sm border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-gray-900 dark:text-white w-48"
@@ -100,6 +101,7 @@ export const BookingsTab: React.FC<BookingsTabProps> = ({ enrollments, updateEnr
                       <input
                         type="number"
                         placeholder={calculatedPrice ? String(calculatedPrice) : 'Amount (MKD)'}
+                        aria-label={t('totalAmount')}
                         value={paymentAmounts[e.id] || ''}
                         onChange={ev => setPaymentAmounts({ ...paymentAmounts, [e.id]: ev.target.value })}
                         className="px-3 py-1.5 text-sm border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-gray-900 dark:text-white w-36"

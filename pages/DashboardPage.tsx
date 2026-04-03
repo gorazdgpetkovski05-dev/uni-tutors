@@ -6,10 +6,11 @@ import { Enrollment, Session as SessionRecord, CourseRecord, StudentXP, Review }
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import {
-  BookOpen, Clock, CheckCircle2, XCircle, AlertCircle, LogOut,
+  BookOpen, Clock, CheckCircle2, LogOut, Calendar,
   ChevronRight, User, Send, MessageSquare, Star, HelpCircle,
-  TrendingUp, Users, Award, BarChart3, Zap
+  TrendingUp, Users, Zap
 } from 'lucide-react';
+import { EmptyState } from '../components/EmptyState';
 import { NotificationBell } from '../components/dashboard/NotificationBell';
 import { ReviewForm } from '../components/reviews/ReviewForm';
 import { AvatarUpload } from '../components/AvatarUpload';
@@ -20,6 +21,7 @@ import { CourseProgressCard } from '../components/dashboard/CourseProgressCard';
 import { StreakCard } from '../components/dashboard/StreakCard';
 import { SuccessModal } from '../components/SuccessModal';
 import { MessageThread } from '../components/messaging/MessageThread';
+import { OnboardingWizard, STORAGE_KEY as ONBOARDING_KEY } from '../components/OnboardingWizard';
 
 // ─── Student Dashboard ─────────────────────────────────────────────────────────
 const StudentDashboard: React.FC = () => {
@@ -34,6 +36,7 @@ const StudentDashboard: React.FC = () => {
   const [reviewEnrollment, setReviewEnrollment] = useState<Enrollment | null>(null);
   const [enrollSuccess, setEnrollSuccess] = useState(false);
   const [messageEnrollment, setMessageEnrollment] = useState<(Enrollment & { course?: CourseRecord }) | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem(ONBOARDING_KEY));
 
   // Detect enrollment success from URL param
   useEffect(() => {
@@ -171,8 +174,8 @@ const StudentDashboard: React.FC = () => {
           <h3 className="font-bold text-gray-900 dark:text-white mb-4">{t('editProfile')}</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('fullName')}</label>
-              <input type="text" value={editName} onChange={e => setEditName(e.target.value)}
+              <label htmlFor="student-edit-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('fullName')}</label>
+              <input id="student-edit-name" type="text" value={editName} onChange={e => setEditName(e.target.value)}
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder={t('fullName')} />
             </div>
@@ -255,12 +258,14 @@ const StudentDashboard: React.FC = () => {
       {activeTab === 'courses' && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="space-y-4">
           {enrollments.length === 0 ? (
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-8 border border-gray-200 dark:border-slate-700 text-center">
-              <BookOpen className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-500 dark:text-gray-400 mb-4">{t('noEnrollments')}</p>
-              <Link to="/courses" className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all">
-                {t('browseCourses')} <ChevronRight className="h-4 w-4" />
-              </Link>
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
+              <EmptyState
+                icon={BookOpen}
+                title={t('emptyEnrollmentsTitle')}
+                description={t('emptyEnrollmentsDesc')}
+                actionLabel={t('browseCourses')}
+                actionLink="/courses"
+              />
             </div>
           ) : (
             enrollments.map(enrollment => (
@@ -328,9 +333,12 @@ const StudentDashboard: React.FC = () => {
       {activeTab === 'history' && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="space-y-3">
           {sessions.length === 0 ? (
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-8 border border-gray-200 dark:border-slate-700 text-center">
-              <Clock className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-500 dark:text-gray-400">{t('noSessions')}</p>
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
+              <EmptyState
+                icon={Calendar}
+                title={t('emptySessionsTitle')}
+                description={t('emptySessionsDesc')}
+              />
             </div>
           ) : (
             sessions.map(session => {
@@ -376,14 +384,14 @@ const StudentDashboard: React.FC = () => {
           )}
           <form onSubmit={submitSupportTicket} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('subject')}</label>
-              <input type="text" value={ticketSubject} onChange={e => setTicketSubject(e.target.value)} required maxLength={200}
+              <label htmlFor="ticket-subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('subject')}</label>
+              <input id="ticket-subject" type="text" value={ticketSubject} onChange={e => setTicketSubject(e.target.value)} required maxLength={200}
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder={t('ticketSubjectPlaceholder')} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('descriptionLabel')}</label>
-              <textarea value={ticketDesc} onChange={e => setTicketDesc(e.target.value)} required rows={4} maxLength={2000}
+              <label htmlFor="ticket-desc" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('descriptionLabel')}</label>
+              <textarea id="ticket-desc" value={ticketDesc} onChange={e => setTicketDesc(e.target.value)} required rows={4} maxLength={2000}
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
                 placeholder={t('ticketDescPlaceholder')} />
             </div>
@@ -422,6 +430,9 @@ const StudentDashboard: React.FC = () => {
         xpEarned={50}
         onClose={() => setEnrollSuccess(false)}
       />
+
+      {/* Onboarding Wizard for new users */}
+      {showOnboarding && <OnboardingWizard onClose={() => setShowOnboarding(false)} />}
     </div>
   );
 };
@@ -562,7 +573,11 @@ const ProfessorDashboard: React.FC = () => {
     try {
       // Get all approved enrollments for this course
       const courseEnrollments = enrollments.filter(en => en.course_id === schedCourseId && en.status === 'approved');
-      if (courseEnrollments.length === 0) return;
+      if (courseEnrollments.length === 0) {
+        alert(t('noStudents'));
+        setSchedSubmitting(false);
+        return;
+      }
       // Insert a session per enrollment
       await Promise.all(courseEnrollments.map(en =>
         supabase.from('sessions').insert({
@@ -653,25 +668,31 @@ const ProfessorDashboard: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('fullName')}</label>
-              <input type="text" value={editName} onChange={e => setEditName(e.target.value)}
+              <label htmlFor="prof-edit-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('fullName')}</label>
+              <input id="prof-edit-name" type="text" value={editName} onChange={e => setEditName(e.target.value)}
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('specialty')}</label>
-              <input type="text" value={editSpecialty} onChange={e => setEditSpecialty(e.target.value)}
+              <label htmlFor="prof-edit-specialty" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('specialty')}</label>
+              <input id="prof-edit-specialty" type="text" value={editSpecialty} onChange={e => setEditSpecialty(e.target.value)}
                 className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('bio')}</label>
-            <textarea value={editBio} onChange={e => setEditBio(e.target.value)} rows={3}
+            <label htmlFor="prof-edit-bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('bio')}</label>
+            <textarea id="prof-edit-bio" value={editBio} onChange={e => setEditBio(e.target.value)} rows={3}
               placeholder={t('bioPlaceholder')}
               className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
           </div>
-          <button onClick={saveProfile} className="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all">
-            {t('saveChanges')}
-          </button>
+          <div className="flex gap-3">
+            <button onClick={saveProfile} className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all">
+              <CheckCircle2 className="h-4 w-4" /> {t('saveChanges')}
+            </button>
+            <button onClick={() => { setEditingProfile(false); setEditName(profile?.full_name || ''); setEditAvatarUrl(profile?.avatar_url || ''); }}
+              className="px-6 py-2.5 text-gray-600 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+              {t('cancel')}
+            </button>
+          </div>
         </motion.div>
       )}
 

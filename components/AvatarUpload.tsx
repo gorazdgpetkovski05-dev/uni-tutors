@@ -79,7 +79,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentUrl, userId, 
             <Upload className="h-5 w-5 text-white" />
           )}
         </div>
-        <input ref={inputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
+        <input ref={inputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" aria-label="Upload avatar image" />
       </div>
       <div className="text-xs text-gray-500 dark:text-gray-400">
         <p className="font-medium">{t('dragDropPhoto')}</p>

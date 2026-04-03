@@ -538,6 +538,34 @@ export const translations = {
     sendMessage: "Send",
     typeMessage: "Type a message...",
     noMessages: "No messages yet. Start the conversation!",
+    startConversation: "Start the conversation",
+
+    // Empty States
+    emptyCoursesTitle: "No courses found",
+    emptyCoursesDesc: "Try adjusting your search or filters",
+    emptyEnrollmentsTitle: "No courses yet",
+    emptyEnrollmentsDesc: "Start your learning journey today",
+    emptySessionsTitle: "No sessions yet",
+    emptySessionsDesc: "Sessions will appear once scheduled",
+
+    // Mobile Nav
+    profile: "Profile",
+
+    // Onboarding
+    welcomeToUniTutors: "Welcome to UniTutors!",
+    letsGetStarted: "Let's get started",
+    howPlatformWorks: "How UniTutors Works",
+    youAreReady: "You're all set!",
+    startExploring: "Start Exploring",
+    skipOnboarding: "Skip",
+    onboardingStep1: "Find courses taught by certified experts",
+    onboardingStep2: "Book sessions that fit your schedule",
+    onboardingStep3: "Learn, pass exams, and earn XP!",
+
+    // Search Combobox
+    recentSearches: "Recent Searches",
+    clearRecent: "Clear",
+    noResults: "No matching courses",
   },
   mk: {
     // Navbar
@@ -1075,5 +1103,33 @@ export const translations = {
     sendMessage: "Испрати",
     typeMessage: "Напиши порака...",
     noMessages: "Нема пораки. Започни разговор!",
+    startConversation: "Започни разговор",
+
+    // Empty States
+    emptyCoursesTitle: "Не се пронајдени курсеви",
+    emptyCoursesDesc: "Обидете се со друго пребарување",
+    emptyEnrollmentsTitle: "Сè уште нема курсеви",
+    emptyEnrollmentsDesc: "Започни го учењето денес",
+    emptySessionsTitle: "Нема сесии",
+    emptySessionsDesc: "Сесиите ќе се појават кога ќе бидат закажани",
+
+    // Mobile Nav
+    profile: "Профил",
+
+    // Onboarding
+    welcomeToUniTutors: "Добредојде на UniTutors!",
+    letsGetStarted: "Да започнеме",
+    howPlatformWorks: "Како функционира UniTutors",
+    youAreReady: "Сè е подготвено!",
+    startExploring: "Започни со истражување",
+    skipOnboarding: "Прескокни",
+    onboardingStep1: "Најди курсеви од сертифицирани експерти",
+    onboardingStep2: "Закажи сесии што одговараат на твојот распоред",
+    onboardingStep3: "Учи, полагај испити и освојувај XP!",
+
+    // Search Combobox
+    recentSearches: "Последни пребарувања",
+    clearRecent: "Избриши",
+    noResults: "Нема курсеви што се совпаѓаат",
   }
 };

@@ -3,12 +3,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { WHATSAPP_URL } from '../constants';
 import { MessageCircle, X, Gift, Sparkles } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 export const DiscountPopup: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const { t } = useLanguage();
-  const navigate = useNavigate();
   const location = useLocation();
 
   // Don't show on auth, dashboard, or admin pages
@@ -46,8 +45,9 @@ export const DiscountPopup: React.FC = () => {
           className="fixed bottom-4 right-4 z-[100] max-w-sm w-full mx-auto md:right-8 md:bottom-8"
         >
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden border-2 border-indigo-100 dark:border-indigo-500/30 relative transition-colors duration-300">
-            <button 
+            <button
               onClick={handleClose}
+              aria-label="Close"
               className="absolute top-2 right-2 p-1 bg-gray-100 dark:bg-slate-700 rounded-full hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors z-10"
             >
               <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />

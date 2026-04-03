@@ -188,12 +188,14 @@ export const AdminPage: React.FC = () => {
 
   // Session management
   const addSession = async (enrollmentId: string, title: string, status: string) => {
-    await supabase.from('sessions').insert({ enrollment_id: enrollmentId, title, status });
+    const { error } = await supabase.from('sessions').insert({ enrollment_id: enrollmentId, title, status });
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
     fetchAll();
   };
 
   const updateSession = async (id: string, status: string) => {
-    await supabase.from('sessions').update({ status }).eq('id', id);
+    const { error } = await supabase.from('sessions').update({ status }).eq('id', id);
+    if (error) { if (import.meta.env.DEV) console.error('Failed:', error.message); alert(t('operationFailed')); return; }
     fetchAll();
   };
 
@@ -257,12 +259,14 @@ export const AdminPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Tab Navigation */}
-        <div className="flex gap-1 overflow-x-auto bg-gray-100 dark:bg-slate-800 rounded-xl p-1 mb-6 no-scrollbar">
+        <div className="flex gap-1 overflow-x-auto bg-gray-100 dark:bg-slate-800 rounded-xl p-1 mb-6 no-scrollbar" role="tablist">
           {tabs.map(tab => (
             <button
               key={tab.key}
+              role="tab"
+              aria-selected={activeTab === tab.key}
               onClick={() => { setActiveTab(tab.key); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                 activeTab === tab.key
                   ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
                   : 'text-gray-500 dark:text-gray-400 hover:text-gray-700'

@@ -65,7 +65,7 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ enrollment, onClose, onS
         <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 p-6 w-full max-w-md">
           <div className="flex justify-between items-start mb-6">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t('leaveReview')}</h3>
-            <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
+            <button onClick={onClose} aria-label="Close" className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
               <X className="h-5 w-5 text-gray-400" />
             </button>
           </div>
@@ -105,8 +105,9 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ enrollment, onClose, onS
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('reviewComment')}</label>
+              <label htmlFor="review-comment" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('reviewComment')}</label>
               <textarea
+                id="review-comment"
                 value={comment}
                 onChange={e => setComment(e.target.value)}
                 rows={4}

@@ -61,17 +61,19 @@ export const AiTutor: React.FC = () => {
 
       <div className="p-3 bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700">
         <div className="relative">
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Explain recursion..."
+            aria-label="Ask AI Tutor a question"
             className="w-full pl-4 pr-12 py-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all"
           />
-          <button 
+          <button
             onClick={handleSend}
             disabled={loading}
+            aria-label="Send message"
             className="absolute right-2 top-2 p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
           >
             <Send className="h-4 w-4" />

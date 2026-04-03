@@ -61,7 +61,6 @@ const FadeInSection: React.FC<{ children: React.ReactNode, className?: string, d
 };
 
 import { WHATSAPP_URL } from '../constants';
-import { MessageCircle } from 'lucide-react';
 
 interface Testimonial {
   id: string;
@@ -150,7 +149,7 @@ export const Home: React.FC = () => {
             </p>
           </FadeInSection>
 
-          <div className="grid md:grid-cols-4 gap-8 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 relative">
             {/* Connecting Line (Desktop) */}
             <motion.div 
               initial={{ scaleX: 0 }}
@@ -258,7 +257,7 @@ export const Home: React.FC = () => {
             </p>
           </FadeInSection>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <FadeInSection className="h-full group" delay={0.1}>
               <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-slate-700 transition-all duration-300 ease-out group-hover:shadow-xl group-hover:shadow-indigo-500/30 dark:group-hover:shadow-indigo-500/40 group-hover:border-indigo-300 dark:group-hover:border-indigo-500 group-hover:-translate-y-2 h-full flex flex-col active:scale-[0.98]">
                 <div className="h-14 w-14 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -323,7 +322,7 @@ export const Home: React.FC = () => {
               <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">{t('featuredCoursesTitle')}</h2>
               <p className="mt-4 text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">{t('featuredCoursesSub')}</p>
             </FadeInSection>
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
               {featuredCourses.map((course, i) => (
                 <FadeInSection key={course.id} delay={i * 0.1}>
                   <CourseCard course={course} />
@@ -429,6 +428,7 @@ export const Home: React.FC = () => {
                 <div className="border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden">
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    aria-expanded={openFaq === i}
                     className="w-full flex items-center justify-between p-5 text-left bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
                   >
                     <span className="font-semibold text-gray-900 dark:text-white pr-4">{item.q}</span>

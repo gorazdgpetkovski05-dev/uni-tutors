@@ -55,6 +55,7 @@ export const UsersTab: React.FC<UsersTabProps> = ({ users, updateUserRole, t }) 
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t('searchUsers')}
+            aria-label={t('searchUsers')}
             className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400"
           />
         </div>
@@ -105,6 +106,7 @@ export const UsersTab: React.FC<UsersTabProps> = ({ users, updateUserRole, t }) 
             <div className="flex items-center gap-2">
               <select
                 value={u.role}
+                aria-label={`${t('changeRoleConfirm')} ${u.full_name}`}
                 onChange={e => {
                   const newRole = e.target.value;
                   if (!window.confirm(`${t('changeRoleConfirm')} "${newRole}"${t('changeRoleWarning')}`)) return;

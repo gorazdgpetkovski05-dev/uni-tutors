@@ -19,11 +19,16 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ proposals, updatePro
               <p className="font-bold text-gray-900 dark:text-white">{p.title}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{(p as any).professor?.full_name} • {p.course_code} • {p.university}</p>
               <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{p.description}</p>
+              {p.admin_notes && p.status !== 'pending' && (
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">
+                  {t('adminNotes')}: {p.admin_notes}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-2">
               {p.status === 'pending' && (
                 <>
-                  <input placeholder={t('adminNotes')} value={notes[p.id] || ''} onChange={e => setNotes({...notes, [p.id]: e.target.value})}
+                  <input placeholder={t('adminNotes')} aria-label={t('adminNotes')} value={notes[p.id] || ''} onChange={e => setNotes({...notes, [p.id]: e.target.value})}
                     className="px-3 py-1.5 text-sm border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-gray-900 dark:text-white" />
                   <div className="flex gap-2">
                     <button onClick={() => updateProposal(p.id, 'approved', notes[p.id])}

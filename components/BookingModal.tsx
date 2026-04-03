@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Course, BookingType, Midterm } from '../types';
-import { X, Copy, Phone, Wallet, Info, Check, ArrowRight, Mail } from 'lucide-react';
+import { X, Phone, Wallet, Info, ArrowRight, Mail } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface BookingModalProps {
@@ -24,17 +24,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   price 
 }) => {
   const { t } = useLanguage();
-  const [copied, setCopied] = useState(false);
-  
+
   if (!isOpen || !course) return null;
-
-  const phoneNumber = "+389 70 356 541";
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(phoneNumber);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   const selectedLecture = course.lectures.find(l => l.id === selectedLectureId);
 
@@ -51,7 +42,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                  {t('completeBooking')}
               </h3>
             </div>
-            <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+            <button onClick={onClose} aria-label="Close" className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
               <X className="h-6 w-6 text-gray-400 dark:text-gray-500" />
             </button>
           </div>
@@ -128,7 +119,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             >
               <div className="flex items-center gap-3">
                 <Mail className="h-6 w-6 text-white" />
-                <span className="text-lg font-bold tracking-wide">uni.tutors.mk@gmail.com</span>
+                <span className="text-base sm:text-lg font-bold tracking-wide break-all">uni.tutors.mk@gmail.com</span>
               </div>
               <div className="flex items-center gap-2 text-xs font-medium text-white/90 group-hover:text-white transition-colors">
                  <span>{t('email')}</span>

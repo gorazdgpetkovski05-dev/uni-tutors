@@ -51,7 +51,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             className="flex items-center gap-3 mb-3 cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 -mx-2 px-2 py-1 rounded-lg transition-colors"
             onClick={(e) => { if (professor) { e.preventDefault(); e.stopPropagation(); navigate(`/professor/${professor.id}`); } }}
           >
-            <img src={professor?.avatar || 'https://ui-avatars.com/api/?name=Prof'} alt={professor?.name} className="h-8 w-8 rounded-full border border-gray-200 dark:border-slate-600" loading="lazy" />
+            <img src={professor?.avatar || 'https://ui-avatars.com/api/?name=Prof'} alt={professor?.name || 'Professor'} className="h-8 w-8 rounded-full border border-gray-200 dark:border-slate-600" loading="lazy" />
             <div className="text-sm">
               <p className="font-medium text-gray-900 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{professor?.name || t('unknownProfessor')}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">{professor?.specialty}</p>

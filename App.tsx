@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { Home } from './pages/Home';
 import { CoursesPage } from './pages/CoursesPage';
 const CourseDetailsPage = React.lazy(() => import('./pages/CourseDetailsPage').then(m => ({ default: m.CourseDetailsPage })));
@@ -94,7 +95,7 @@ const AppContent: React.FC = () => {
             <CookieConsent />
             <DiscountPopup />
             {!isAuthPage && <Navbar />}
-            <main className={`flex-grow ${!isAuthPage ? 'pt-16' : ''}`}>
+            <main className={`flex-grow ${!isAuthPage ? 'pt-16' : ''} ${!isAuthPage && !isAdminPage ? 'pb-16 md:pb-0' : ''}`}>
                 <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" /></div>}>
                     <Routes>
                         <Route path="/" element={<Home />} />
@@ -119,6 +120,7 @@ const AppContent: React.FC = () => {
                 </React.Suspense>
             </main>
             {!isAuthPage && !isAdminPage && <Footer />}
+            {!isAuthPage && !isAdminPage && <MobileBottomNav />}
         </div>
     );
 }
@@ -126,8 +128,8 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <ErrorBoundary>
-        <LanguageProvider>
+      <LanguageProvider>
+        <ErrorBoundary>
             <AuthProvider>
               <NotificationProvider>
                 <DataProvider>
@@ -137,8 +139,8 @@ const App: React.FC = () => {
                 </DataProvider>
               </NotificationProvider>
             </AuthProvider>
-        </LanguageProvider>
-      </ErrorBoundary>
+        </ErrorBoundary>
+      </LanguageProvider>
     </ThemeProvider>
   );
 };
