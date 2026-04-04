@@ -100,7 +100,7 @@ const AppContent: React.FC = () => {
     const isAdminPage = location.pathname.startsWith('/admin');
 
     return (
-        <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300">
+        <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300 overflow-x-hidden">
             <ScrollToTop />
             <TopProgressBar />
             <GeoNoticeBanner />

@@ -23,9 +23,9 @@ export const CookieConsent: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 60 }}
           transition={{ duration: 0.35 }}
-          className="fixed bottom-4 left-4 right-4 z-50 flex justify-center pointer-events-none"
+          className="fixed bottom-20 md:bottom-4 left-3 right-3 md:left-4 md:right-4 z-[60] flex justify-center pointer-events-none"
         >
-          <div className="pointer-events-auto max-w-lg w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border border-gray-200 dark:border-slate-700 rounded-xl shadow-lg px-5 py-4 flex flex-col sm:flex-row items-center gap-3">
+          <div className="pointer-events-auto max-w-lg w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border border-gray-200 dark:border-slate-700 rounded-xl shadow-lg px-4 py-3 md:px-5 md:py-4 flex flex-col sm:flex-row items-center gap-3">
             <p className="text-sm text-gray-600 dark:text-slate-300 flex-1">{t('cookieConsent')}</p>
             <div className="flex gap-2 flex-shrink-0">
               <button
