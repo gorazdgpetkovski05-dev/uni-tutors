@@ -267,7 +267,7 @@ export const AdminPage: React.FC = () => {
               key={tab.key}
               role="tab"
               aria-selected={activeTab === tab.key}
-              onClick={() => { setActiveTab(tab.key); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                 activeTab === tab.key
                   ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'

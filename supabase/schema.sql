@@ -650,3 +650,39 @@ create policy "Users can mark own messages as read" on messages
         select 1 from courses where courses.id = enrollments.course_id and courses.professor_id = auth.uid()
       )))
   );
+
+-- ============================================
+-- DIRECT MESSAGES (User-to-User messaging)
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS direct_messages (
+  id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+  sender_id uuid REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  receiver_id uuid REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  content text NOT NULL,
+  read boolean NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_dm_sender ON direct_messages(sender_id);
+CREATE INDEX IF NOT EXISTS idx_dm_receiver ON direct_messages(receiver_id);
+
+ALTER TABLE direct_messages ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own DMs" ON direct_messages
+  FOR SELECT USING (auth.uid() = sender_id OR auth.uid() = receiver_id);
+
+CREATE POLICY "Users can send DMs" ON direct_messages
+  FOR INSERT WITH CHECK (auth.uid() = sender_id);
+
+CREATE POLICY "Users can mark DMs as read" ON direct_messages
+  FOR UPDATE USING (auth.uid() = receiver_id);
+
+ALTER PUBLICATION supabase_realtime ADD TABLE direct_messages;
+
+-- ============================================
+-- PHONE VERIFICATION
+-- ============================================
+
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS phone_verified boolean NOT NULL DEFAULT false;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS phone_verified_at timestamptz;

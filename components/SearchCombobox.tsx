@@ -62,6 +62,7 @@ export const SearchCombobox: React.FC<Props> = ({ courses, onSearch, placeholder
       <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-500 pointer-events-none" />
       <input
         type="text"
+        data-search-input
         aria-label={placeholder || t('searchPlaceholder')}
         placeholder={placeholder || t('searchPlaceholder')}
         value={input}

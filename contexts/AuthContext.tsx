@@ -16,6 +16,7 @@ interface AuthContextType {
   isProfessor: boolean;
   isStudent: boolean;
   refreshProfile: () => Promise<void>;
+  needsProfileCompletion: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -31,6 +32,7 @@ const AuthContext = createContext<AuthContextType>({
   isProfessor: false,
   isStudent: false,
   refreshProfile: async () => {},
+  needsProfileCompletion: false,
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -108,6 +110,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const role = profile?.role;
+  const needsProfileCompletion = !!profile && (!profile.full_name || profile.full_name.trim() === '' || profile.full_name.includes('@'));
 
   return (
     <AuthContext.Provider value={{
@@ -123,6 +126,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isProfessor: role === 'professor',
       isStudent: role === 'student',
       refreshProfile,
+      needsProfileCompletion,
     }}>
       {children}
     </AuthContext.Provider>

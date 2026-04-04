@@ -14,15 +14,21 @@ interface BookingModalProps {
   price: number;
 }
 
-export const BookingModal: React.FC<BookingModalProps> = ({ 
-  course, 
-  isOpen, 
-  onClose, 
-  bookingType, 
-  selectedLectureId, 
+export const BookingModal: React.FC<BookingModalProps> = ({
+  course,
+  isOpen,
+  onClose,
+  bookingType,
+  selectedLectureId,
   selectedMidterm,
-  price 
+  price
 }) => {
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [isOpen, onClose]);
   const { t } = useLanguage();
 
   if (!isOpen || !course) return null;

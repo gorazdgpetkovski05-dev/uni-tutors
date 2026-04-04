@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight, Star, Heart } from 'lucide-react';
+import { ArrowRight, Star, Heart, GitCompareArrows } from 'lucide-react';
 import { Course } from '../types';
 import { useData } from '../contexts/DataContext';
 import { Link, useNavigate } from 'react-router-dom';
@@ -11,9 +11,11 @@ import { VerifiedBadge, TopRatedBadge } from './badges/TrustBadges';
 
 interface CourseCardProps {
   course: Course;
+  isCompareSelected?: boolean;
+  onToggleCompare?: (course: Course) => void;
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+export const CourseCard: React.FC<CourseCardProps> = ({ course, isCompareSelected, onToggleCompare }) => {
   const { professors } = useData();
   const professor = professors.find(p => p.id === course.professorId);
   const { t } = useLanguage();
@@ -38,8 +40,23 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
               <Heart className={`h-4 w-4 ${isFavorited ? 'text-red-500 fill-red-500' : 'text-gray-500 dark:text-gray-400'}`} />
             </button>
           )}
-          <div className="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-indigo-600 dark:text-indigo-400 z-20 shadow-sm">
-            {course.code}
+          <div className="absolute top-4 right-4 flex items-center gap-2 z-20">
+            {onToggleCompare && (
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleCompare(course); }}
+                aria-label={isCompareSelected ? t('removeFromCompare') : t('addToCompare')}
+                className={`p-1.5 rounded-full backdrop-blur-sm shadow-sm transition-all duration-200 hover:scale-110 ${
+                  isCompareSelected
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-white/90 dark:bg-slate-900/90 text-gray-500 dark:text-gray-400 md:opacity-0 md:group-hover:opacity-100'
+                }`}
+              >
+                <GitCompareArrows className="h-4 w-4" />
+              </button>
+            )}
+            <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-indigo-600 dark:text-indigo-400 shadow-sm">
+              {course.code}
+            </div>
           </div>
         </div>
         

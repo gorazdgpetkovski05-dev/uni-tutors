@@ -124,6 +124,7 @@ export const translations = {
     enrollSuccess: "Enrollment request sent! Check your dashboard.",
 
     // Courses Page
+    recentlyViewed: "Recently Viewed",
     recommendedForYou: "Recommended for You",
     availableCourses: "Available Courses",
     selectSubject: "Select a course to view details and experts.",
@@ -214,6 +215,12 @@ export const translations = {
     markAllRead: "Mark all read",
     noNotifications: "No notifications yet.",
     justNow: "Just now",
+    notificationPreferences: "Notification Settings",
+    bookingUpdates: "Booking Updates",
+    sessionNotifications: "Session Notifications",
+    reviewRequests: "Review Requests",
+    supportReplies: "Support Replies",
+    generalAnnouncements: "General",
 
     // Support
     submitSupportTicket: "Submit Support Ticket",
@@ -576,6 +583,57 @@ export const translations = {
 
     // Breadcrumbs
     breadcrumbProfessor: "Professor",
+
+    // Keyboard Shortcuts
+    keyboardShortcuts: "Keyboard Shortcuts",
+    shortcutSearch: "Focus search",
+    shortcutDarkMode: "Toggle dark mode",
+    shortcutClose: "Close modal",
+    shortcutHelp: "Show shortcuts",
+
+    // Certificate
+    certificateOfCompletion: "Certificate of Completion",
+    certifiesCompletion: "This certifies that",
+    hasCompleted: "has successfully completed the course",
+    underGuidance: "Under the guidance of",
+    downloadCertificate: "Download Certificate",
+    printCertificate: "Print / Save as PDF",
+
+    // Messenger
+    messenger: "Messages",
+    searchConversations: "Search conversations...",
+    noConversations: "No conversations yet",
+    startChat: "Start a conversation with your course contacts",
+    backToConversations: "Back",
+
+    // Course Comparison
+    compareCourses: "Compare Courses",
+    addToCompare: "Compare",
+    removeFromCompare: "Remove",
+    maxCompare: "Maximum 3 courses",
+    price: "Price",
+    rating: "Rating",
+
+    // Phone Verification
+    verifyPhone: "Verify Phone",
+    phoneVerified: "Phone Verified",
+    addPhone: "Add Phone",
+    enterPhoneNumber: "Enter your phone number",
+    sendCode: "Send Code",
+    enterCode: "Enter verification code",
+    verifyCode: "Verify",
+    codeSent: "Code sent!",
+    codeExpired: "Code expired. Try again.",
+    resendCode: "Resend Code",
+    resendIn: "Resend in",
+    phoneVerifiedSuccess: "Phone verified successfully!",
+
+    // Complete Profile
+    completeProfile: "Complete Your Profile",
+    enterFullName: "Please enter your full name to continue",
+    fullNameRequired: "Full name is required",
+    phoneOptional: "Phone number (optional)",
+    continueToApp: "Continue",
   },
   mk: {
     // Navbar
@@ -699,6 +757,7 @@ export const translations = {
     enrollSuccess: "Барањето за запишување е испратено! Проверете ја таблата.",
 
     // Courses Page
+    recentlyViewed: "Неодамна прегледани",
     recommendedForYou: "Препорачано за вас",
     availableCourses: "Достапни Курсеви",
     selectSubject: "Избери курс за детали и експерти.",
@@ -789,6 +848,12 @@ export const translations = {
     markAllRead: "Означи сите прочитани",
     noNotifications: "Нема известувања.",
     justNow: "Сега",
+    notificationPreferences: "Поставки за известувања",
+    bookingUpdates: "Ажурирања за резервации",
+    sessionNotifications: "Известувања за сесии",
+    reviewRequests: "Барања за рецензии",
+    supportReplies: "Одговори од поддршка",
+    generalAnnouncements: "Општо",
 
     // Support
     submitSupportTicket: "Испрати Тикет за Поддршка",
@@ -1151,5 +1216,56 @@ export const translations = {
 
     // Breadcrumbs
     breadcrumbProfessor: "Професор",
+
+    // Certificate
+    certificateOfCompletion: "Сертификат за завршување",
+    certifiesCompletion: "Со ова се потврдува дека",
+    hasCompleted: "успешно го заврши курсот",
+    underGuidance: "Под менторство на",
+    downloadCertificate: "Преземи сертификат",
+    printCertificate: "Печати / Зачувај како PDF",
+
+    // Keyboard Shortcuts
+    keyboardShortcuts: "Кратенки на тастатура",
+    shortcutSearch: "Фокусирај пребарување",
+    shortcutDarkMode: "Промени тема",
+    shortcutClose: "Затвори прозорец",
+    shortcutHelp: "Прикажи кратенки",
+
+    // Messenger
+    messenger: "Пораки",
+    searchConversations: "Пребарај разговори...",
+    noConversations: "Нема разговори",
+    startChat: "Започни разговор со контактите од курсевите",
+    backToConversations: "Назад",
+
+    // Course Comparison
+    compareCourses: "Спореди курсеви",
+    addToCompare: "Спореди",
+    removeFromCompare: "Отстрани",
+    maxCompare: "Максимум 3 курсеви",
+    price: "Цена",
+    rating: "Оценка",
+
+    // Phone Verification
+    verifyPhone: "Верификувај телефон",
+    phoneVerified: "Телефонот е верифициран",
+    addPhone: "Додај телефон",
+    enterPhoneNumber: "Внесете го вашиот телефонски број",
+    sendCode: "Испрати код",
+    enterCode: "Внесете го кодот за верификација",
+    verifyCode: "Верификувај",
+    codeSent: "Кодот е испратен!",
+    codeExpired: "Кодот истече. Обидете се повторно.",
+    resendCode: "Испрати повторно",
+    resendIn: "Испрати повторно за",
+    phoneVerifiedSuccess: "Телефонот е успешно верифициран!",
+
+    // Complete Profile
+    completeProfile: "Дополни го профилот",
+    enterFullName: "Внесете го вашето целосно име за да продолжите",
+    fullNameRequired: "Целосно име е задолжително",
+    phoneOptional: "Телефонски број (опционално)",
+    continueToApp: "Продолжи",
   }
 };

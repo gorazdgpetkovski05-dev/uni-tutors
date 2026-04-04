@@ -9,7 +9,7 @@ import { motion } from 'motion/react';
 import {
   BookOpen, Clock, CheckCircle2, LogOut, Calendar,
   ChevronRight, User, Send, MessageSquare, Star, HelpCircle,
-  TrendingUp, Users, Zap
+  TrendingUp, Users, Zap, Award, Settings
 } from 'lucide-react';
 import { EmptyState } from '../components/EmptyState';
 import { NotificationBell } from '../components/dashboard/NotificationBell';
@@ -21,8 +21,10 @@ import { UpcomingSessionsCard } from '../components/dashboard/UpcomingSessionsCa
 import { CourseProgressCard } from '../components/dashboard/CourseProgressCard';
 import { StreakCard } from '../components/dashboard/StreakCard';
 import { SuccessModal } from '../components/SuccessModal';
-import { MessageThread } from '../components/messaging/MessageThread';
 import { OnboardingWizard, STORAGE_KEY as ONBOARDING_KEY } from '../components/OnboardingWizard';
+import { NotificationPreferences } from '../components/dashboard/NotificationPreferences';
+import { CertificateGenerator } from '../components/CertificateGenerator';
+import PhoneVerification from '../components/PhoneVerification';
 
 // ─── Student Dashboard ─────────────────────────────────────────────────────────
 const StudentDashboard: React.FC = () => {
@@ -36,8 +38,11 @@ const StudentDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'courses' | 'history' | 'support'>('courses');
   const [reviewEnrollment, setReviewEnrollment] = useState<Enrollment | null>(null);
   const [enrollSuccess, setEnrollSuccess] = useState(false);
-  const [messageEnrollment, setMessageEnrollment] = useState<(Enrollment & { course?: CourseRecord }) | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem(ONBOARDING_KEY));
+  const [showNotifPrefs, setShowNotifPrefs] = useState(false);
+  const [certificateEnrollment, setCertificateEnrollment] = useState<(Enrollment & { course?: CourseRecord }) | null>(null);
+  const [professorNames, setProfessorNames] = useState<Record<string, string>>({});
+  const [showPhoneVerify, setShowPhoneVerify] = useState(false);
 
   // Detect enrollment success from URL param
   useEffect(() => {
@@ -76,6 +81,16 @@ const StudentDashboard: React.FC = () => {
         const { data: sessionData } = await supabase
           .from('sessions').select('*').in('enrollment_id', enrollmentIds).order('session_date', { ascending: true });
         if (sessionData) setSessions(sessionData);
+      }
+      // Fetch professor names for completed course certificates
+      const profIds = [...new Set(enrollRes.data.filter(e => e.status === 'completed' && e.course?.professor_id).map(e => e.course!.professor_id!))];
+      if (profIds.length > 0) {
+        const { data: profData } = await supabase.from('profiles').select('id, full_name').in('id', profIds);
+        if (profData) {
+          const map: Record<string, string> = {};
+          profData.forEach(p => { map[p.id] = p.full_name; });
+          setProfessorNames(map);
+        }
       }
     }
     if (xpRes.data) setXpHistory(xpRes.data);
@@ -154,6 +169,19 @@ const StudentDashboard: React.FC = () => {
         </div>
         <div className="flex items-center gap-3">
           <NotificationBell />
+          <button onClick={() => setShowNotifPrefs(!showNotifPrefs)} aria-label={t('notificationPreferences')}
+            className="p-2 rounded-lg bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-all">
+            <Settings className="h-5 w-5" />
+          </button>
+          {profile?.phone_verified ? (
+            <span className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-xl">
+              <CheckCircle2 className="h-3.5 w-3.5" /> {t('phoneVerified')}
+            </span>
+          ) : (
+            <button onClick={() => setShowPhoneVerify(true)} className="flex items-center gap-2 px-4 py-2 text-sm bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-xl hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors">
+              {t('addPhone')}
+            </button>
+          )}
           <button onClick={() => setEditingProfile(!editingProfile)} className="flex items-center gap-2 px-4 py-2 text-sm bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors">
             <User className="h-4 w-4" /> {t('editProfile')}
           </button>
@@ -162,6 +190,16 @@ const StudentDashboard: React.FC = () => {
           </button>
         </div>
       </div>
+
+      <PhoneVerification open={showPhoneVerify} onClose={() => setShowPhoneVerify(false)} />
+
+      {/* Notification Preferences */}
+      {showNotifPrefs && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+          className="mb-6 overflow-hidden">
+          <NotificationPreferences />
+        </motion.div>
+      )}
 
       {/* Profile Edit */}
       {profileSaveSuccess && (
@@ -243,7 +281,7 @@ const StudentDashboard: React.FC = () => {
         {(['courses', 'history', 'support'] as const).map(tab => (
           <button
             key={tab}
-            onClick={() => { setActiveTab(tab); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
               activeTab === tab
                 ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
@@ -300,17 +338,16 @@ const StudentDashboard: React.FC = () => {
                     )}
                   </div>
                   <div className="flex gap-2">
-                    {enrollment.status === 'approved' && (
-                      <button onClick={() => setMessageEnrollment(enrollment)}
-                        className="flex items-center gap-1.5 px-3 py-2 text-sm bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg font-medium hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors"
-                        title={t('messages')}>
-                        <MessageSquare className="h-4 w-4" /> {t('messages')}
-                      </button>
-                    )}
                     {enrollment.status === 'completed' && (
                       <button onClick={() => setReviewEnrollment(enrollment)}
                         className="flex items-center gap-1.5 px-4 py-2 text-sm bg-gradient-to-r from-yellow-400 to-orange-400 text-slate-900 rounded-lg font-bold hover:from-yellow-300 hover:to-orange-300 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-md hover:shadow-yellow-400/30">
                         <Star className="h-4 w-4 fill-current" /> {t('leaveReview')}
+                      </button>
+                    )}
+                    {enrollment.status === 'completed' && (
+                      <button onClick={() => setCertificateEnrollment(enrollment)}
+                        className="flex items-center gap-1.5 px-3 py-2 text-sm bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg font-medium hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors">
+                        <Award className="h-4 w-4" /> {t('downloadCertificate')}
                       </button>
                     )}
                     {enrollment.course && (
@@ -413,13 +450,14 @@ const StudentDashboard: React.FC = () => {
         />
       )}
 
-      {/* Message Thread Modal */}
-      {messageEnrollment && user && (
-        <MessageThread
-          enrollmentId={messageEnrollment.id}
-          currentUserId={user.id}
-          otherUserName={messageEnrollment.course?.title || t('unknownCourse')}
-          onClose={() => setMessageEnrollment(null)}
+      {/* Certificate Modal */}
+      {certificateEnrollment && (
+        <CertificateGenerator
+          studentName={profile?.full_name || t('student')}
+          courseName={certificateEnrollment.course?.title || t('unknownCourse')}
+          professorName={certificateEnrollment.course?.professor_id ? (professorNames[certificateEnrollment.course.professor_id] || t('unknownProfessor')) : t('unknownProfessor')}
+          completionDate={certificateEnrollment.updated_at}
+          onClose={() => setCertificateEnrollment(null)}
         />
       )}
 
@@ -449,7 +487,8 @@ const ProfessorDashboard: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'courses' | 'students' | 'schedule' | 'proposal'>('overview');
-  const [messageEnrollment, setMessageEnrollment] = useState<(Enrollment & { student?: any; course?: any }) | null>(null);
+  const [showNotifPrefs, setShowNotifPrefs] = useState(false);
+  const [showPhoneVerify, setShowPhoneVerify] = useState(false);
 
   // Course proposal state
   const [proposalTitle, setProposalTitle] = useState('');
@@ -641,6 +680,19 @@ const ProfessorDashboard: React.FC = () => {
         </div>
         <div className="flex items-center gap-3">
           <NotificationBell />
+          <button onClick={() => setShowNotifPrefs(!showNotifPrefs)} aria-label={t('notificationPreferences')}
+            className="p-2 rounded-lg bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-all">
+            <Settings className="h-5 w-5" />
+          </button>
+          {profile?.phone_verified ? (
+            <span className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-xl">
+              <CheckCircle2 className="h-3.5 w-3.5" /> {t('phoneVerified')}
+            </span>
+          ) : (
+            <button onClick={() => setShowPhoneVerify(true)} className="flex items-center gap-2 px-4 py-2 text-sm bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-xl hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors">
+              {t('addPhone')}
+            </button>
+          )}
           <button onClick={() => setEditingProfile(!editingProfile)} className="flex items-center gap-2 px-4 py-2 text-sm bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors">
             <User className="h-4 w-4" /> {t('editProfile')}
           </button>
@@ -649,6 +701,16 @@ const ProfessorDashboard: React.FC = () => {
           </button>
         </div>
       </div>
+
+      <PhoneVerification open={showPhoneVerify} onClose={() => setShowPhoneVerify(false)} />
+
+      {/* Notification Preferences */}
+      {showNotifPrefs && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+          className="mb-6 overflow-hidden">
+          <NotificationPreferences />
+        </motion.div>
+      )}
 
       {/* Profile Edit */}
       {profileSaveSuccess && (
@@ -762,7 +824,7 @@ const ProfessorDashboard: React.FC = () => {
       {/* Tabs */}
       <div className="flex gap-1 bg-gray-100 dark:bg-slate-800 rounded-xl p-1 mb-6 overflow-x-auto no-scrollbar">
         {(['overview', 'courses', 'students', 'schedule', 'proposal'] as const).map(tab => (
-          <button key={tab} onClick={() => { setActiveTab(tab); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          <button key={tab} onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}>
             {tab === 'overview' ? t('overview') : tab === 'courses' ? t('myCourses') : tab === 'students' ? t('myStudents') : tab === 'schedule' ? t('scheduleSession') : t('proposeCourse')}
           </button>
@@ -865,13 +927,6 @@ const ProfessorDashboard: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {e.status === 'approved' && (
-                  <button onClick={() => setMessageEnrollment(e)}
-                    className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors"
-                    title={t('messages')}>
-                    <MessageSquare className="h-4 w-4" />
-                  </button>
-                )}
                 <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${e.status === 'approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : e.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'}`}>
                   {t(e.status)}
                 </span>
@@ -981,15 +1036,6 @@ const ProfessorDashboard: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Message Thread Modal */}
-      {messageEnrollment && user && (
-        <MessageThread
-          enrollmentId={messageEnrollment.id}
-          currentUserId={user.id}
-          otherUserName={messageEnrollment.student?.full_name || t('unknownStudent')}
-          onClose={() => setMessageEnrollment(null)}
-        />
-      )}
     </div>
   );
 };

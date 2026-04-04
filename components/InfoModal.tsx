@@ -13,6 +13,12 @@ interface InfoModalProps {
 
 export const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, title, message }) => {
   const { t } = useLanguage();
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [isOpen, onClose]);
   return (
     <AnimatePresence>
       {isOpen && (

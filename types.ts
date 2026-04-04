@@ -16,6 +16,8 @@ export interface Profile {
   full_name: string;
   avatar_url: string | null;
   phone: string | null;
+  phone_verified: boolean;
+  phone_verified_at: string | null;
   xp: number;
   level: number;
   created_at: string;
@@ -205,6 +207,15 @@ export interface Message {
   id: string;
   enrollment_id: string;
   sender_id: string;
+  content: string;
+  read: boolean;
+  created_at: string;
+}
+
+export interface DirectMessage {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
   content: string;
   read: boolean;
   created_at: string;

@@ -11,6 +11,7 @@ import { WHATSAPP_URL } from '../constants';
 import { ContactModal } from '../components/ContactModal';
 import { EnrollmentCount, RecentActivity, LiveViewers } from '../components/SocialProof';
 import { ShareButton } from '../components/ShareButton';
+import { useRecentlyViewed } from '../hooks/useRecentlyViewed';
 
 export const CourseDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,6 +22,7 @@ export const CourseDetailsPage: React.FC = () => {
 
   const course = courses.find(c => c.id === id);
   const professor = course ? professors.find(p => p.id === course.professorId) : null;
+  const { addToRecent } = useRecentlyViewed();
 
   const [bookingType] = useState<BookingType>('full');
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -29,6 +31,10 @@ export const CourseDetailsPage: React.FC = () => {
   const [enrollSuccess, setEnrollSuccess] = useState(false);
   const [reviews, setReviews] = useState<(Review & { student?: { full_name: string; avatar_url: string | null } })[]>([]);
   const [avgRating, setAvgRating] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (course) addToRecent(course.id);
+  }, [course?.id]);
 
   useEffect(() => {
     if (user && id) checkEnrollment();

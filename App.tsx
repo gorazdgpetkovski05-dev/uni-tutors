@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { MobileBottomNav } from './components/MobileBottomNav';
@@ -11,6 +11,7 @@ const LoginPage = React.lazy(() => import('./pages/LoginPage').then(m => ({ defa
 const SignupPage = React.lazy(() => import('./pages/SignupPage').then(m => ({ default: m.SignupPage })));
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
 const AdminPage = React.lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })));
+const CompleteProfilePage = React.lazy(() => import('./pages/CompleteProfilePage').then(m => ({ default: m.CompleteProfilePage })));
 import { DataProvider } from './contexts/DataContext';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -26,8 +27,11 @@ import { CookieConsent } from './components/CookieConsent';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NotFoundPage } from './components/NotFoundPage';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
+import { FloatingMessenger } from './components/messaging/FloatingMessenger';
 import { TopProgressBar } from './components/TopProgressBar';
 import { Breadcrumbs } from './components/Breadcrumbs';
+import { ShortcutsModal } from './components/ShortcutsModal';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 const Footer: React.FC = () => {
     const { t } = useLanguage();
@@ -85,11 +89,14 @@ const ScrollToTop: React.FC = () => {
 };
 
 const AppContent: React.FC = () => {
-    const { user, isAdmin } = useAuth();
+    const { user, isAdmin, needsProfileCompletion } = useAuth();
     const location = useLocation();
+    const [shortcutsOpen, setShortcutsOpen] = useState(false);
+    const toggleShortcuts = useCallback(() => setShortcutsOpen(prev => !prev), []);
+    useKeyboardShortcuts(toggleShortcuts);
 
     // Hide navbar/footer on auth pages and admin
-    const isAuthPage = ['/login', '/signup'].includes(location.pathname);
+    const isAuthPage = ['/login', '/signup', '/complete-profile'].includes(location.pathname);
     const isAdminPage = location.pathname.startsWith('/admin');
 
     return (
@@ -110,14 +117,19 @@ const AppContent: React.FC = () => {
                         <Route path="/professor/:id" element={<ProfessorProfilePage />} />
                         <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
                         <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignupPage />} />
+                        <Route path="/complete-profile" element={
+                            <ProtectedRoute>
+                                <CompleteProfilePage />
+                            </ProtectedRoute>
+                        } />
                         <Route path="/dashboard" element={
                             <ProtectedRoute>
-                                {isAdmin ? <Navigate to="/admin" replace /> : <DashboardPage />}
+                                {needsProfileCompletion ? <Navigate to="/complete-profile" replace /> : isAdmin ? <Navigate to="/admin" replace /> : <DashboardPage />}
                             </ProtectedRoute>
                         } />
                         <Route path="/admin" element={
                             <ProtectedRoute allowedRoles={['admin']}>
-                                <AdminPage />
+                                {needsProfileCompletion ? <Navigate to="/complete-profile" replace /> : <AdminPage />}
                             </ProtectedRoute>
                         } />
                         <Route path="/pricing" element={<Navigate to="/" replace />} />
@@ -127,7 +139,9 @@ const AppContent: React.FC = () => {
             </main>
             {!isAuthPage && !isAdminPage && <Footer />}
             {!isAuthPage && !isAdminPage && <MobileBottomNav />}
+            {user && !isAuthPage && !isAdminPage && <FloatingMessenger />}
             <ScrollToTopButton />
+            <ShortcutsModal isOpen={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
         </div>
     );
 }

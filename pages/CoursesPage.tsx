@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { CourseCard } from '../components/CourseCard';
+import { CompareDrawer } from '../components/CompareDrawer';
 import { SkeletonCard } from '../components/SkeletonCard';
-import { Search, Filter, ArrowUpDown, Sparkles } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, Sparkles, GitCompareArrows } from 'lucide-react';
 import { SearchCombobox } from '../components/SearchCombobox';
 import { EmptyState } from '../components/EmptyState';
 import { useData } from '../contexts/DataContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useRecentlyViewed } from '../hooks/useRecentlyViewed';
 import { motion, AnimatePresence } from 'motion/react';
 import { getRecommendations } from '../services/geminiService';
 import { supabase } from '../lib/supabase';
@@ -41,6 +43,17 @@ export const CoursesPage: React.FC = () => {
   const { t } = useLanguage();
   const [recommendations, setRecommendations] = useState<Course[]>([]);
   const [loadingRecs, setLoadingRecs] = useState(false);
+  const { recentIds } = useRecentlyViewed();
+  const [compareList, setCompareList] = useState<Course[]>([]);
+  const [compareOpen, setCompareOpen] = useState(false);
+
+  const toggleCompare = (course: Course) => {
+    setCompareList(prev => {
+      if (prev.find(c => c.id === course.id)) return prev.filter(c => c.id !== course.id);
+      if (prev.length >= 3) return prev;
+      return [...prev, course];
+    });
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -96,6 +109,11 @@ export const CoursesPage: React.FC = () => {
       if (sortBy === 'top_rated') return (b.averageRating ?? 0) - (a.averageRating ?? 0);
       return 0;
     });
+
+  const hasActiveFilter = searchTerm !== '' || selectedUniversity !== 'All' || selectedCategory !== 'allCategories';
+  const recentlyViewedCourses = hasActiveFilter ? [] : recentIds
+    .map(id => courses.find(c => c.id === id && !c.hidden))
+    .filter((c): c is Course => !!c);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-800/50 dark:to-indigo-950 py-12 transition-colors duration-300">
@@ -188,11 +206,26 @@ export const CoursesPage: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {recommendations.map(course => (
-                  <CourseCard key={course.id} course={course} />
+                  <CourseCard key={course.id} course={course} isCompareSelected={!!compareList.find(c => c.id === course.id)} onToggleCompare={toggleCompare} />
                 ))}
               </div>
             )}
             <div className="border-b border-gray-200 dark:border-slate-700 mt-10 mb-2" />
+          </motion.div>
+        )}
+
+        {/* Recently Viewed */}
+        {recentlyViewedCourses.length > 0 && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">{t('recentlyViewed')}</h2>
+            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+              {recentlyViewedCourses.map(course => (
+                <div key={course.id} className="min-w-[300px] max-w-[340px] flex-shrink-0">
+                  <CourseCard course={course} isCompareSelected={!!compareList.find(c => c.id === course.id)} onToggleCompare={toggleCompare} />
+                </div>
+              ))}
+            </div>
+            <div className="border-b border-gray-200 dark:border-slate-700 mt-6 mb-2" />
           </motion.div>
         )}
 
@@ -213,7 +246,7 @@ export const CoursesPage: React.FC = () => {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3, delay: index * 0.05, ease: "easeOut" }}
                 >
-                  <CourseCard course={course} />
+                  <CourseCard course={course} isCompareSelected={!!compareList.find(c => c.id === course.id)} onToggleCompare={toggleCompare} />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -232,6 +265,40 @@ export const CoursesPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Floating compare bar */}
+      <AnimatePresence>
+        {compareList.length > 0 && !compareOpen && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-40"
+          >
+            <button
+              onClick={() => setCompareOpen(true)}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-full shadow-lg shadow-indigo-500/30 transition-colors font-medium"
+            >
+              <GitCompareArrows className="h-5 w-5" />
+              {t('compareCourses')} ({compareList.length})
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Compare drawer */}
+      <AnimatePresence>
+        {compareOpen && (
+          <CompareDrawer
+            courses={compareList}
+            onRemove={(id) => {
+              setCompareList(prev => prev.filter(c => c.id !== id));
+              if (compareList.length <= 1) setCompareOpen(false);
+            }}
+            onClose={() => setCompareOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
